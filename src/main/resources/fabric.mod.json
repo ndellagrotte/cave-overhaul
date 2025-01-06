@@ -3,9 +3,9 @@
 	"id": "caveoverhaul",
 	"version": "${version}",
 	"name": "CaveOverhaul",
-	"description": "Hello and thanks for reading me!",
+	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"W.F."
+		"Me!"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -30,6 +30,5 @@
 	},
 	"suggests": {
 		"another-mod": "*"
-	},
-	"accessWidener": "caveoverhaul.accessWidener"
+	}
 }

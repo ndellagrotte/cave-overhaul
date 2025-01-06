@@ -1,0 +1,6 @@
+{
+  "type": "cavesrevisited:add_carver",
+  "biomes": "#is_overworld",
+  "carvers": "cavesrevisited:mycelium_caves",
+  "step": "underground_ores"
+}

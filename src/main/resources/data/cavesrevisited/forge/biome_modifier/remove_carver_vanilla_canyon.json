@@ -1,0 +1,6 @@
+{
+  "type": "cavesrevisited:remove_carver",
+  "biomes": "#is_overworld",
+  "carvers": "minecraft:canyon",
+  "step": "underground_ores"
+}

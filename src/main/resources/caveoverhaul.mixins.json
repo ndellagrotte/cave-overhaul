@@ -1,22 +1,9 @@
 {
 	"required": true,
-	"package": "wftech.caveoverhaul.mixins",
+	"package": "wftech.caveoverhaul.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"CaveCarverConfigurationAccessor",
-		"CaveWorldCarverAccessor",
-		"DedicatedServerMixin",
-		"IntegratedServerMixin",
-		"NoiseChunkAccessor",
-		"NoiseChunkMixin",
-		"NoiseRouterDataAccessor",
-		"RandomStateMixin",
-		"VeinTypeAccessor",
-		"NoiseBasedAquiferMixin",
-		"AquiferAccessor",
-		"DFConstantMixin",
-		"CarvingMaskMixin",
-		"ProtoChunkMixin"
+		"ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

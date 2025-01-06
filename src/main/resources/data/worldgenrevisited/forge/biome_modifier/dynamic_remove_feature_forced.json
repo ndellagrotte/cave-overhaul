@@ -1,0 +1,6 @@
+{
+  "type": "worldgenrevisited:dynamic_remove_features",
+  "biomes": "#is_overworld",
+  "features": "worldgenrevisited:dummy_clay",
+  "step": "underground_ores"
+}

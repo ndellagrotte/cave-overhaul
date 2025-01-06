@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "wftech.worldgenrevisited.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "worldgenrevisited.refmap.json",
+  "mixins": [
+  	"RandomStateMixin",
+  	"VanillaRegistriesAccessor",
+    "SurfaceRuleDataMixin",
+    "SurfaceRulesMixin",
+    "BlockStateBaseMixin",
+    "OreFeaturesMixin",
+    "NoiseBasedChunkGeneratorMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
