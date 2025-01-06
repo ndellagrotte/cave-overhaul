@@ -28,6 +28,7 @@ import java.util.Map;
 @Mixin(RandomState.class)
 public class RandomStateMixin {
 
+	//SRG name: <init>(Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/core/HolderGetter;J)V
 	@ModifyVariable(method = "<init>(Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/core/HolderGetter;J)V",
 			at = @At("HEAD"),
 			remap=true)
@@ -42,13 +43,13 @@ public class RandomStateMixin {
 		RegistryAccess registries;
 		MinecraftServer server = FabricUtils.server;
 		registries = server.registryAccess();
-		Provider provider = registries.asGetterLookup();
-		noise = provider.lookupOrThrow(Registries.NOISE);
-		density_function = provider.lookupOrThrow(Registries.NOISE);
+		//Provider provider = registries.asGetterLookup();
+		noise = registries.lookupOrThrow(Registries.NOISE);
+		density_function = registries.lookupOrThrow(Registries.NOISE);
 
-		Registry<NoiseGeneratorSettings> noiseReg = registries.registryOrThrow(Registries.NOISE_SETTINGS);
+		Registry<NoiseGeneratorSettings> noiseReg = registries.lookupOrThrow(Registries.NOISE_SETTINGS);
 
-		NoiseGeneratorSettings overworldNoise = noiseReg.getOrThrow(NoiseGeneratorSettings.OVERWORLD);
+		NoiseGeneratorSettings overworldNoise = noiseReg.get(NoiseGeneratorSettings.OVERWORLD).get().value();
 
 		for(Map.Entry<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorSettings> entry: noiseReg.entrySet()){
 			if (entry.getKey().location().getPath().equals("overworld")){
@@ -57,13 +58,13 @@ public class RandomStateMixin {
 		}
 
 		for(ResourceLocation key: noiseReg.keySet()) {
-			NoiseGeneratorSettings ngs_noise = noiseReg.get(key);
+			NoiseGeneratorSettings ngs_noise = noiseReg.get(key).get().value();
 			if( (!Config.getBoolSetting(Config.KEY_GENERATE_CAVERNS)) & key.getPath().toLowerCase().contains("overworld") && (defaultSettings == ngs_noise) ) {
 
 				NoiseRouter defaultNoiseRouter = defaultSettings.noiseRouter();
 
-				HolderGetter hg_noise = provider.lookupOrThrow(Registries.NOISE);
-				HolderGetter hg_density_function = provider.lookupOrThrow(Registries.DENSITY_FUNCTION);
+				HolderGetter hg_noise = registries.lookupOrThrow(Registries.NOISE);
+				HolderGetter hg_density_function = registries.lookupOrThrow(Registries.DENSITY_FUNCTION);
 
 				DensityFunction densityfunction8 = NoiseRouterDataAccessor.getFunction(hg_density_function, false ? NoiseRouterDataAccessor.FACTOR_LARGE() : (false ? NoiseRouterDataAccessor.FACTOR_AMPLIFIED() : NoiseRouterDataAccessor.FACTOR()));
 				DensityFunction densityfunction9 = NoiseRouterDataAccessor.getFunction(hg_density_function, false ? NoiseRouterDataAccessor.DEPTH_LARGE() : (false ? NoiseRouterDataAccessor.DEPTH_AMPLIFIED() : NoiseRouterDataAccessor.DEPTH()));

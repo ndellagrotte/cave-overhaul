@@ -29,7 +29,7 @@ public class InitCarverTypesFabric {
         ResourceLocation caves_noise_distribution_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "caves_noise_distribution");
         ResourceLocation v12_caves_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "v12_caves");
         Registry.register(BuiltInRegistries.CARVER, vanilla_canyon_rloc, VANILLA_CANYON);
-        Registry.register(BuiltInRegistries.CARVER, v12_caves_rloc, V12_CAVES);
+        Registry.register(BuiltInRegistries.CARVER, v12_caves_rloc, CAVES_NOISE_DISTRIBUTION);
 
         /*
         Minecraft will at some point take the above registered caves and canyons,
@@ -50,17 +50,14 @@ public class InitCarverTypesFabric {
          */
         BiomeModifications.addCarver(
                 BiomeSelectors.foundInOverworld(),
-                GenerationStep.Carving.AIR,
                 ResourceKey.create(Registries.CONFIGURED_CARVER, canyons_rloc));
 
         BiomeModifications.addCarver(
                 BiomeSelectors.foundInOverworld(),
-                GenerationStep.Carving.AIR,
                 ResourceKey.create(Registries.CONFIGURED_CARVER, canyons_low_y_rloc));
 
         BiomeModifications.addCarver(
                 BiomeSelectors.foundInOverworld(),
-                GenerationStep.Carving.AIR,
                 ResourceKey.create(Registries.CONFIGURED_CARVER, caves_rloc));
 
     }

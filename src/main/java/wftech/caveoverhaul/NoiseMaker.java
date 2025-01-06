@@ -34,8 +34,8 @@ public class NoiseMaker {
             RegistryAccess registries;
             MinecraftServer server = FabricUtils.server;
             registries = server.registryAccess();
-            HolderGetter.Provider provider = registries.asGetterLookup();
-            HolderGetter<DensityFunction> hg = provider.lookup(Registries.DENSITY_FUNCTION).get();
+            //HolderGetter.Provider provider = registries.asGetterLookup();
+            HolderGetter<DensityFunction> hg = registries.lookup(Registries.DENSITY_FUNCTION).get();
 
             ResourceKey<DensityFunction> zero = NoiseRouterDataAccessor.ZERO();
             Holder.Reference<DensityFunction> hg_zero = hg.get(zero).get();
