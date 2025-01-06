@@ -1,6 +1,0 @@
-{x
-  "type": "cavesrevisited:add_carver",
-  "biomes": "#is_overworld",
-  "carvers": "cavesrevisited:canyon_low_y",
-  "step": "underground_ores"
-}

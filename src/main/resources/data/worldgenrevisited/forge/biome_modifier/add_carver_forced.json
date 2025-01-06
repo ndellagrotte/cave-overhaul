@@ -1,6 +1,0 @@
-{
-  "type": "worldgenrevisited:add_carver",
-  "biomes": "#is_overworld",
-  "carvers": "worldgenrevisited:blank_carver",
-  "step": "underground_ores"
-}
