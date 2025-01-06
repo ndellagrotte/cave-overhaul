@@ -19,6 +19,7 @@ public class CaveOverhaul implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		Config.initConfig();
 		InitCarverTypesFabric.init();
 	}
 

@@ -113,4 +113,24 @@ public interface NoiseRouterDataAccessor {
     public static ResourceKey<DensityFunction> RIDGES() {
         throw new AssertionError();
     }
+
+    @Accessor("NOODLE")
+    public static ResourceKey<DensityFunction> NOODLE() {
+        throw new AssertionError();
+    }
+
+    @Accessor("SPAGHETTI_2D_THICKNESS_MODULATOR")
+    public static ResourceKey<DensityFunction> SPAGHETTI_2D_THICKNESS_MODULATOR() {
+        throw new AssertionError();
+    }
+
+    @Accessor("SPAGHETTI_2D")
+    public static ResourceKey<DensityFunction> SPAGHETTI_2D() {
+        throw new AssertionError();
+    }
+
+    @Accessor("ZERO")
+    public static ResourceKey<DensityFunction> ZERO() {
+        throw new AssertionError();
+    }
 }

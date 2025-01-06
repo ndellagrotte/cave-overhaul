@@ -11,7 +11,12 @@
 		"NoiseChunkMixin",
 		"NoiseRouterDataAccessor",
 		"RandomStateMixin",
-		"VeinTypeAccessor"
+		"VeinTypeAccessor",
+		"NoiseBasedAquiferMixin",
+		"AquiferAccessor",
+		"DFConstantMixin",
+		"CarvingMaskMixin",
+		"ProtoChunkMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

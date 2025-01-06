@@ -15,6 +15,8 @@ import net.minecraft.world.level.levelgen.DensityFunction.SinglePointContext;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
+import wftech.caveoverhaul.carvertypes.rivers.NURDynamicLayer;
+import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 //public class AirOnlyAquifer implements Aquifer {
@@ -49,8 +51,15 @@ public class AirOnlyAquifer implements Aquifer {
 		if(this.level == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		
+
 		BlockState state = this.level.getBlockState(new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ()));
+
+		//if (ctx.blockY() <= (-64 + 9) && state != null && state.getBlock() == Blocks.LAVA) {
+		//	return state;
+		int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+		if (ctx.blockY() <= (Globals.minY + y_offset)) {
+			return Blocks.LAVA.defaultBlockState();
+		}
 		
 		///tp -656 60 138
 		if(state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.WATER) {
@@ -123,8 +132,17 @@ public class AirOnlyAquifer implements Aquifer {
 		if(this.isLiquid(state_u) || this.isLiquid(state_u2) || this.isLiquid(state_u3)) {
 			return state;
 		}
+
+		NURDynamicLayer riverLayer = null;
+		if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null) {
+			return state;
+		} else if (NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
+			return state;
+		} else if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null) {
+			return state;
+		}
 		
-		
+		/*
 		if(NoiseChunkMixinUtils.shouldSetToLava(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
 			return state;
 		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
@@ -136,6 +154,8 @@ public class AirOnlyAquifer implements Aquifer {
 		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ())) {
 			return state;
 		}
+
+		 */
 
 		return Blocks.AIR.defaultBlockState();
 	}
