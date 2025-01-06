@@ -28,18 +28,18 @@
     "lava_level": {
       "above_bottom": 8
     },
-    "probability": 0.00,
+    "probability": 0.0,
     "replaceable": "#minecraft:overworld_carver_replaceables",
     "shape": {
       "distance_factor": {
         "type": "minecraft:uniform",
-          "max_exclusive": 1.0,
-          "min_inclusive": 0.75
+        "max_exclusive": 1.0,
+        "min_inclusive": 0.75
       },
       "horizontal_radius_factor": {
         "type": "minecraft:uniform",
-          "max_exclusive": 1.0,
-          "min_inclusive": 0.75
+        "max_exclusive": 1.0,
+        "min_inclusive": 0.75
       },
       "thickness": {
         "type": "minecraft:trapezoid",
@@ -53,13 +53,13 @@
     },
     "vertical_rotation": {
       "type": "minecraft:uniform",
-        "max_exclusive": 0.125,
-        "min_inclusive": -0.125
+      "max_exclusive": 0.125,
+      "min_inclusive": -0.125
     },
     "y": {
       "type": "minecraft:uniform",
       "max_inclusive": {
-        "absolute": 90
+        "absolute": 67
       },
       "min_inclusive": {
         "absolute": 10

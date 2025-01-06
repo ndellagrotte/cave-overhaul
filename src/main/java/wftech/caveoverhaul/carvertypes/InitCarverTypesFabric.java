@@ -19,6 +19,7 @@ public class InitCarverTypesFabric {
 
     public static final WorldCarver<CanyonCarverConfiguration> VANILLA_CANYON = new VanillaCanyon(CanyonCarverConfiguration.CODEC);
     public static final WorldCarver<CaveCarverConfiguration> CAVES_NOISE_DISTRIBUTION = new OldWorldCarverv12ReverseNoiseDistribution(CaveCarverConfiguration.CODEC);
+    public static final WorldCarver<CaveCarverConfiguration> V12_CAVES = new OldWorldCarverv12(CaveCarverConfiguration.CODEC);
 
     public static void init() {
         /*
@@ -26,8 +27,9 @@ public class InitCarverTypesFabric {
          */
         ResourceLocation vanilla_canyon_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "vanilla_canyon");
         ResourceLocation caves_noise_distribution_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "caves_noise_distribution");
+        ResourceLocation v12_caves_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "v12_caves");
         Registry.register(BuiltInRegistries.CARVER, vanilla_canyon_rloc, VANILLA_CANYON);
-        Registry.register(BuiltInRegistries.CARVER, caves_noise_distribution_rloc, CAVES_NOISE_DISTRIBUTION);
+        Registry.register(BuiltInRegistries.CARVER, v12_caves_rloc, V12_CAVES);
 
         /*
         Minecraft will at some point take the above registered caves and canyons,

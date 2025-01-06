@@ -1,5 +1,5 @@
 {
-  "type": "caveoverhaul:caves_noise_distribution",
+  "type": "caveoverhaul:v12_caves",
   "config": {
     "debug_settings": {
       "air_state": {
