@@ -12,7 +12,7 @@ import wftech.caveoverhaul.carvertypes.NoiseCavernTopLayer3;
 import wftech.caveoverhaul.carvertypes.rivers.*;
 
 public class NoiseChunkMixinUtils {
-
+	
 	public static boolean shouldSetToWater(int topY, int x, int y, int z) {
 
 		if(NoiseUndergroundRiver_Layer1_Lava1.INSTANCE.isWater(x, y, z)) {
@@ -38,10 +38,10 @@ public class NoiseChunkMixinUtils {
 		} else if(NoiseUndergroundRiver_Layer8_Water.INSTANCE.isWater(x, y, z)) {
 			return true;
 		}
-
-		return false;
+		
+		return false;		
 	}
-
+	
 	public static boolean shouldSetToLava(int topY, int x, int y, int z) {
 
 		if(y <= -55 && shouldSetToAirCaverns(topY, x, y, z)) {
@@ -57,11 +57,11 @@ public class NoiseChunkMixinUtils {
 		} else if(NoiseUndergroundRiver_Layer3_Lava.INSTANCE.isLava(x, y, z)) {
 			return true;
 		}
-
+		
 		return false;
-
+		
 	}
-
+	
 	public static boolean shouldSetToStone(int topY, int x, int y, int z) {
 
 		if(NoiseUndergroundRiver_Layer1_Lava1.INSTANCE.isBelowRiverSupport(x, y, z)) {
@@ -135,10 +135,10 @@ public class NoiseChunkMixinUtils {
 		} else if(NoiseUndergroundRiver_Layer8_Water.INSTANCE.isBoundary(x, y, z, true)) {
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	public static boolean shouldSetToAirRivers(int topY, int x, int y, int z) {
 		if(NoiseUndergroundRiver_Layer1_Lava1.INSTANCE.isAir(x, y, z)) {
 			return true;
@@ -163,10 +163,10 @@ public class NoiseChunkMixinUtils {
 		} else if(NoiseUndergroundRiver_Layer8_Water.INSTANCE.isAir(x, y, z)) {
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	public static boolean shouldSetToAirCaverns(int topY, int x, int y, int z) {
 
 		if( NoiseCavernBottomLayer1.shouldCarve(x, y, z) ) {
@@ -186,7 +186,7 @@ public class NoiseChunkMixinUtils {
 		} else if( y < topY && NoiseCavernTopLayer3.shouldCarve(x, y, z) ) {
 			return true;
 		}
-
+		
 		return false;
 	}
 

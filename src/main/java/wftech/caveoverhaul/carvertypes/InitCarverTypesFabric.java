@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.CanyonCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
@@ -23,8 +24,8 @@ public class InitCarverTypesFabric {
         /*
         Register the caves/canyons
          */
-        ResourceLocation vanilla_canyon_rloc = new ResourceLocation(CaveOverhaul.MOD_ID, "vanilla_canyon");
-        ResourceLocation caves_noise_distribution_rloc = new ResourceLocation(CaveOverhaul.MOD_ID, "caves_noise_distribution");
+        ResourceLocation vanilla_canyon_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "vanilla_canyon");
+        ResourceLocation caves_noise_distribution_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "caves_noise_distribution");
         Registry.register(BuiltInRegistries.CARVER, vanilla_canyon_rloc, VANILLA_CANYON);
         Registry.register(BuiltInRegistries.CARVER, caves_noise_distribution_rloc, CAVES_NOISE_DISTRIBUTION);
 
@@ -38,9 +39,9 @@ public class InitCarverTypesFabric {
         /*
         Declare keys
          */
-        ResourceLocation canyons_rloc = new ResourceLocation(CaveOverhaul.MOD_ID, "canyons");
-        ResourceLocation canyons_low_y_rloc = new ResourceLocation(CaveOverhaul.MOD_ID, "canyons_low_y");
-        ResourceLocation caves_rloc = new ResourceLocation(CaveOverhaul.MOD_ID, "caves_noise_distribution");
+        ResourceLocation canyons_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "canyons");
+        ResourceLocation canyons_low_y_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "canyons_low_y");
+        ResourceLocation caves_rloc = ResourceLocation.tryBuild(CaveOverhaul.MOD_ID, "caves_noise_distribution");
 
         /*
         Actually add

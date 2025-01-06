@@ -24,10 +24,10 @@ public class NoiseUndergroundRiver {
 	public static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST};
 
 	protected void initNoise() {
-
+		
 		if(noise != null) {
 			return;
-		}
+		}		
 
 		FastNoiseLite tnoise = new FastNoiseLite();
 		tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
@@ -45,7 +45,7 @@ public class NoiseUndergroundRiver {
 		tnoise.SetDomainWarpLacunarity(2.7f);
 		tnoise.SetDomainWarpFrequency(0.018f);
 		*/
-
+		
 		/*
 		 * Is domain warp broken? WTF?
 		 * ^ Yup. It's not true domain warp. Time to use my own solution.
@@ -58,34 +58,34 @@ public class NoiseUndergroundRiver {
 		tnoise.SetDomainWarpLacunarity(2.7f);
 		tnoise.SetDomainWarpFrequency(0.045f); //increased to 0.045 //0.018 is minimum for labarynthine canals //CHANGED
 		*/
-
+				
 		noise = tnoise;
 	}
-
+	
 	protected void initNoiseYLevel() {
-
+		
 		if(noise != null) {
 			return;
-		}
+		}		
 
 		FastNoiseLite tnoise = new FastNoiseLite();
 		tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed() + 51);
 		tnoise.SetNoiseType(NoiseType.OpenSimplex2); //SimplexFractal
 		tnoise.SetFrequency(0.002f);
-
+				
 		noiseYLevelBase = tnoise;
 	}
-
-
+	
+	
 	protected int getCaveY(float noiseValue) {
 		float min = -3;
 		float max = 0;
 		float diffSize = max - min;
 		return (int) (noiseValue * (diffSize)) + (int) min;
 	}
-
+	
 	protected void initDomainWarp() {
-
+		
 		FastNoiseLite tnoise = new FastNoiseLite();
 		tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
 		tnoise.SetNoiseType(NoiseType.OpenSimplex2);
@@ -94,36 +94,36 @@ public class NoiseUndergroundRiver {
 		tnoise.SetFractalGain(1.6f);
 		domainWarp = tnoise;
 	}
-
+	
 	protected void initShouldCarveNoise() {
-
+		
 		FastNoiseLite tnoise = new FastNoiseLite();
 		tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed() + 50);
 		tnoise.SetNoiseType(NoiseType.OpenSimplex2);
 		tnoise.SetFrequency(0.0015f);
 		noiseShouldCarveBase = tnoise;
 	}
-
+	
 	protected float getShouldCarveNoise(int x, int z) {
 		if(noiseShouldCarveBase == null) {
 			initShouldCarveNoise();
 		}
-
+		
 		return noiseShouldCarveBase.GetNoise(x, z);
 	}
-
+	
 	protected float getCaveYNoise(int x, int z) {
 		if(noiseYLevelBase == null) {
 			initNoiseYLevel();
 		}
-
+		
 		return noiseYLevelBase.GetNoise(x, z);
 	}
-
+	
 	protected Block getLiquidType() {
 		return Blocks.WATER;
 	}
-
+	
 	protected boolean isOutOfBounds(int x, int z) {
 		float shouldCarveNoise = this.getShouldCarveNoise(x, z);
 		return shouldCarveNoise < 0f;
@@ -132,18 +132,18 @@ public class NoiseUndergroundRiver {
 	public float norm(float f) {
 		return (1f + f) / 2f;
 	}
+	
+    public int getCaveY(RandomSource p_230361_1_) {
+	    return p_230361_1_.nextInt(p_230361_1_.nextInt(p_230361_1_.nextInt(120 + 64) + 1) + 1) - 64;
+    }
 
-	public int getCaveY(RandomSource p_230361_1_) {
-		return p_230361_1_.nextInt(p_230361_1_.nextInt(p_230361_1_.nextInt(120 + 64) + 1) + 1) - 64;
-	}
-
-
+	
 	protected float getWarpedNoise(int xPos, int zPos) {
-
+			
 		if(domainWarp == null) {
 			initDomainWarp();
 		}
-
+		
 		Integer[] offsetsX = {-101, 71, 53, 61, 3, 13};
 		//Integer[] offsetsY = {23, 29, 31, 37, 41};
 		Integer[] offsetsZ = {101, 67, 59, 41, 5, 7};
@@ -157,10 +157,10 @@ public class NoiseUndergroundRiver {
 			warpX += domainWarp.GetNoise(warpX + 20, warpZ + 20) * 2f; //was 5 with pretty incredible results
 			warpZ += domainWarp.GetNoise(warpX - 20, warpZ - 20) * 2f;
 		}
-
+		
 		return this.getNoise2D((int) warpX, (int) warpZ);
 	}
-
+	
 	public float getNoise2D(int xPos, int zPos) {
 		return this.getCaveDetailsNoise2D(xPos, zPos);
 	}
@@ -169,7 +169,7 @@ public class NoiseUndergroundRiver {
 		if(noise == null) {
 			initNoise();
 		}
-
+		
 		return noise.GetNoise(x, z);
 	}
 
@@ -181,23 +181,23 @@ public class NoiseUndergroundRiver {
 		if(this.getNoise2D(bPos.getX(), bPos.getZ()) < 0.75){
 			return false;
 		}
-
+		
 		return true;
 	}
 
-
+	
 	/*
 	 * Do not edit below
 	 */
 	public boolean isLava(int x, int y, int z) {
 		Block preferredBlock = this.getLiquidType();
-
+		
 		if(preferredBlock != Blocks.LAVA) {
 			return false;
 		}
-
+		
 		BlockPos bPos = new BlockPos(x, y, z);
-
+		
 		if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
 			return false;
 		}
@@ -211,24 +211,24 @@ public class NoiseUndergroundRiver {
 		if(caveY != y) {
 			return false;
 		}
-
+		
 		float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
 		if(noise > NOISE_CUTOFF_RIVER) {
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	public boolean isWater(int x, int y, int z) {
 		Block preferredBlock = this.getLiquidType();
-
+		
 		if(preferredBlock != Blocks.WATER) {
 			return false;
 		}
-
+		
 		BlockPos bPos = new BlockPos(x, y, z);
-
+		
 		if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
 			return false;
 		}
@@ -242,19 +242,19 @@ public class NoiseUndergroundRiver {
 		if(caveY != y) {
 			return false;
 		}
-
+		
 		float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
 		if(noise > NOISE_CUTOFF_RIVER) {
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	//checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
 	public boolean isBoundary(int x, int y, int z, boolean checkIfInRiver) {
 		BlockPos bPos = new BlockPos(x, y, z);
-
+		
 		if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
 			return false;
 		}
@@ -263,7 +263,7 @@ public class NoiseUndergroundRiver {
 		if(this.getNoise2D(bPos.getX(), bPos.getZ()) < 0.75){
 			return false;
 		}
-
+		
 		float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
 		boolean shouldCarveRiver = noise > NOISE_CUTOFF_RIVER;
 		if(shouldCarveRiver) {
@@ -300,15 +300,15 @@ public class NoiseUndergroundRiver {
 			return y == y1;
 		}
 		*/
-
+		
 		boolean shouldCheckBoundary = true;
 		for(int i = 0; i < 5; i++) {
 			if(shouldCheckBoundary) {
-				shouldCheckBoundary = !NoiseChunkMixinUtils.shouldSetToLava(128, x, y - i, z) &&
+				shouldCheckBoundary = !NoiseChunkMixinUtils.shouldSetToLava(128, x, y - i, z) && 
 						!NoiseChunkMixinUtils.shouldSetToWater(128, x, y - i, z);
 			}
 		}
-
+		
 		// /tp 4383 -18 3784
 		if(shouldCheckBoundary) {
 			if(NoiseChunkMixinUtils.shouldSetToLava(128, x + 1, y, z) || NoiseChunkMixinUtils.shouldSetToWater(128, x + 1, y, z)) {
@@ -321,14 +321,14 @@ public class NoiseUndergroundRiver {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 
 	//checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
 	public boolean isBelowWaterfallSupport(int x, int y, int z) {
 		BlockPos bPos = new BlockPos(x, y, z);
-
+		
 		if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
 			return false;
 		}
@@ -336,13 +336,13 @@ public class NoiseUndergroundRiver {
 		if(this.getNoise2D(bPos.getX(), bPos.getZ()) < 0.75){
 			return false;
 		}
-
+		
 		float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
 		boolean noiseAboveCutoff = noise > NOISE_CUTOFF_RIVER;
 
 		float yLevelNoise_o = this.getCaveYNoise(x, z);
 		int y_o = this.getCaveY(yLevelNoise_o);
-
+		
 		MutableBlockPos mbPos = new MutableBlockPos();
 		mbPos.set(bPos.getX() + 1, bPos.getY(), bPos.getZ());
 		if(this.getWarpedNoise(mbPos.getX(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
@@ -368,11 +368,11 @@ public class NoiseUndergroundRiver {
 			int neighborY = this.getCaveY(yLevelNoise1);
 			return y == neighborY && y_o != y && neighborY < y_o;
 		}
-
+		
 		return false;
 	}
 
-
+	
 	public boolean isBelowRiverSupport(int x, int y, int z) {
 		if(this.getLiquidType() == Blocks.LAVA) {
 			if(this.isLava(x, y + 1, z)) {
@@ -389,13 +389,13 @@ public class NoiseUndergroundRiver {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
-
+	
 	public boolean isAir(int x, int y, int z) {
 		BlockPos bPos = new BlockPos(x, y, z);
-
+		
 		if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
 			return false;
 		}
@@ -403,7 +403,7 @@ public class NoiseUndergroundRiver {
 		if(this.getNoise2D(bPos.getX(), bPos.getZ()) < 0.75){
 			return false;
 		}
-
+		
 		float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
 		if(noise <= NOISE_CUTOFF_RIVER) {
 			return false;
@@ -412,6 +412,7 @@ public class NoiseUndergroundRiver {
 		if (y <= (-64 + 9)) {
 			return false;
 		}
+		
 		if(isRiver(x, y - 1, z)) {
 			return true;
 		} else if(isRiver(x, y - 2, z)) {
@@ -419,7 +420,7 @@ public class NoiseUndergroundRiver {
 		}
 
 		float noiseDiff = noise - NOISE_CUTOFF_RIVER;
-
+		
 		//Carve roof
 		float noiseDelta = noiseDiff;
 		int noiseCutoffCeiling = (int) (noiseDelta * 100);
@@ -431,10 +432,10 @@ public class NoiseUndergroundRiver {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
-
+	
 	protected boolean isRiver(int x, int y, int z) {
 		if(this.getLiquidType() == Blocks.LAVA) {
 			return this.isLava(x, y, z);

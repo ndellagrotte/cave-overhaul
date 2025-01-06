@@ -70,12 +70,12 @@ public class OldWorldCarverv12ReverseNoiseDistribution extends OldWorldCarverv12
 				NoiseCavernTopLayer2.caveSizeNoise,
 				NoiseCavernTopLayer3.caveSizeNoise
 		};
-		
+
+		/*
 		ChunkPos chunkPos = level.getPos();
 		int x = chunkPos.getBlockX(0);
 		int z = chunkPos.getBlockZ(0);
-
-		/*
+		
 		float totalHeights = 0;
 		float numChecked = 0;
 		float maxHeight = 0;
@@ -93,31 +93,12 @@ public class OldWorldCarverv12ReverseNoiseDistribution extends OldWorldCarverv12
 		avgHeight *= (float) NoiseCavernBaseFixFromNewCaves.MAX_CAVE_SIZE_Y;
 		float noiseToSquish = avgHeight = ((1f + avgHeight) / 2f) * (float) NoiseCavernBaseFixFromNewCaves.MAX_CAVE_SIZE_Y;
 		float squished = NoiseCavernBaseFixFromNewCaves.ySquishSatic(noiseToSquish);
-
-		/*
-		 * 0.15 or 0.1 if squished = 0 (avg of heights implies low density)
-		 * 0.5 if caves form.
-		 */
-		
-		/*
-		float odds = avgHeight <= 10f ? 0.10f : 0.05f;
-		float odds2 = avgHeight * 2;
-		odds2 = odds2 > 1f ? 1f : odds2;
-		odds2 = 1f - odds2;
-		odds2 *= 0.1;
-		odds2 = odds2 < 0.05 ? 0.05f : odds2;
 		*/
 
-		/*
-		float odds2 = 1f - squished;
-		odds2 *= 0.035;
-		odds2 = odds2 < 0.035 ? 0.035f : odds2;
-		 */
+
 		//float odds2 = 0.045f;
 		float odds2 = Config.settings.get(Config.KEY_CAVE_CHANCE);
-
-
-
+		
 		return random.nextFloat() <= odds2;
     }
 	
