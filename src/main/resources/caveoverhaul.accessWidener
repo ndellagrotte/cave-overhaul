@@ -61,3 +61,5 @@ accessible   field    net/minecraft/core/Holder$Reference owner Lnet/minecraft/c
 accessible   field    net/minecraft/core/Holder$Reference type Lnet/minecraft/core/Holder$Reference$Type;
 accessible   field    net/minecraft/core/Holder$Reference value Ljava/lang/Object;
 accessible   method   net/minecraft/core/Holder$Reference <init> (Lnet/minecraft/core/Holder$Reference$Type;Lnet/minecraft/core/HolderOwner;Lnet/minecraft/resources/ResourceKey;Ljava/lang/Object;)V
+#accessible   field    net/minecraft/world/level/levelgen/Aquifer$FluidStatus fluidLevel Z
+accessible   method   net/minecraft/world/level/levelgen/carver/CanyonWorldCarver doCarve (Lnet/minecraft/world/level/levelgen/carver/CarvingContext;Lnet/minecraft/world/level/levelgen/carver/CanyonCarverConfiguration;Lnet/minecraft/world/level/chunk/ChunkAccess;Ljava/util/function/Function;JLnet/minecraft/world/level/levelgen/Aquifer;DDDFFFIIDLnet/minecraft/world/level/chunk/CarvingMask;)V

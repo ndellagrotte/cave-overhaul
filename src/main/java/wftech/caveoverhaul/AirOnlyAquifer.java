@@ -15,6 +15,8 @@ import net.minecraft.world.level.levelgen.DensityFunction.SinglePointContext;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
+import wftech.caveoverhaul.carvertypes.rivers.NURDynamicLayer;
+import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 //public class AirOnlyAquifer implements Aquifer {
@@ -25,12 +27,12 @@ public class AirOnlyAquifer implements Aquifer {
 	protected int x = 0;
 	protected int y = 0;
 	protected int z = 0;
-	
+
 	public AirOnlyAquifer(ChunkAccess level, boolean exposeToAir) {
 		this.level = level;
 		this.exposeToAir = exposeToAir;
 	}
-	
+
 	public AirOnlyAquifer(ChunkAccess chunkPrimer, boolean b, int blockX, int yIter, int blockZ) {
 		this.level = chunkPrimer;
 		this.exposeToAir = b;
@@ -45,42 +47,45 @@ public class AirOnlyAquifer implements Aquifer {
 
 	@Override
 	public BlockState computeSubstance(FunctionContext ctx, double p_208159_) {
-		
+
 		if(this.level == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		
+
 		BlockState state = this.level.getBlockState(new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ()));
 
-		if (ctx.blockY() <= (-64 + 9) && state != null && state.getBlock() == Blocks.LAVA) {
-			return state;
+		//if (ctx.blockY() <= (-64 + 9) && state != null && state.getBlock() == Blocks.LAVA) {
+		//	return state;
+		int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+		if (ctx.blockY() <= (Globals.minY + y_offset)) {
+			return Blocks.LAVA.defaultBlockState();
 		}
 
 		///tp -656 60 138
 		if(state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.WATER) {
 			return state;
 		}
-		
+
 		int topHeight = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ());
 		if(ctx.blockY() >= (topHeight - 1) && !this.exposeToAir) {
 			return state;
 		}
-		
+
 		int topHeight_1 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX() + 1, ctx.blockZ());
 		if(ctx.blockY() >= (topHeight_1 - 2) && !this.exposeToAir) {
 			return state;
 		}
-		
+
 		int topHeight_2 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX() - 1, ctx.blockZ());
 		if(ctx.blockY() >= (topHeight_2 - 2) && !this.exposeToAir) {
 			return state;
 		}
-		
+
 		int topHeight_3 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ() + 1);
 		if(ctx.blockY() >= (topHeight_3 - 2) && !this.exposeToAir) {
 			return state;
 		}
-		
+
 		int topHeight_4 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ() - 1);
 		if(ctx.blockY() >= (topHeight_4 - 2) && !this.exposeToAir) {
 			return state;
@@ -94,7 +99,7 @@ public class AirOnlyAquifer implements Aquifer {
 		BlockPos pos_u = new BlockPos(ctx.blockX(), ctx.blockY() + 1, ctx.blockZ());
 		BlockPos pos_u2 = new BlockPos(ctx.blockX(), ctx.blockY() + 2, ctx.blockZ());
 		BlockPos pos_u3 = new BlockPos(ctx.blockX(), ctx.blockY() + 3, ctx.blockZ());
-		
+
 		ChunkPos cbasePos = new ChunkPos(basePos);
 		ChunkPos cpos_n = new ChunkPos(pos_n);
 		ChunkPos cpos_s = new ChunkPos(pos_s);
@@ -108,7 +113,7 @@ public class AirOnlyAquifer implements Aquifer {
 		BlockState state_u = this.level.getBlockState(pos_u);
 		BlockState state_u2 = this.level.getBlockState(pos_u2);
 		BlockState state_u3 = this.level.getBlockState(pos_u3);
-		
+
 		if(cbasePos.x == cpos_w.x && cbasePos.z == cpos_w.z && this.isLiquid(state_w)) {
 			return state;
 		}
@@ -118,17 +123,26 @@ public class AirOnlyAquifer implements Aquifer {
 		if(cbasePos.x == cpos_n.x && cbasePos.z == cpos_n.z && this.isLiquid(state_n)) {
 			return state;
 		}
-		
+
 		if(cbasePos.x == cpos_s.x && cbasePos.z == cpos_s.z && this.isLiquid(state_s)) {
 			return state;
 		}
-		
+
 		///tp -1042 63.37 -54.94
 		if(this.isLiquid(state_u) || this.isLiquid(state_u2) || this.isLiquid(state_u3)) {
 			return state;
 		}
-		
-		
+
+		NURDynamicLayer riverLayer = null;
+		if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null) {
+			return state;
+		} else if (NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
+			return state;
+		} else if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null) {
+			return state;
+		}
+
+		/*
 		if(NoiseChunkMixinUtils.shouldSetToLava(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
 			return state;
 		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
@@ -140,6 +154,8 @@ public class AirOnlyAquifer implements Aquifer {
 		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ())) {
 			return state;
 		}
+
+		 */
 
 		return Blocks.AIR.defaultBlockState();
 	}
