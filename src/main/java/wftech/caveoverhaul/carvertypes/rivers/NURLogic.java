@@ -1,11 +1,10 @@
 package wftech.caveoverhaul.carvertypes.rivers;
 
-import net.minecraft.core.BlockPos;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 
 public class NURLogic {
 
-    private FastNoiseLite domainWarp = null;
+//    private FastNoiseLite domainWarp = null;
     public FastNoiseLite noiseIsLiquid = null;
     public FastNoiseLite noiseShouldCarveBase = null;
     public FastNoiseLite noiseYLevelBase = null;
@@ -18,12 +17,6 @@ public class NURLogic {
         this.noiseIsLiquid = noiseIsLiquid;
         this.noiseShouldCarveBase = noiseShouldCarveBase;
         this.noiseYLevelBase = noiseYLevelBase;
-    }
-
-    public float getCachedYLevel(int x, int y, int z, FastNoiseLite noiseGenerator) {
-        Long key = BlockPos.asLong(x, y, z);
-        //return .get(key, () -> noiseGenerator.GetNoise(x, y, z));
-        return noiseGenerator.GetNoise(x, y, z);
     }
 
     public float getCaveDetailsNoise2D(int x, int z) {
@@ -40,7 +33,15 @@ public class NURLogic {
     OOB test, was never properly implemented.
     Sratch it?
      */
-    public float getShouldCarveNoise(int x, int z) {
-        return noiseShouldCarveBase.GetNoise(x, z);
-    }
+//    public float getShouldCarveNoise(int x, int z) {
+//        return noiseShouldCarveBase.GetNoise(x, z);
+//    }
+//
+//    public FastNoiseLite getDomainWarp() {
+//        return domainWarp;
+//    }
+//
+//    public void setDomainWarp(FastNoiseLite domainWarp) {
+//        this.domainWarp = domainWarp;
+//    }
 }

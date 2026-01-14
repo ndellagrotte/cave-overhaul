@@ -11,7 +11,4 @@ public interface VeinTypeAccessor {
     @Accessor("minY")
     int minY();
 
-    //final int minY;, maxY
-    @Accessor("maxY")
-    int maxY();
 }

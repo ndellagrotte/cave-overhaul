@@ -28,11 +28,8 @@ public class NoiseChunkMixinUtils {
 	public static boolean isAirBlock(int x, int y, int z){
 		if(NoiseChunkMixinUtils.shouldSetToAirRivers(9999, x, y, z)) {
 			return true;
-		} else if(NoiseChunkMixinUtils.shouldSetToAirCaverns(9999, x, y, z)) {
-			return true;
-		}
-		return false;
-	}
+		} else return NoiseChunkMixinUtils.shouldSetToAirCaverns(9999, x, y, z);
+    }
 
 	public static boolean isStoneBlock(int x, int y, int z){
 		return NoiseChunkMixinUtils.shouldSetToStone(9999, x, y, z);

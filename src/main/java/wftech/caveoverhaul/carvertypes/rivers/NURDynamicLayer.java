@@ -147,12 +147,8 @@ public class NURDynamicLayer {
     public boolean enableRiver() {
         Block preferredBlock = this.getLiquidType();
         if(preferredBlock == Blocks.LAVA && !Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE)) {
-            return false;
-        } else if (preferredBlock == Blocks.WATER && !Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE)) {
-            return false;
-        }
-
-        return true;
+            return true;
+        } else return preferredBlock == Blocks.WATER && !Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE);
     }
 
     public float getNoise2D(int xPos, int zPos) {
@@ -180,7 +176,7 @@ public class NURDynamicLayer {
 
     public boolean isLiquid(int x, int y, int z) {
 
-        if(!enableRiver()) {
+        if(enableRiver()) {
             return false;
         }
 
@@ -204,16 +200,12 @@ public class NURDynamicLayer {
         }
 
         float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
-        if(noise > NOISE_CUTOFF_RIVER) {
-            return true;
-        }
-
-        return false;
+        return noise > NOISE_CUTOFF_RIVER;
     }
 
     public boolean isAir(int x, int y, int z) {
 
-        if(!enableRiver()) {
+        if(enableRiver()) {
             return false;
         }
 
@@ -247,13 +239,10 @@ public class NURDynamicLayer {
             return true;
         }
 
-        float noiseDiff = noise - NOISE_CUTOFF_RIVER;
-
         //Carve roof
-        float noiseDelta = noiseDiff;
+        float noiseDelta = noise - NOISE_CUTOFF_RIVER;
         int noiseCutoffCeiling = (int) (noiseDelta * 100);
         noiseCutoffCeiling /= 2;
-        int topDelta = noiseCutoffCeiling + 2;
         for(int i = 1; i < noiseCutoffCeiling; i++) {
             //level.setBlockState(curPos.above(2 + i), Blocks.AIR.defaultBlockState(), false);
             if(isLiquid(x, y - (2 + i), z)) {
@@ -264,45 +253,11 @@ public class NURDynamicLayer {
         return false;
     }
 
-    public boolean isNearAir(int x, int y, int z) {
-
-        if(!enableRiver()) {
-            return false;
-        }
-
-        BlockPos bPos = new BlockPos(x, y, z);
-
-        /*
-        if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
-            return false;
-        }
-
-         */
-
-
-        if(this.getNoise2D(bPos.getX(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED){
-            return false;
-        }
-
-        float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
-        if(noise <= NOISE_CUTOFF_RIVER) {
-            return false;
-        }
-
-        if (y <= (Globals.minY + 8)) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-
 
     public boolean isInYRange(int y) {
         //16 is arbitrary, should be more than enough
         //for any cavernous tops + an extra stone as a boundary
-        return y >= (this.min_y - 2) && y <= (this.min_y + 16);
+        return y < (this.min_y - 2) || y > (this.min_y + 16);
     }
 
 
@@ -310,7 +265,7 @@ public class NURDynamicLayer {
     //checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
     public boolean isBoundary(int x, int y, int z, boolean checkIfInRiver) {
 
-        if(!enableRiver()) {
+        if(enableRiver()) {
             return false;
         }
 
@@ -351,17 +306,13 @@ public class NURDynamicLayer {
          */
 
         // /tp 4383 -18 3784
-        if(shouldCheckBoundary) {
-            if(NoiseChunkMixinUtils.getRiverLayer(128, x + 1, y, z) != null) {
-                return true;
-            } else if(NoiseChunkMixinUtils.getRiverLayer(128, x - 1, y, z) != null) {
-                return true;
-            } else if(NoiseChunkMixinUtils.getRiverLayer(128, x, y, z + 1) != null) {
-                return true;
-            } else if(NoiseChunkMixinUtils.getRiverLayer(128, x, y, z - 1) != null) {
-                return true;
-            }
-        }
+        if (NoiseChunkMixinUtils.getRiverLayer(128, x + 1, y, z) != null) {
+            return true;
+        } else if (NoiseChunkMixinUtils.getRiverLayer(128, x - 1, y, z) != null) {
+            return true;
+        } else if (NoiseChunkMixinUtils.getRiverLayer(128, x, y, z + 1) != null) {
+            return true;
+        } else return NoiseChunkMixinUtils.getRiverLayer(128, x, y, z - 1) != null;
 
 
         /*
@@ -388,13 +339,12 @@ public class NURDynamicLayer {
 
          */
 
-        return false;
     }
 
     //checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
     public boolean isBelowWaterfallSupport(int x, int y, int z) {
 
-        if(!enableRiver()) {
+        if(enableRiver()) {
             return false;
         }
 
@@ -417,8 +367,7 @@ public class NURDynamicLayer {
             return false;
         }
 
-        float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
-        boolean noiseAboveCutoff = noise > NOISE_CUTOFF_RIVER;
+        this.getWarpedNoise(bPos.getX(), bPos.getZ());
 
         float yLevelNoise_o = this.getCaveYNoise(x, z);
         int y_o = this.getCaveY(yLevelNoise_o);
@@ -455,7 +404,7 @@ public class NURDynamicLayer {
 
     public boolean isBelowRiverSupport(int x, int y, int z) {
 
-        if(!enableRiver()) {
+        if(enableRiver()) {
             return false;
         }
 
@@ -486,10 +435,6 @@ public class NURDynamicLayer {
 
         if(this.isLiquid(x, y + 1, z)) {
             return true;
-        } else if(this.isLiquid(x, y + 2, z)) {
-            return true;
-        }
-
-        return false;
+        } else return this.isLiquid(x, y + 2, z);
     }
 }

@@ -36,38 +36,8 @@ public interface NoiseRouterDataAccessor {
         throw new AssertionError();
     }
 
-    @Accessor("SHIFT_X")
-    static ResourceKey<DensityFunction> SHIFT_X() {
-        throw new AssertionError();
-    }
-
-    @Accessor("SHIFT_Z")
-    static ResourceKey<DensityFunction> SHIFT_Z() {
-        throw new AssertionError();
-    }
-
-    @Accessor("FACTOR_LARGE")
-    static ResourceKey<DensityFunction> FACTOR_LARGE() {
-        throw new AssertionError();
-    }
-
-    @Accessor("FACTOR_AMPLIFIED")
-    static ResourceKey<DensityFunction> FACTOR_AMPLIFIED() {
-        throw new AssertionError();
-    }
-
     @Accessor("FACTOR")
     static ResourceKey<DensityFunction> FACTOR() {
-        throw new AssertionError();
-    }
-
-    @Accessor("DEPTH_LARGE")
-    static ResourceKey<DensityFunction> DEPTH_LARGE() {
-        throw new AssertionError();
-    }
-
-    @Accessor("DEPTH_AMPLIFIED")
-    static ResourceKey<DensityFunction> DEPTH_AMPLIFIED() {
         throw new AssertionError();
     }
 
@@ -81,37 +51,7 @@ public interface NoiseRouterDataAccessor {
         throw new AssertionError();
     }
 
-    @Accessor("Y")
-    static ResourceKey<DensityFunction> Y() {
-        throw new AssertionError();
-    }
-
-    @Accessor("CONTINENTS_LARGE")
-    static ResourceKey<DensityFunction> CONTINENTS_LARGE() {
-        throw new AssertionError();
-    }
-
-    @Accessor("CONTINENTS")
-    static ResourceKey<DensityFunction> CONTINENTS() {
-        throw new AssertionError();
-    }
-
-    @Accessor("EROSION_LARGE")
-    static ResourceKey<DensityFunction> EROSION_LARGE() {
-        throw new AssertionError();
-    }
-
-    @Accessor("EROSION")
-    static ResourceKey<DensityFunction> EROSION() {
-        throw new AssertionError();
-    }
-
-    @Accessor("RIDGES")
-    static ResourceKey<DensityFunction> RIDGES() {
-        throw new AssertionError();
-    }
-
-//    @Accessor("NOODLE")
+    //    @Accessor("NOODLE")
 //    static ResourceKey<DensityFunction> NOODLE() {
 //        throw new AssertionError();
 //    }

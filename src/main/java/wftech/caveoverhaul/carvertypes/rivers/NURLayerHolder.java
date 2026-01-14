@@ -1,7 +1,6 @@
 package wftech.caveoverhaul.carvertypes.rivers;
 
 import net.minecraft.world.level.block.Blocks;
-import org.apache.commons.lang3.NotImplementedException;
 import wftech.caveoverhaul.utils.Globals;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class NURLayerHolder {
      */
     public static NURLayerHolder INSTANCE =  new NURLayerHolder();
 
-    private List<NURDynamicLayer> riverLayers = new ArrayList<>();
+    private final List<NURDynamicLayer> riverLayers = new ArrayList<>();
 
     public boolean shouldSetToAirRivers(int topY, int x, int y, int z) {
         return shouldSetToAirRiversInternal(topY, x, y, z);
@@ -72,7 +71,7 @@ public class NURLayerHolder {
     public NURDynamicLayer getRiverLayerInternal(int topY, int x, int y, int z) {
         for (NURDynamicLayer layer: this.riverLayers) {
 
-            if(!layer.isInYRange(y)) {
+            if(layer.isInYRange(y)) {
                 continue;
             }
 
@@ -87,7 +86,7 @@ public class NURLayerHolder {
     public boolean shouldSetToStoneInternal(int topY, int x, int y, int z) {
         for (NURDynamicLayer layer: this.riverLayers) {
 
-            if(!layer.isInYRange(y)) {
+            if(layer.isInYRange(y)) {
                 continue;
             }
 
@@ -108,7 +107,7 @@ public class NURLayerHolder {
     public boolean shouldSetToAirRiversInternal(int topY, int x, int y, int z) {
         for (NURDynamicLayer layer: this.riverLayers) {
 
-            if(!layer.isInYRange(y)) {
+            if(layer.isInYRange(y)) {
                 continue;
             }
 
