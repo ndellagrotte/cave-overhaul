@@ -299,7 +299,6 @@ public class FastNoiseLite
     /// </remarks>
     public void SetDomainWarpAmp(float domainWarpAmp) { mDomainWarpAmp = domainWarpAmp; }
 
-
     /// <summary>
     /// 3D noise at given position using current settings
     /// </summary>
@@ -1621,4 +1620,5 @@ public class FastNoiseLite
             this.z = z;
         }
     }
+
 }

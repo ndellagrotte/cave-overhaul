@@ -5,10 +5,10 @@ import wftech.caveoverhaul.fastnoise.FastNoiseLite.Vector3;
 
 public class NURLogic {
 
-    private FastNoiseLite domainWarp = null;
-    public FastNoiseLite noiseIsLiquid = null;
-    public FastNoiseLite noiseShouldCarveBase = null;
-    public FastNoiseLite noiseYLevelBase = null;
+    private final FastNoiseLite domainWarp;
+    public FastNoiseLite noiseIsLiquid;
+    public FastNoiseLite noiseShouldCarveBase;
+    public FastNoiseLite noiseYLevelBase;
 
     public NURLogic(FastNoiseLite noiseIsLiquid, FastNoiseLite noiseShouldCarveBase, FastNoiseLite noiseYLevelBase) {
         this.noiseIsLiquid = noiseIsLiquid;
@@ -23,10 +23,6 @@ public class NURLogic {
         this.domainWarp = warp;
     }
 
-    public float getCaveDetailsNoise2D(int x, int z) {
-        return getCaveDetailsNoise3D(x, 0, z);
-    }
-
     public float getCaveDetailsNoise3D(int x, int y, int z) {
         if (domainWarp != null) {
             Vector3 coords = new Vector3(x, y, z);
@@ -36,10 +32,6 @@ public class NURLogic {
         return noiseIsLiquid.GetNoise(x, y, z);
     }
 
-    public float getCaveYNoise(int x, int z) {
-        return getCaveYNoise3D(x, 0, z);
-    }
-
     public float getCaveYNoise3D(int x, int y, int z) {
         if (domainWarp != null) {
             Vector3 coords = new Vector3(x, y, z);
@@ -47,10 +39,6 @@ public class NURLogic {
             return noiseYLevelBase.GetNoise(coords.x, coords.y, coords.z);
         }
         return noiseYLevelBase.GetNoise(x, y, z);
-    }
-
-    public float getShouldCarveNoise(int x, int z) {
-        return getShouldCarveNoise3D(x, 0, z);
     }
 
     public float getCaveYNoise(int x, int y, int z) {
