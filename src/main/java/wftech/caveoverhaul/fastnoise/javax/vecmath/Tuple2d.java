@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A generic 2-element tuple that is represented by double-precision
  * floating point x,y coordinates.
@@ -34,7 +36,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
  */
 public abstract class Tuple2d implements java.io.Serializable, Cloneable {
 
-    static final long serialVersionUID = 6205762482756093838L;
+    @Serial
+    private static final long serialVersionUID = 6205762482756093838L;
 
     /**
      * The x coordinate.
@@ -325,8 +328,7 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
            Tuple2d t2 = (Tuple2d) t1;
            return(this.x == t2.x && this.y == t2.y);
         }
-        catch (NullPointerException e2) {return false;}
-        catch (ClassCastException   e1) {return false;}
+        catch (NullPointerException | ClassCastException e2) {return false;}
 
     }
 
@@ -349,9 +351,7 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
 
        diff = y - t1.y;
        if(Double.isNaN(diff)) return false;
-       if((diff<0?-diff:diff) > epsilon) return false;
-
-       return true;
+       return !((diff < 0 ? -diff : diff) > epsilon);
     }
 
    /**
@@ -377,70 +377,16 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
    {
         if( t.x > max ) {
           x = max;
-        } else if( t.x < min ){
-          x = min;
-        } else {
-          x = t.x;
-        }
+        } else x = Math.max(t.x, min);
 
         if( t.y > max ) {
           y = max;
-        } else if( t.y < min ){
-          y = min;
-        } else {
-          y = t.y;
-        }
+        } else y = Math.max(t.y, min);
 
    }
 
 
-  /**
-    *  Clamps the minimum value of the tuple parameter to the min
-    *  parameter and places the values into this tuple.
-    *  @param min   the lowest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMin(double min, Tuple2d t)
-   {
-        if( t.x < min ) {
-          x = min;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y < min ) {
-          y = min;
-        } else {
-          y = t.y;
-        }
-
-   }
-
-
-  /**
-    *  Clamps the maximum value of the tuple parameter to the max
-    *  parameter and places the values into this tuple.
-    *  @param max   the highest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMax(double max, Tuple2d t)
-   {
-        if( t.x > max ) {
-          x = max;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y > max ) {
-          y = max;
-        } else {
-          y = t.y;
-        }
-
-   }
-
-
-  /**
+    /**
     *  Sets each component of the tuple parameter to its absolute
     *  value and places the modified values into this tuple.
     *  @param t   the source tuple, which will not be modified
@@ -475,29 +421,7 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
    }
 
 
-  /**
-    *  Clamps the minimum value of this tuple to the min parameter.
-    *  @param min   the lowest value in this tuple after clamping
-    */
-   public final void clampMin(double min)
-   {
-      if( x < min ) x=min;
-      if( y < min ) y=min;
-   }
-
-
-  /**
-    *  Clamps the maximum value of this tuple to the max parameter.
-    *  @param max   the highest value in the tuple after clamping
-    */
-   public final void clampMax(double max)
-   {
-      if( x > max ) x=max;
-      if( y > max ) y=max;
-   }
-
-
-  /**
+    /**
     *  Sets each component of this tuple to its absolute value.
     */
   public final void absolute()
@@ -506,33 +430,6 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
      y = Math.abs(y);
   }
 
-
-  /**
-    *  Linearly interpolates between tuples t1 and t2 and places the
-    *  result into this tuple:  this = (1-alpha)*t1 + alpha*t2.
-    *  @param t1  the first tuple
-    *  @param t2  the second tuple
-    *  @param alpha  the alpha interpolation parameter
-    */
-  public final void interpolate(Tuple2d t1, Tuple2d t2, double alpha)
-  {
-       this.x = (1-alpha)*t1.x + alpha*t2.x;
-       this.y = (1-alpha)*t1.y + alpha*t2.y;
-  }
-
-
-  /**
-    *  Linearly interpolates between this tuple and tuple t1 and
-    *  places the result into this tuple:  this = (1-alpha)*this + alpha*t1.
-    *  @param t1  the first tuple
-    *  @param alpha  the alpha interpolation parameter
-    */
-  public final void interpolate(Tuple2d t1, double alpha)
-  {
-       this.x = (1-alpha)*this.x + alpha*t1.x;
-       this.y = (1-alpha)*this.y + alpha*t1.y;
-
-  }
 
     /**
      * Creates a new object of the same class as this object.

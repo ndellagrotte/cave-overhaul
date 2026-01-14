@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A 4-element tuple represented by single-precision floating point x,y,z,w
  * coordinates.
@@ -34,7 +36,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
  */
 public abstract class Tuple4f implements java.io.Serializable, Cloneable {
 
-  static final long serialVersionUID =  7068460319248845763L;
+  @Serial
+  private static final long serialVersionUID =  7068460319248845763L;
 
   /**
    * The x coordinate.
@@ -388,8 +391,7 @@ public abstract class Tuple4f implements java.io.Serializable, Cloneable {
            return(this.x == t2.x && this.y == t2.y &&
                   this.z == t2.z && this.w == t2.w);
         }
-        catch (NullPointerException e2) {return false;}
-        catch (ClassCastException   e1) {return false;}
+        catch (NullPointerException | ClassCastException e2) {return false;}
     }
 
 
@@ -457,111 +459,24 @@ public abstract class Tuple4f implements java.io.Serializable, Cloneable {
    {
         if( t.x > max ) {
           x = max;
-        } else if( t.x < min ){
-          x = min;
-        } else {
-          x = t.x;
-        }
+        } else x = Math.max(t.x, min);
 
         if( t.y > max ) {
           y = max;
-        } else if( t.y < min ){
-          y = min;
-        } else {
-          y = t.y;
-        }
+        } else y = Math.max(t.y, min);
 
         if( t.z > max ) {
           z = max;
-        } else if( t.z < min ){
-          z = min;
-        } else {
-          z = t.z;
-        }
+        } else z = Math.max(t.z, min);
 
         if( t.w > max ) {
           w = max;
-        } else if( t.w < min ){
-          w = min;
-        } else {
-          w = t.w;
-        }
+        } else w = Math.max(t.w, min);
 
    }
 
 
-  /**
-    *  Clamps the minimum value of the tuple parameter to the min
-    *  parameter and places the values into this tuple.
-    *  @param min   the lowest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMin(float min, Tuple4f t)
-   {
-        if( t.x < min ) {
-          x = min;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y < min ) {
-          y = min;
-        } else {
-          y = t.y;
-        }
-
-        if( t.z < min ) {
-          z = min;
-        } else {
-          z = t.z;
-        }
-
-        if( t.w < min ) {
-          w = min;
-        } else {
-          w = t.w;
-        }
-
-
-   }
-
-
-  /**
-    *  Clamps the maximum value of the tuple parameter to the max
-    *  parameter and places the values into this tuple.
-    *  @param max   the highest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMax(float max, Tuple4f t)
-   {
-        if( t.x > max ) {
-          x = max;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y > max ) {
-          y = max;
-        } else {
-          y = t.y;
-        }
-
-        if( t.z > max ) {
-          z = max;
-        } else {
-          z = t.z;
-        }
-
-        if( t.w > max ) {
-          w = max;
-        } else {
-          w = t.z;
-        }
-
-   }
-
-
-  /**
+    /**
     *  Sets each component of the tuple parameter to its absolute
     *  value and places the modified values into this tuple.
     *  @param t   the source tuple, which will not be modified
@@ -609,35 +524,7 @@ public abstract class Tuple4f implements java.io.Serializable, Cloneable {
    }
 
 
-  /**
-    *  Clamps the minimum value of this tuple to the min parameter.
-    *  @param min   the lowest value in this tuple after clamping
-    */
-   public final void clampMin(float min)
-   {
-      if( x < min ) x=min;
-      if( y < min ) y=min;
-      if( z < min ) z=min;
-      if( w < min ) w=min;
-
-   }
-
-
-  /**
-    *  Clamps the maximum value of this tuple to the max parameter.
-    *  @param max   the highest value in the tuple after clamping
-    */
-   public final void clampMax(float max)
-   {
-      if( x > max ) x=max;
-      if( y > max ) y=max;
-      if( z > max ) z=max;
-      if( w > max ) w=max;
-
-   }
-
-
-  /**
+    /**
     *  Sets each component of this tuple to its absolute value.
     */
   public final void absolute()
@@ -648,38 +535,6 @@ public abstract class Tuple4f implements java.io.Serializable, Cloneable {
      w = Math.abs(w);
   }
 
-
-  /**
-    *  Linearly interpolates between tuples t1 and t2 and places the
-    *  result into this tuple:  this = (1-alpha)*t1 + alpha*t2.
-    *  @param t1  the first tuple
-    *  @param t2  the second tuple
-    *  @param alpha  the alpha interpolation parameter
-    */
-  public void interpolate(Tuple4f t1, Tuple4f t2, float alpha)
-  {
-           this.x = (1-alpha)*t1.x + alpha*t2.x;
-           this.y = (1-alpha)*t1.y + alpha*t2.y;
-           this.z = (1-alpha)*t1.z + alpha*t2.z;
-           this.w = (1-alpha)*t1.w + alpha*t2.w;
-
-  }
-
-
-  /**
-    *  Linearly interpolates between this tuple and tuple t1 and
-    *  places the result into this tuple:  this = (1-alpha)*this + alpha*t1.
-    *  @param t1  the first tuple
-    *  @param alpha  the alpha interpolation parameter
-    */
-  public void interpolate(Tuple4f t1, float alpha)
-  {
-     this.x = (1-alpha)*this.x + alpha*t1.x;
-     this.y = (1-alpha)*this.y + alpha*t1.y;
-     this.z = (1-alpha)*this.z + alpha*t1.z;
-     this.w = (1-alpha)*this.w + alpha*t1.w;
-
-  }
 
     /**
      * Creates a new object of the same class as this object.

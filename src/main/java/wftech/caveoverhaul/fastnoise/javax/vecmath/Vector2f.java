@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A 2-element vector that is represented by single-precision floating
  * point x,y coordinates.
@@ -35,68 +37,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Vector2f extends Tuple2f implements java.io.Serializable {
 
     // Combatible with 1.1
-    static final long serialVersionUID = -2168194326883512320L;
-
-    /**
-     * Constructs and initializes a Vector2f from the specified xy coordinates.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     */
-    public Vector2f(float x, float y)
-    {
-      super(x,y);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector2f from the specified array.
-     * @param v the array of length 2 containing xy in order
-     */
-    public Vector2f(float[] v)
-    {
-      super(v);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector2f from the specified Vector2f.
-     * @param v1 the Vector2f containing the initialization x y data
-     */
-    public Vector2f(Vector2f v1)
-    {
-       super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector2f from the specified Vector2d.
-     * @param v1 the Vector2d containing the initialization x y data
-     */
-    public Vector2f(Vector2d v1)
-    {
-       super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector2f from the specified Tuple2f.
-     * @param t1 the Tuple2f containing the initialization x y data
-     */
-    public Vector2f(Tuple2f t1)
-    {
-       super(t1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector2f from the specified Tuple2d.
-     * @param t1 the Tuple2d containing the initialization x y data
-     */
-    public Vector2f(Tuple2d t1)
-    {
-       super(t1);
-    }
-
+    @Serial
+    private static final long serialVersionUID = -2168194326883512320L;
 
 
     /**
@@ -125,15 +67,6 @@ public class Vector2f extends Tuple2f implements java.io.Serializable {
     public final float length()
     {
         return (float) Math.sqrt(this.x*this.x + this.y*this.y);
-    }
-
-    /**
-     * Returns the squared length of this vector.
-     * @return the squared length of this vector
-     */
-    public final float lengthSquared()
-    {
-        return (this.x*this.x + this.y*this.y);
     }
 
     /**

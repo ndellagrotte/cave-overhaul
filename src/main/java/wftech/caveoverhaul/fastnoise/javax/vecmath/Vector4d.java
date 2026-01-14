@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A 4-element vector represented by double-precision floating point
  * x,y,z,w coordinates.
@@ -35,79 +37,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Vector4d extends Tuple4d implements java.io.Serializable {
 
     // Compatible with 1.1
-    static final long serialVersionUID = 3938123424117448700L;
-
-    /**
-     * Constructs and initializes a Vector4d from the specified xyzw coordinates.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     * @param w the w coordinate
-     */
-    public Vector4d(double x, double y, double z, double w)
-    {
-        super(x,y,z,w);
-    }
-
-    /**
-     * Constructs and initializes a Vector4d from the coordinates contained
-     * in the array.
-     * @param v the array of length 4 containing xyzw in order
-     */
-    public Vector4d(double[] v)
-    {
-        super(v);
-    }
-
-    /**
-     * Constructs and initializes a Vector4d from the specified Vector4d.
-     * @param v1 the Vector4d containing the initialization x y z w data
-     */
-    public Vector4d(Vector4d v1)
-    {
-         super(v1);
-    }
-
-    /**
-     * Constructs and initializes a Vector4d from the specified Vector4f.
-     * @param v1 the Vector4f containing the initialization x y z w data
-     */
-    public Vector4d(Vector4f v1)
-    {
-       super(v1);
-    }
-
-    /**
-     * Constructs and initializes a Vector4d from the specified Tuple4f.
-     * @param t1 the Tuple4f containing the initialization x y z w data
-     */
-    public Vector4d(Tuple4f t1)
-    {
-       super(t1);
-    }
-
-    /**
-     * Constructs and initializes a Vector4d from the specified Tuple4d.
-     * @param t1 the Tuple4d containing the initialization x y z w data
-     */
-    public Vector4d(Tuple4d t1)
-    {
-       super(t1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector4d from the specified Tuple3d.
-     * The x,y,z components of this vector are set to the corresponding
-     * components of tuple t1.  The w component of this vector
-     * is set to 0.
-     * @param t1 the tuple to be copied
-     *
-     * @since vecmath 1.2
-     */
-    public Vector4d(Tuple3d t1) {
-	super(t1.x, t1.y, t1.z, 0.0);
-    }
+    @Serial
+    private static final long serialVersionUID = 3938123424117448700L;
 
 
     /**
@@ -147,17 +78,6 @@ public class Vector4d extends Tuple4d implements java.io.Serializable {
 
 
     /**
-     * Returns the squared length of this vector.
-     * @return the squared length of this vector
-     */
-    public final double lengthSquared()
-    {
-        return (this.x*this.x + this.y*this.y +
-                this.z*this.z + this.w*this.w);
-    }
-
-
-  /**
    * Returns the dot product of this vector and vector v1.
    * @param v1 the other vector
    * @return the dot product of this vector and vector v1
@@ -212,7 +132,7 @@ public class Vector4d extends Tuple4d implements java.io.Serializable {
       double vDot = this.dot(v1) / ( this.length()*v1.length() );
       if( vDot < -1.0) vDot = -1.0;
       if( vDot >  1.0) vDot =  1.0;
-      return((double) (Math.acos( vDot )));
+      return Math.acos( vDot );
    }
 
 }

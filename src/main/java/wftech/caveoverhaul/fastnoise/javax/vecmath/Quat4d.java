@@ -41,40 +41,7 @@ public class Quat4d extends Tuple4d implements java.io.Serializable {
   final static double EPS2 = 1.0e-30;
   final static double PIO2 = 1.57079632679;
 
-  /**
-   * Constructs and initializes a Quat4d from the specified xyzw coordinates.
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   * @param w the w scalar component
-   */
-  public Quat4d(double x, double y, double z, double w)
-  {
-      double mag;
-      mag = 1.0/Math.sqrt( x*x + y*y + z*z + w*w );
-      this.x =  x*mag;
-      this.y =  y*mag;
-      this.z =  z*mag;
-      this.w =  w*mag;
-
-  }
-
-  /**
-   * Constructs and initializes a Quat4d from the array of length 4.
-   * @param q the array of length 4 containing xyzw in order
-   */
-  public Quat4d(double[] q)
-  {
-      double mag;
-      mag = 1.0/Math.sqrt( q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3] );
-      x =  q[0]*mag;
-      y =  q[1]*mag;
-      z =  q[2]*mag;
-      w =  q[3]*mag;
-
-  }
-
-  /**
+    /**
    * Constructs and initializes a Quat4d from the specified Quat4d.
    * @param q1 the Quat4d containing the initialization x y z w data
    */
@@ -83,82 +50,8 @@ public class Quat4d extends Tuple4d implements java.io.Serializable {
        super(q1);
   }
 
-  /**
-   * Constructs and initializes a Quat4d from the specified Quat4f.
-   * @param q1 the Quat4f containing the initialization x y z w data
-   */
-  public Quat4d(Quat4f q1)
-  {
-     super(q1);
-  }
-
 
     /**
-     * Constructs and initializes a Quat4d from the specified Tuple4f.
-     * @param t1 the Tuple4f containing the initialization x y z w data
-     */
-    public Quat4d(Tuple4f t1)
-    {
-      double mag;
-      mag = 1.0/Math.sqrt( t1.x*t1.x + t1.y*t1.y + t1.z*t1.z + t1.w*t1.w );
-      x =  t1.x*mag;
-      y =  t1.y*mag;
-      z =  t1.z*mag;
-      w =  t1.w*mag;
-
-    }
-
-
-    /**
-     * Constructs and initializes a Quat4d from the specified Tuple4d.
-     * @param t1 the Tuple4d containing the initialization x y z w data
-     */
-    public Quat4d(Tuple4d t1)
-    {
-      double mag;
-      mag = 1.0/Math.sqrt( t1.x*t1.x + t1.y*t1.y + t1.z*t1.z + t1.w*t1.w );
-      x =  t1.x*mag;
-      y =  t1.y*mag;
-      z =  t1.z*mag;
-      w =  t1.w*mag;
-    }
-
-
-  /**
-   * Constructs and initializes a Quat4d to (0,0,0,0).
-   */
-  public Quat4d()
-  {
-     super();
-  }
-
-
-  /**
-   * Sets the value of this quaternion to the conjugate of quaternion q1.
-   * @param q1 the source vector
-   */
-  public final void conjugate(Quat4d q1)
-  {
-    this.x = -q1.x;
-    this.y = -q1.y;
-    this.z = -q1.z;
-    this.w = q1.w;
-  }
-
-
-  /**
-   * Negate the value of of each of this quaternion's x,y,z coordinates
-   *  in place.
-   */
-  public final void conjugate()
-  {
-    this.x = -this.x;
-    this.y = -this.y;
-    this.z = -this.z;
-  }
-
-
-  /**
    * Sets the value of this quaternion to the quaternion product of
    * quaternions q1 and q2 (this = q1 * q2).
    * Note that this is safe for aliasing (e.g. this can be q1 or q2).
@@ -237,23 +130,7 @@ public class Quat4d extends Tuple4d implements java.io.Serializable {
   }
 
 
-  /**
-   * Sets the value of this quaternion to quaternion inverse of quaternion q1.
-   * @param q1 the quaternion to be inverted
-   */
-  public final void inverse(Quat4d q1)
-  {
-    double norm;
-
-    norm = 1.0/(q1.w*q1.w + q1.x*q1.x + q1.y*q1.y + q1.z*q1.z);
-    this.w =  norm*q1.w;
-    this.x = -norm*q1.x;
-    this.y = -norm*q1.y;
-    this.z = -norm*q1.z;
-  }
-
-
-  /**
+    /**
    * Sets the value of this quaternion to the quaternion inverse of itself.
    */
   public final void inverse()

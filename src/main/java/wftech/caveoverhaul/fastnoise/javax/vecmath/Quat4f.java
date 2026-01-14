@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A 4 element unit quaternion represented by single precision floating
  * point x,y,z,w coordinates.  The quaternion is always normalized.
@@ -35,47 +37,14 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Quat4f extends Tuple4f implements java.io.Serializable {
 
   // Combatible with 1.1
-  static final long serialVersionUID = 2675933778405442383L;
+  @Serial
+  private static final long serialVersionUID = 2675933778405442383L;
 
   final static double EPS = 0.000001;
   final static double EPS2 = 1.0e-30;
-  final static double PIO2 = 1.57079632679;
-
-  /**
-   * Constructs and initializes a Quat4f from the specified xyzw coordinates.
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   * @param w the w scalar component
-   */
-  public Quat4f(float x, float y, float z, float w)
-  {
-      float mag;
-      mag = (float)(1.0/Math.sqrt( x*x + y*y + z*z + w*w ));
-      this.x =  x*mag;
-      this.y =  y*mag;
-      this.z =  z*mag;
-      this.w =  w*mag;
-
-  }
-
-  /**
-   * Constructs and initializes a Quat4f from the array of length 4.
-   * @param q the array of length 4 containing xyzw in order
-   */
-  public Quat4f(float[] q)
-  {
-      float mag;
-      mag = (float)(1.0/Math.sqrt( q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3] ));
-      x =  q[0]*mag;
-      y =  q[1]*mag;
-      z =  q[2]*mag;
-      w =  q[3]*mag;
-
-  }
 
 
-  /**
+    /**
    * Constructs and initializes a Quat4f from the specified Quat4f.
    * @param q1 the Quat4f containing the initialization x y z w data
    */
@@ -84,80 +53,8 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
        super(q1);
   }
 
-  /**
-   * Constructs and initializes a Quat4f from the specified Quat4d.
-   * @param q1 the Quat4d containing the initialization x y z w data
-   */
-  public Quat4f(Quat4d q1)
-  {
-      super(q1);
-  }
-
 
     /**
-     * Constructs and initializes a Quat4f from the specified Tuple4f.
-     * @param t1 the Tuple4f containing the initialization x y z w data
-     */
-    public Quat4f(Tuple4f t1)
-    {
-      float mag;
-      mag = (float)(1.0/Math.sqrt( t1.x*t1.x + t1.y*t1.y + t1.z*t1.z + t1.w*t1.w ));
-      x =  t1.x*mag;
-      y =  t1.y*mag;
-      z =  t1.z*mag;
-      w =  t1.w*mag;
-
-    }
-
-
-    /**
-     * Constructs and initializes a Quat4f from the specified Tuple4d.
-     * @param t1 the Tuple4d containing the initialization x y z w data
-     */
-    public Quat4f(Tuple4d t1)
-    {
-      double mag;
-      mag = 1.0/Math.sqrt( t1.x*t1.x + t1.y*t1.y + t1.z*t1.z + t1.w*t1.w );
-      x =  (float)(t1.x*mag);
-      y =  (float)(t1.y*mag);
-      z =  (float)(t1.z*mag);
-      w =  (float)(t1.w*mag);
-    }
-
-
-  /**
-   * Constructs and initializes a Quat4f to (0.0,0.0,0.0,0.0).
-   */
-  public Quat4f()
-  {
-      super();
-  }
-
-
-  /**
-   * Sets the value of this quaternion to the conjugate of quaternion q1.
-   * @param q1 the source vector
-   */
-  public final void conjugate(Quat4f q1)
-  {
-    this.x = -q1.x;
-    this.y = -q1.y;
-    this.z = -q1.z;
-    this.w = q1.w;
-  }
-
-  /**
-   * Sets the value of this quaternion to the conjugate of itself.
-   */
-  public final void conjugate()
-  {
-    this.x = -this.x;
-    this.y = -this.y;
-    this.z = -this.z;
-  }
-
-
-  /**
    * Sets the value of this quaternion to the quaternion product of
    * quaternions q1 and q2 (this = q1 * q2).
    * Note that this is safe for aliasing (e.g. this can be q1 or q2).
@@ -236,24 +133,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
   }
 
 
-
-  /**
-   * Sets the value of this quaternion to quaternion inverse of quaternion q1.
-   * @param q1 the quaternion to be inverted
-   */
-  public final void inverse(Quat4f q1)
-  {
-    float norm;
-
-    norm = 1.0f/(q1.w*q1.w + q1.x*q1.x + q1.y*q1.y + q1.z*q1.z);
-    this.w =  norm*q1.w;
-    this.x = -norm*q1.x;
-    this.y = -norm*q1.y;
-    this.z = -norm*q1.z;
-  }
-
-
-  /**
+    /**
    * Sets the value of this quaternion to the quaternion inverse of itself.
    */
   public final void inverse()
@@ -443,7 +323,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 
 	if (ww >= 0) {
 	    if (ww >= EPS2) {
-		this.w = (float) Math.sqrt((double) ww);
+		this.w = (float) Math.sqrt(ww);
 		ww = 0.25f/this.w;
 		this.x = (m1.m21 - m1.m12)*ww;
 		this.y = (m1.m02 - m1.m20)*ww;
@@ -478,7 +358,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 	this.x = 0;
 	ww =  0.5f*(1.0f - m1.m22);
 	if (ww >= EPS2) {
-	    this.y = (float) Math.sqrt((double) ww);
+	    this.y = (float) Math.sqrt(ww);
 	    this.z = m1.m21/(2.0f*this.y);
 	    return;
 	}
@@ -598,89 +478,6 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 
     }
 
-
-    /**
-     *  Performs a great circle interpolation between this quaternion
-     *  and the quaternion parameter and places the result into this
-     *  quaternion.
-     *  @param q1  the other quaternion
-     *  @param alpha  the alpha interpolation parameter
-     */
-    public final void interpolate(Quat4f q1, float alpha) {
-	// From "Advanced Animation and Rendering Techniques"
-	// by Watt and Watt pg. 364, function as implemented appeared to be
-	// incorrect.  Fails to choose the same quaternion for the double
-	// covering. Resulting in change of direction for rotations.
-	// Fixed function to negate the first quaternion in the case that the
-	// dot product of q1 and this is negative. Second case was not needed.
-
-     double dot,s1,s2,om,sinom;
-
-     dot = x*q1.x + y*q1.y + z*q1.z + w*q1.w;
-
-     if ( dot < 0 ) {
-        // negate quaternion
-       q1.x = -q1.x;  q1.y = -q1.y;  q1.z = -q1.z;  q1.w = -q1.w;
-       dot = -dot;
-     }
-
-     if ( (1.0 - dot) > EPS ) {
-       om = Math.acos(dot);
-       sinom = Math.sin(om);
-       s1 = Math.sin((1.0-alpha)*om)/sinom;
-       s2 = Math.sin( alpha*om)/sinom;
-     } else{
-       s1 = 1.0 - alpha;
-       s2 = alpha;
-     }
-
-     w = (float)(s1*w + s2*q1.w);
-     x = (float)(s1*x + s2*q1.x);
-     y = (float)(s1*y + s2*q1.y);
-     z = (float)(s1*z + s2*q1.z);
-  }
-
-
-
-  /**
-    *  Performs a great circle interpolation between quaternion q1
-    *  and quaternion q2 and places the result into this quaternion.
-    *  @param q1  the first quaternion
-    *  @param q2  the second quaternion
-    *  @param alpha  the alpha interpolation parameter
-    */
-    public final void interpolate(Quat4f q1, Quat4f q2, float alpha) {
-	// From "Advanced Animation and Rendering Techniques"
-	// by Watt and Watt pg. 364, function as implemented appeared to be
-	// incorrect.  Fails to choose the same quaternion for the double
-	// covering. Resulting in change of direction for rotations.
-	// Fixed function to negate the first quaternion in the case that the
-	// dot product of q1 and this is negative. Second case was not needed.
-
-     double dot,s1,s2,om,sinom;
-
-     dot = q2.x*q1.x + q2.y*q1.y + q2.z*q1.z + q2.w*q1.w;
-
-     if ( dot < 0 ) {
-        // negate quaternion
-       q1.x = -q1.x;  q1.y = -q1.y;  q1.z = -q1.z;  q1.w = -q1.w;
-       dot = -dot;
-     }
-
-     if ( (1.0 - dot) > EPS ) {
-       om = Math.acos(dot);
-       sinom = Math.sin(om);
-       s1 = Math.sin((1.0-alpha)*om)/sinom;
-       s2 = Math.sin( alpha*om)/sinom;
-     } else{
-       s1 = 1.0 - alpha;
-       s2 = alpha;
-     }
-     w = (float)(s1*q1.w + s2*q2.w);
-     x = (float)(s1*q1.x + s2*q2.x);
-     y = (float)(s1*q1.y + s2*q2.y);
-     z = (float)(s1*q1.z + s2*q2.z);
-  }
 
 }
 

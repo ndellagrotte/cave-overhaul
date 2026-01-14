@@ -323,23 +323,6 @@ public abstract class Tuple4d implements java.io.Serializable, Cloneable {
 
 
     /**
-     * Sets the value of this tuple to the scalar multiplication by s
-     * of tuple t1 plus tuple t2 (this = s*t1 + t2).
-     * @param s the scalar value
-     * @param t1 the tuple to be multipled
-     * @param t2 the tuple to be added
-     */
-    public final void scaleAdd(double s, Tuple4d t1, Tuple4d t2)
-    {
-	this.x = s*t1.x + t2.x;
-	this.y = s*t1.y + t2.y;
-	this.z = s*t1.z + t2.z;
-	this.w = s*t1.w + t2.w;
-    }
-
-
-
-    /**
      * @deprecated Use scaleAdd(double,Tuple4d) instead
      */
     public final void scaleAdd(float s, Tuple4d t1) {
@@ -571,7 +554,7 @@ public abstract class Tuple4d implements java.io.Serializable, Cloneable {
      * @deprecated Use clamp(double,double) instead
      */
     public final void clamp(float min, float max) {
-	clamp((double)min, (double)max);
+	clamp(min, (double)max);
     }
 
 

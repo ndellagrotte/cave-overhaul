@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A generic 3-element tuple that is represented by single precision-floating
  * point x,y,z coordinates.
@@ -34,7 +36,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
  */
 public abstract class Tuple3f implements java.io.Serializable, Cloneable {
 
-    static final long serialVersionUID=5019834619484343712L;
+    @Serial
+    private static final long serialVersionUID=5019834619484343712L;
 
     /**
      * The x coordinate.
@@ -359,8 +362,7 @@ public abstract class Tuple3f implements java.io.Serializable, Cloneable {
            Tuple3f t2 = (Tuple3f) t1;
            return(this.x == t2.x && this.y == t2.y && this.z == t2.z);
         }
-        catch (NullPointerException e2) {return false;}
-        catch (ClassCastException   e1) {return false;}
+        catch (NullPointerException | ClassCastException e2) {return false;}
     }
 
 
@@ -387,9 +389,7 @@ public abstract class Tuple3f implements java.io.Serializable, Cloneable {
 
        diff = z - t1.z;
        if(Float.isNaN(diff)) return false;
-       if((diff<0?-diff:diff) > epsilon) return false;
-
-       return true;
+       return !((diff < 0 ? -diff : diff) > epsilon);
 
     }
 
@@ -424,90 +424,20 @@ public abstract class Tuple3f implements java.io.Serializable, Cloneable {
    {
         if( t.x > max ) {
           x = max;
-        } else if( t.x < min ){
-          x = min;
-        } else {
-          x = t.x;
-        }
+        } else x = Math.max(t.x, min);
 
         if( t.y > max ) {
           y = max;
-        } else if( t.y < min ){
-          y = min;
-        } else {
-          y = t.y;
-        }
+        } else y = Math.max(t.y, min);
 
         if( t.z > max ) {
           z = max;
-        } else if( t.z < min ){
-          z = min;
-        } else {
-          z = t.z;
-        }
+        } else z = Math.max(t.z, min);
 
    }
 
 
-  /**
-    *  Clamps the minimum value of the tuple parameter to the min
-    *  parameter and places the values into this tuple.
-    *  @param min   the lowest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMin(float min, Tuple3f t)
-   {
-        if( t.x < min ) {
-          x = min;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y < min ) {
-          y = min;
-        } else {
-          y = t.y;
-        }
-
-        if( t.z < min ) {
-          z = min;
-        } else {
-          z = t.z;
-        }
-
-   }
-
-
-  /**
-    *  Clamps the maximum value of the tuple parameter to the max
-    *  parameter and places the values into this tuple.
-    *  @param max   the highest value in the tuple after clamping
-    *  @param t   the source tuple, which will not be modified
-    */
-   public final void clampMax(float max, Tuple3f t)
-   {
-        if( t.x > max ) {
-          x = max;
-        } else {
-          x = t.x;
-        }
-
-        if( t.y > max ) {
-          y = max;
-        } else {
-          y = t.y;
-        }
-
-        if( t.z > max ) {
-          z = max;
-        } else {
-          z = t.z;
-        }
-
-   }
-
-
-  /**
+    /**
     *  Sets each component of the tuple parameter to its absolute
     *  value and places the modified values into this tuple.
     *  @param t   the source tuple, which will not be modified

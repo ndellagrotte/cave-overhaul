@@ -38,67 +38,6 @@ public class Vector3d extends Tuple3d implements java.io.Serializable {
     // Combatible with 1.1
     static final long serialVersionUID = 3761969948420550442L;
 
-    /**
-     * Constructs and initializes a Vector3d from the specified xyz coordinates.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     */
-    public Vector3d(double x, double y, double z)
-    {
-        super(x,y,z);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3d from the array of length 3.
-     * @param v the array of length 3 containing xyz in order
-     */
-    public Vector3d(double[] v)
-    {
-       super(v);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3d from the specified Vector3d.
-     * @param v1 the Vector3d containing the initialization x y z data
-     */
-    public Vector3d(Vector3d v1)
-    {
-         super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3d from the specified Vector3f.
-     * @param v1 the Vector3f containing the initialization x y z data
-     */
-    public Vector3d(Vector3f v1)
-    {
-       super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3d from the specified Tuple3f.
-     * @param t1 the Tuple3f containing the initialization x y z data
-     */
-    public Vector3d(Tuple3f t1)
-    {
-       super(t1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3d from the specified Tuple3d.
-     * @param t1 the Tuple3d containing the initialization x y z data
-     */
-    public Vector3d(Tuple3d t1)
-    {
-       super(t1);
-    }
-
 
     /**
      * Constructs and initializes a Vector3d to (0,0,0).
@@ -106,23 +45,6 @@ public class Vector3d extends Tuple3d implements java.io.Serializable {
     public Vector3d()
     {
        super();
-    }
-
-
-   /**
-     * Sets this vector to the vector cross product of vectors v1 and v2.
-     * @param v1 the first vector
-     * @param v2 the second vector
-     */
-    public final void cross(Vector3d v1, Vector3d v2)
-    {
-        double x,y;
-
-        x = v1.y*v2.z - v1.z*v2.y;
-        y = v2.x*v1.z - v2.z*v1.x;
-        this.z = v1.x*v2.y - v1.y*v2.x;
-        this.x = x;
-        this.y = y;
     }
 
 
@@ -167,16 +89,6 @@ public class Vector3d extends Tuple3d implements java.io.Serializable {
 
 
     /**
-     * Returns the squared length of this vector.
-     * @return the squared length of this vector
-     */
-    public final double lengthSquared()
-    {
-        return (this.x*this.x + this.y*this.y + this.z*this.z);
-    }
-
-
-    /**
      * Returns the length of this vector.
      * @return the length of this vector
      */
@@ -197,7 +109,7 @@ public class Vector3d extends Tuple3d implements java.io.Serializable {
       double vDot = this.dot(v1) / ( this.length()*v1.length() );
       if( vDot < -1.0) vDot = -1.0;
       if( vDot >  1.0) vDot =  1.0;
-      return((double) (Math.acos( vDot )));
+      return Math.acos( vDot );
    }
 
 

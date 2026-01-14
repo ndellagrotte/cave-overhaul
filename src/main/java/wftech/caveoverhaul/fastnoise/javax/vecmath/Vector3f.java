@@ -38,65 +38,6 @@ public class Vector3f extends Tuple3f implements java.io.Serializable {
     // Combatible with 1.1
     static final long serialVersionUID = -7031930069184524614L;
 
-    /**
-     * Constructs and initializes a Vector3f from the specified xyz coordinates.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     */
-    public Vector3f(float x, float y, float z)
-    {
-        super(x,y,z);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3f from the array of length 3.
-     * @param v the array of length 3 containing xyz in order
-     */
-    public Vector3f(float[] v)
-    {
-       super(v);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3f from the specified Vector3f.
-     * @param v1 the Vector3f containing the initialization x y z data
-     */
-    public Vector3f(Vector3f v1)
-    {
-       super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3f from the specified Vector3d.
-     * @param v1 the Vector3d containing the initialization x y z data
-     */
-    public Vector3f(Vector3d v1)
-    {
-       super(v1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3f from the specified Tuple3f.
-     * @param t1 the Tuple3f containing the initialization x y z data
-     */
-    public Vector3f(Tuple3f t1) {
-       super(t1);
-    }
-
-
-    /**
-     * Constructs and initializes a Vector3f from the specified Tuple3d.
-     * @param t1 the Tuple3d containing the initialization x y z data
-     */
-    public Vector3f(Tuple3d t1) {
-       super(t1);
-    }
-
 
     /**
      * Constructs and initializes a Vector3f to (0,0,0).
@@ -106,15 +47,6 @@ public class Vector3f extends Tuple3f implements java.io.Serializable {
         super();
     }
 
-
-   /**
-     * Returns the squared length of this vector.
-     * @return the squared length of this vector
-     */
-    public final float lengthSquared()
-    {
-        return (this.x*this.x + this.y*this.y + this.z*this.z);
-    }
 
     /**
      * Returns the length of this vector.
@@ -127,23 +59,7 @@ public class Vector3f extends Tuple3f implements java.io.Serializable {
     }
 
 
-  /**
-     * Sets this vector to be the vector cross product of vectors v1 and v2.
-     * @param v1 the first vector
-     * @param v2 the second vector
-     */
-    public final void cross(Vector3f v1, Vector3f v2)
-    {
-        float x,y;
-
-        x = v1.y*v2.z - v1.z*v2.y;
-        y = v2.x*v1.z - v2.z*v1.x;
-        this.z = v1.x*v2.y - v1.y*v2.x;
-        this.x = x;
-        this.y = y;
-    }
-
- /**
+    /**
    * Computes the dot product of this vector and vector v1.
    * @param v1 the other vector
    * @return the dot product of this vector and v1
