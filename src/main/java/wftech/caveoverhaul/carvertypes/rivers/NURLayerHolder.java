@@ -96,7 +96,7 @@ public class NURLayerHolder {
             if(layer.isBelowWaterfallSupport(x, y, z)) {
                 return true;
             }
-            if(layer.isBoundary(x, y, z, true)) {
+            if(layer.isBoundary(x, y, z)) {
                 return true;
             }
         }

@@ -18,9 +18,9 @@ public class NURDynamicLayer {
     public static int MAX_CAVE_SIZE_Y = Settings.MAX_CAVE_SIZE_Y;
     public static float NOISE_CUTOFF_RIVER = 0.92f;
     public static float NOISE_CUTOFF_RIVER_NON_WARPED = 0.75f;
-    public int seedOffset = 0;
-    private int min_y = 0;
-    private Block blockType = Blocks.WATER;
+    public int seedOffset;
+    private final int min_y;
+    private final Block blockType;
     private FastNoiseLite domainWarp = null;
     private NURLogic cache = null;
 
@@ -263,7 +263,7 @@ public class NURDynamicLayer {
 
 
     //checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
-    public boolean isBoundary(int x, int y, int z, boolean checkIfInRiver) {
+    public boolean isBoundary(int x, int y, int z) {
 
         if(enableRiver()) {
             return false;
@@ -293,8 +293,6 @@ public class NURDynamicLayer {
         if(shouldCarveRiver) {
             return false;
         }
-
-        boolean shouldCheckBoundary = true;
 
         //why do I have this?
         /*
