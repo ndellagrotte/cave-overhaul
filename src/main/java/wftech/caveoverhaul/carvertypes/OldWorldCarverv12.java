@@ -1,7 +1,5 @@
 package wftech.caveoverhaul.carvertypes;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -17,21 +15,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.CarvingMask;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
-import net.minecraft.world.level.levelgen.carver.CanyonCarverConfiguration;
-import net.minecraft.world.level.levelgen.carver.CanyonWorldCarver;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.CaveWorldCarver;
-import net.minecraft.world.level.levelgen.carver.WorldCarver;
+import org.jspecify.annotations.NonNull;
 import wftech.caveoverhaul.AirOnlyAquifer;
-import wftech.caveoverhaul.CaveOverhaul;
 import wftech.caveoverhaul.Config;
-import wftech.caveoverhaul.carvertypes.rivers.NURDynamicLayer;
 import wftech.caveoverhaul.mixins.CaveCarverConfigurationAccessor;
 import wftech.caveoverhaul.mixins.CaveWorldCarverAccessor;
 import wftech.caveoverhaul.utils.Globals;
@@ -53,12 +46,11 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 			return 130 - randomSource.nextInt(randomSource.nextInt(120) + 1); //130 = average y I'd like the caves to start at
 		} else {
 			//return randomSource.nextInt(randomSource.nextInt(384) + 8);
-			int newy = randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.minY)) + 8) - Math.abs(Globals.minY);
-			return newy;
+            return randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.minY)) + 8) - Math.abs(Globals.minY);
 		}
 	}
 
-	public int getCaveYSurface(RandomSource random, ChunkAccess access, ChunkPos cPos) {
+	public int getCaveYSurface(ChunkAccess access, ChunkPos cPos) {
 		int xPos = cPos.getBlockX(0);
 		int zPos = cPos.getBlockZ(0);
 		int wgHeight = access.getHeight(Types.WORLD_SURFACE_WG, xPos, zPos);
@@ -88,27 +80,27 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 									boolean shallow,
 									boolean surfaceCluster) {
 
-		double x = (double) chunkPos.getBlockX(random.nextInt(16 * 16));
+		double x = chunkPos.getBlockX(random.nextInt(16 * 16));
 		//double y = (double) this.getCaveY(random, shallow) - (shallow ? 0 : 64);
-		double coord_y = 0;
+		double coord_y;
 		if(surfaceCluster) {
-			coord_y = this.getCaveYSurface(random, chunk, chunk.getPos());
+			coord_y = this.getCaveYSurface(chunk, chunk.getPos());
 		} else {
-			coord_y = (double) this.getCaveY(random, shallow);
+			coord_y = this.getCaveY(random, shallow);
 		}
 
-		double z = (double) chunkPos.getBlockZ(random.nextInt(16 * 16));
+		double z = chunkPos.getBlockZ(random.nextInt(16 * 16));
 
-		double horizontalRadiusMultiplier = (double) config.horizontalRadiusMultiplier.sample(random);
-		double verticalRadiusMultiplier = (double) config.verticalRadiusMultiplier.sample(random);
-		double floorLevel = (double) ((CaveCarverConfigurationAccessor) config).getFloorLevel().sample(random);
+        config.horizontalRadiusMultiplier.sample(random);
+        config.verticalRadiusMultiplier.sample(random);
+        double floorLevel = ((CaveCarverConfigurationAccessor) config).getFloorLevel().sample(random);
 
 		CarveSkipChecker skipChecker = (world, x1, y1, z1, depth) -> CaveWorldCarverAccessor.shouldSkip(x1, y1, z1, floorLevel);
 
 		int numRooms = 1;
 
 		if (shallow || random.nextInt(2) == 0) {
-			double yScale = (double) config.yScale.sample(random);
+			double yScale = config.yScale.sample(random);
 			float roomWidth = 1.0F + random.nextFloat() * 6.0F;
 			createRoom(context, config, chunk, posToBiomeMapping, aquifer, x, coord_y, z, roomWidth, yScale, mask, skipChecker);
 			numRooms += random.nextInt(4);
@@ -149,14 +141,14 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
 	@Override
 	public boolean carve(
-			CarvingContext ctx,
-			CaveCarverConfiguration cfg,
-			ChunkAccess level,
-			Function<BlockPos, Holder<Biome>> pos2BiomeMapping,
-			RandomSource random,
-			Aquifer disabled,
-			ChunkPos chunkPos,
-			CarvingMask mask) {
+            @NonNull CarvingContext ctx,
+            @NonNull CaveCarverConfiguration cfg,
+            @NonNull ChunkAccess level,
+            @NonNull Function<BlockPos, Holder<Biome>> pos2BiomeMapping,
+            @NonNull RandomSource random,
+            @NonNull Aquifer disabled,
+            @NonNull ChunkPos chunkPos,
+            @NonNull CarvingMask mask) {
 
 		if(!this.shouldCarve(ctx, cfg, level, random, chunkPos)) {
 			return true;
@@ -213,14 +205,12 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 			CarvingMask carvingMask,
 			boolean surface) {
 
-		boolean initialFlag;
-		Random random = new Random(seed);
+        Random random = new Random(seed);
 		//Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface ? true : random.nextFloat() <=  0.15f);
-		Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface ? true : random.nextFloat() <=  Config.settings.get(Config.KEY_CAVE_AIR_EXPOSURE));
+		Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface || random.nextFloat() <= Config.settings.get(Config.KEY_CAVE_AIR_EXPOSURE));
 
-		int skipEvery = 0;
-		MutableBlockPos mbPosCheckAir = new MutableBlockPos();
-		List<BlockPos> airPosList = new ArrayList<>();
+//      MutableBlockPos mbPosCheckAir = new MutableBlockPos();
+//		List<BlockPos> airPosList = new ArrayList<>();
 
 		double startX = chunkPrimer.getPos().getMiddleBlockX();
 		double startZ = chunkPrimer.getPos().getMiddleBlockZ();
@@ -243,21 +233,18 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 		}
 
 		int j = random.nextInt(endNode / 2) + endNode / 4;
-		boolean isRandomFlag = random.nextInt(6) == 0;
+        random.nextInt(6);
 
-		while (curNode < endNode) {
+        while (curNode < endNode) {
 			//1.5 for the first term by default
 			double yStepApprox = 2.5 + (double)(Mth.sin((float)curNode * 3.1415927f / (float)endNode) * unkModifier);
 			double yStep = yStepApprox * length;
 			float yawChangeRate = Mth.cos(pitch);
 			float pitchChangeRateY = Mth.sin(pitch);
-			initialX += (double)(Mth.cos(yaw) * yawChangeRate);
-			initialY += (double)pitchChangeRateY;
-			initialZ += (double)(Mth.sin(yaw) * yawChangeRate);
-			pitch = surface ?
-					(isRandomFlag ? (pitch *= 0.7f) : (pitch *= 1.0f)) :
-					(isRandomFlag ? (pitch *= 0.92f) : (pitch *= 0.7f)); //CHANGED was 0.7
-			pitch += pitchChangeRate * 0.1f;
+			initialX += Mth.cos(yaw) * yawChangeRate;
+			initialY += pitchChangeRateY;
+			initialZ += Mth.sin(yaw) * yawChangeRate;
+            pitch += pitchChangeRate * 0.1f;
 			yaw += pitchChange * 0.1f;
 			pitchChangeRate *= 0.9f;
 			pitchChange *= 0.75f;
@@ -281,12 +268,12 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 				if (deltaX * deltaX + deltaZ * deltaZ - deltaDiameter * deltaDiameter > maxDiameter * maxDiameter) {
 					return;
 				}
-
-				mbPosCheckAir.set(initialX, initialY, initialZ);
-				boolean flagInAir = chunkPrimer.getBlockState(mbPosCheckAir).isAir();
-				if(flagInAir) {
-					airPosList.add(new BlockPos((int) initialX, (int) initialY, (int) initialZ));
-				}
+//
+//				mbPosCheckAir.set(initialX, initialY, initialZ);
+//				boolean flagInAir = chunkPrimer.getBlockState(mbPosCheckAir).isAir();
+//				if(flagInAir) {
+//					airPosList.add(new BlockPos((int) initialX, (int) initialY, (int) initialZ));
+//				}
 
 				if (initialX >= startX - 16.0 - yStepApprox * 2.0 && initialZ >= startZ - 16.0 - yStepApprox * 2.0 && initialX <= startX + 16.0 + yStepApprox * 2.0 && initialZ <= startZ + 16.0 + yStepApprox * 2.0) {
 					int minX = Mth.floor(initialX - yStepApprox) - minBlockX - 1;
@@ -338,10 +325,9 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 							for (int zIter = minZ; zIter < maxZ; ++zIter) {
 								int blockZ = chunkPos.getBlockZ(zIter);
 								double zTargetSize = ((double)(zIter + minBlockZ) + 0.5 - initialZ) / yStepApprox;
-								boolean isTopBlock = false;
 
 
-								//CHANGED: first skip, originally set to skip @ 1.0
+                                //CHANGED: first skip, originally set to skip @ 1.0
 								if (xTargetSize * xTargetSize + zTargetSize * zTargetSize >= 4.0) continue;
 
 								MutableBoolean shouldCarve = new MutableBoolean(false);
@@ -368,8 +354,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 	        	            		}
 									 */
 
-									NURDynamicLayer riverLayer = null;
-									if(NoiseChunkMixinUtils.getRiverLayer(128, blockX, yIter, blockZ) != null) {
+                                    if(NoiseChunkMixinUtils.getRiverLayer(128, blockX, yIter, blockZ) != null) {
 										continue;
 									} else if (NoiseChunkMixinUtils.shouldSetToStone(128, blockX, yIter, blockZ)) {
 										continue;

@@ -12,8 +12,7 @@ public class CaveOverhaul implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 
 	public static String MOD_ID = "caveoverhaul";
-	public static String MODID = MOD_ID;
-	public static boolean ENABLE_MULTILAYER_RIVERS = false;
+//	public static boolean ENABLE_MULTILAYER_RIVERS = false;
 
     public static final Logger LOGGER = LoggerFactory.getLogger("caveoverhaul");
 

@@ -374,8 +374,7 @@ public abstract class Tuple3d implements java.io.Serializable, Cloneable {
            Tuple3d t2 = (Tuple3d) t1;
            return(this.x == t2.x && this.y == t2.y && this.z == t2.z);
       }
-      catch (ClassCastException   e1) {return false;}
-      catch (NullPointerException e2) {return false;}
+      catch (ClassCastException | NullPointerException e1) {return false;}
 
     }
 
@@ -402,9 +401,7 @@ public abstract class Tuple3d implements java.io.Serializable, Cloneable {
 
        diff = z - t1.z;
        if(Double.isNaN(diff)) return false;
-       if((diff<0?-diff:diff) > epsilon) return false;
-
-       return true;
+       return !((diff < 0 ? -diff : diff) > epsilon);
 
     }
 
@@ -427,27 +424,15 @@ public abstract class Tuple3d implements java.io.Serializable, Cloneable {
     public final void clamp(double min, double max, Tuple3d t) {
         if( t.x > max ) {
           x = max;
-        } else if( t.x < min ){
-          x = min;
-        } else {
-          x = t.x;
-        }
+        } else x = Math.max(t.x, min);
 
         if( t.y > max ) {
           y = max;
-        } else if( t.y < min ){
-          y = min;
-        } else {
-          y = t.y;
-        }
+        } else y = Math.max(t.y, min);
 
         if( t.z > max ) {
           z = max;
-        } else if( t.z < min ){
-          z = min;
-        } else {
-          z = t.z;
-        }
+        } else z = Math.max(t.z, min);
 
    }
 
@@ -467,23 +452,11 @@ public abstract class Tuple3d implements java.io.Serializable, Cloneable {
      *  @param t   the source tuple, which will not be modified
      */
     public final void clampMin(double min, Tuple3d t) {
-        if( t.x < min ) {
-          x = min;
-        } else {
-          x = t.x;
-        }
+        x = Math.max(t.x, min);
 
-        if( t.y < min ) {
-          y = min;
-        } else {
-          y = t.y;
-        }
+        y = Math.max(t.y, min);
 
-        if( t.z < min ) {
-          z = min;
-        } else {
-          z = t.z;
-        }
+        z = Math.max(t.z, min);
 
    }
 
@@ -503,23 +476,11 @@ public abstract class Tuple3d implements java.io.Serializable, Cloneable {
      *  @param t   the source tuple, which will not be modified
      */
     public final void clampMax(double max, Tuple3d t) {
-        if( t.x > max ) {
-          x = max;
-        } else {
-          x = t.x;
-        }
+        x = Math.min(t.x, max);
 
-        if( t.y > max ) {
-          y = max;
-        } else {
-          y = t.y;
-        }
+        y = Math.min(t.y, max);
 
-        if( t.z > max ) {
-          z = max;
-        } else {
-          z = t.z;
-        }
+        z = Math.min(t.z, max);
 
    }
 

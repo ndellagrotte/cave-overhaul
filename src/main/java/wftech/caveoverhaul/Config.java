@@ -29,7 +29,7 @@ public class Config {
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
-    private static String[] validKeys = {
+    private static final String[] validKeys = {
             KEY_CAVE_CHANCE,
             KEY_CAVE_AIR_EXPOSURE,
             KEY_CANYON_UPPER_CHANCE,
@@ -48,7 +48,7 @@ public class Config {
             //KEY_USE_LEGACY_OVERWORLD_DETECTION
     };
 
-    private static String[] boolKeys = {
+    private static final String[] boolKeys = {
             KEY_GENERATE_CAVERNS,
             KEY_USE_AQUIFER_PATCH,
 
@@ -133,40 +133,49 @@ public class Config {
          */
         HashSet<String> discoveredKeysSet = new HashSet<String>();
         List<String> boolKeysArr = Arrays.asList(boolKeys);
+//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+//            // Read the content of the file
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                if (line.startsWith("#")) {
+//                } else if (line.startsWith("[")) {
+//                } else {
+//                    String[] parts = line.split("=");
+//
+//                    if (parts.length == 0){
+//                        continue;
+//                    }
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            // Read the content of the file
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("#")) {
-                } else if (line.startsWith("[")) {
-                } else {
-                    String[] parts = line.split("=");
+                if (line.startsWith("#") || line.startsWith("[")) {
+                    continue;
+                }
 
-                    if (parts.length == 0){
-                        continue;
-                    }
-
-                    if(isValidKey(parts[0])){
-                        if (boolKeysArr.contains(parts[0])){
-                            boolean generateCaverns = Boolean.parseBoolean((parts[1].strip().toLowerCase()));
-                            float genCaverns_float = generateCaverns ? 1f : 0f;
-                            settings.put(parts[0], genCaverns_float);
-                            discoveredKeysSet.add(parts[0]);
-                        } else {
-                            settings.put(parts[0], Float.parseFloat((parts[1].strip())));
-                            discoveredKeysSet.add(parts[0]);
-                        }
+                String[] parts = line.split("=");
+                if (parts.length == 0) {
+                    continue;
+                }
+                if (isValidKey(parts[0])) {
+                    if (boolKeysArr.contains(parts[0])) {
+                        boolean generateCaverns = Boolean.parseBoolean((parts[1].strip().toLowerCase()));
+                        float genCaverns_float = generateCaverns ? 1f : 0f;
+                        settings.put(parts[0], genCaverns_float);
+                        discoveredKeysSet.add(parts[0]);
+                    } else {
+                        settings.put(parts[0], Float.parseFloat((parts[1].strip())));
+                        discoveredKeysSet.add(parts[0]);
                     }
                 }
             }
         } catch (IOException e) {
             LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to read config.");
-            for(StackTraceElement line: e.getStackTrace()){
+            for (StackTraceElement line : e.getStackTrace()) {
                 LoggerFactory.getLogger("caveoverhaul").error(line.toString());
             }
         } catch (NumberFormatException e) {
             LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to parse config entry.");
-            for(StackTraceElement line: e.getStackTrace()){
+            for (StackTraceElement line : e.getStackTrace()) {
                 LoggerFactory.getLogger("caveoverhaul").error(line.toString());
             }
         }
@@ -180,7 +189,7 @@ public class Config {
         Re-add missing keys or add new missing keys
          */
 
-        if(missingKeysAsSet.size() > 0) {
+        if(!missingKeysAsSet.isEmpty()) {
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
                 writer.write("\n# Added missing keys with their default values:\n\n");
@@ -220,18 +229,17 @@ public class Config {
     private static File generateFile(String relativePath, String fileName){
 
         File directory = new File(relativePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        File file = new File(directory, fileName);
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
 
-        return file;
+        return new File(directory, fileName);
     }
 
     private static void initDefaultValues(){
 
         if (DEFAULT_VALUES == null){
-            DEFAULT_VALUES = new HashMap<String, Float>();
+            DEFAULT_VALUES = new HashMap<>();
             DEFAULT_VALUES.put(KEY_CAVE_CHANCE, 0.12f);
             DEFAULT_VALUES.put(KEY_CANYON_UPPER_CHANCE, 0.12f);
             DEFAULT_VALUES.put(KEY_CANYON_LOWER_CHANCE, 0.04f);
@@ -247,7 +255,7 @@ public class Config {
             DEFAULT_VALUES.put(KEY_LAVA_RIVER_ENABLE, 1f);
             DEFAULT_VALUES.put(KEY_WATER_RIVER_ENABLE, 1f);
             DEFAULT_VALUES.put(KEY_LAVA_OFFSET, 9f);
-            //DEFAULT_VALUES.put(KEY_ENABLE_CAVES_BELOW_MINUS_Y64, 1f);
+            // DEFAULT_VALUES.put(KEY_ENABLE_CAVES_BELOW_MINUS_Y64, 1f);
             // DEFAULT_VALUES.put(KEY_USE_LEGACY_OVERWORLD_DETECTION, 1f);
 
         }

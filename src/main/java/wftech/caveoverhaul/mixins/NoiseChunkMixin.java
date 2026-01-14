@@ -1,17 +1,15 @@
 package wftech.caveoverhaul.mixins;
 
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import wftech.caveoverhaul.Config;
@@ -25,33 +23,35 @@ import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 @Mixin(NoiseChunk.class)
 public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
-	private DedicatedServer server;
-	private NoiseSettings NS;
-	private NoiseGeneratorSettings NGS;
+	// private DedicatedServer server;
+	@Unique
+    private NoiseSettings NS;
+	@Unique
+    private NoiseGeneratorSettings NGS;
 
 	@Inject(method="<init>(ILnet/minecraft/world/level/levelgen/RandomState;IILnet/minecraft/world/level/levelgen/NoiseSettings;Lnet/minecraft/world/level/levelgen/DensityFunctions$BeardifierOrMarker;Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/world/level/levelgen/Aquifer$FluidPicker;Lnet/minecraft/world/level/levelgen/blending/Blender;)V",
-			at=@At("RETURN"), cancellable=false, remap=true)
+			at=@At("RETURN"))
 	private void constructorMixin(int int1, RandomState randomstate, int int2, int int3, NoiseSettings noiseSettings,
 								  DensityFunctions.BeardifierOrMarker beardifier, NoiseGeneratorSettings noiseGenSettings, Aquifer.FluidPicker fluidPicker,
 								  Blender blender, CallbackInfo ci){
 
-		((NoiseChunkMixin) (Object) this).setNGS(noiseGenSettings);
-		((NoiseChunkMixin) (Object) this).setNS(noiseSettings);
+		this.wFCaveOverhaul_Fork$setNGS(noiseGenSettings);
+		this.wFCaveOverhaul_Fork$setNS(noiseSettings);
 
 	}
 
-	@Inject(method="getInterpolatedState()Lnet/minecraft/world/level/block/state/BlockState;", at=@At("RETURN"), cancellable=true, remap=true)
+	@Inject(method="getInterpolatedState()Lnet/minecraft/world/level/block/state/BlockState;", at=@At("RETURN"), cancellable=true)
 	private void getInterpolatedStateMixin(CallbackInfoReturnable<BlockState> cir) {
 
 		NoiseChunk thisChunk = (NoiseChunk) (Object) this;
 
 		//init layers
-		int minY = ((IMixinHelperNoiseChunk) (Object) this).getNGS().noiseSettings().minY();
+		int minY = this.wFCaveOverhaul_Fork$getNGS().noiseSettings().minY();
 		Globals.minY = minY;
 		NoisetypeDomainWarp.init(minY);
 
 		//boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(((NoiseChunkAccessor) this).getNoiseSettings());
-		boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(((IMixinHelperNoiseChunk) (Object) this).getNGS());
+		boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(this.wFCaveOverhaul_Fork$getNGS());
 		if(!isLikelyOverworld) {
 			return;
 		}
@@ -77,7 +77,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		/*
 		Patch 1.3.2 - aquifer patch
 		 */
-		Block original_block_chosen = null;
+		Block original_block_chosen;
 		if (cir.getReturnValue() != null) {
 			original_block_chosen = cir.getReturnValue().getBlock();
 		} else {
@@ -145,8 +145,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 		if (preferredState != null) {
 			Globals.init();
-			boolean found_vo = Globals.isVolcanicCavernsLoaded;
-			int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+            int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
 			if (preferredState.isAir() && y <= Globals.minY + y_offset) {
 				preferredState = Blocks.LAVA.defaultBlockState();
 			}
@@ -160,22 +159,22 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 	 */
 
 	@Override
-	public void setNGS(NoiseGeneratorSettings NGS) {
+	public void wFCaveOverhaul_Fork$setNGS(NoiseGeneratorSettings NGS) {
 		this.NGS = NGS;
 	}
 
 	@Override
-	public NoiseGeneratorSettings getNGS() {
+	public NoiseGeneratorSettings wFCaveOverhaul_Fork$getNGS() {
 		return this.NGS;
 	}
 
 	@Override
-	public void setNS(NoiseSettings NS) {
+	public void wFCaveOverhaul_Fork$setNS(NoiseSettings NS) {
 		this.NS = NS;
 	}
 
 	@Override
-	public NoiseSettings getNS() {
+	public NoiseSettings wFCaveOverhaul_Fork$getNS() {
 		return this.NS;
 	}
 }

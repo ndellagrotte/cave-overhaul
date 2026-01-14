@@ -5,10 +5,10 @@ import net.minecraft.world.level.levelgen.NoiseSettings;
 
 public interface IMixinHelperNoiseChunk {
 
-    void setNGS(NoiseGeneratorSettings NGS);
-    NoiseGeneratorSettings getNGS();
+    void wFCaveOverhaul_Fork$setNGS(NoiseGeneratorSettings NGS);
+    NoiseGeneratorSettings wFCaveOverhaul_Fork$getNGS();
 
-    void setNS(NoiseSettings NS);
-    NoiseSettings getNS();
+    void wFCaveOverhaul_Fork$setNS(NoiseSettings NS);
+    NoiseSettings wFCaveOverhaul_Fork$getNS();
 
 }

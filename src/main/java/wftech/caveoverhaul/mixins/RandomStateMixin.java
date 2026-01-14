@@ -1,28 +1,22 @@
 package wftech.caveoverhaul.mixins;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderGetter.Provider;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.NoiseMaker;
 import wftech.caveoverhaul.WorldGenUtils;
-import wftech.caveoverhaul.CaveOverhaul;
 import wftech.caveoverhaul.utils.FabricUtils;
 
-import java.lang.reflect.Constructor;
 import java.util.Map;
 
 @Mixin(RandomState.class)
@@ -31,94 +25,89 @@ public class RandomStateMixin {
 	//SRG name: <init>(Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/core/HolderGetter;J)V
 	@ModifyVariable(method = "<init>(Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/core/HolderGetter;J)V",
 			at = @At("HEAD"),
-			remap=true)
+			remap = true, argsOnly = true)
 	private static NoiseGeneratorSettings changeSettingsToOverworld(NoiseGeneratorSettings defaultSettings,
 																	NoiseGeneratorSettings noiseGeneratorSettingsIn, HolderGetter<NormalNoise.NoiseParameters> holderIn, final long longIn) {
 
-		//Apparently this runs before we even run the modloader...? Blech, mixins!
-		Config.initConfig();
+        Config.initConfig();
 
-		HolderGetter noise = null;
-		HolderGetter density_function = null;
-		RegistryAccess registries;
-		MinecraftServer server = FabricUtils.server;
-		registries = server.registryAccess();
-		//Provider provider = registries.asGetterLookup();
-		noise = registries.lookupOrThrow(Registries.NOISE);
-		density_function = registries.lookupOrThrow(Registries.NOISE);
+        RegistryAccess registries;
+        MinecraftServer server = FabricUtils.server;
+        registries = server.registryAccess();
 
-		Registry<NoiseGeneratorSettings> noiseReg = registries.lookupOrThrow(Registries.NOISE_SETTINGS);
+        Registry<NoiseGeneratorSettings> noiseReg = registries.lookupOrThrow(Registries.NOISE_SETTINGS);
 
-		NoiseGeneratorSettings overworldNoise = noiseReg.get(NoiseGeneratorSettings.OVERWORLD).get().value();
+        noiseReg.get(NoiseGeneratorSettings.OVERWORLD)
+                .orElseThrow(() -> new IllegalStateException("Overworld noise settings not found"));
 
-		for(Map.Entry<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorSettings> entry: noiseReg.entrySet()){
-			if (entry.getKey().location().getPath().equals("overworld")){
-				WorldGenUtils.addNGS(entry.getValue());
-			}
-		}
+        for (Map.Entry<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorSettings> entry : noiseReg.entrySet()) {
+            if (entry.getKey().identifier().getPath().equals("overworld")) {
+                WorldGenUtils.addNGS(entry.getValue());
+            }
+        }
 
-		for(ResourceLocation key: noiseReg.keySet()) {
-			NoiseGeneratorSettings ngs_noise = noiseReg.get(key).get().value();
-			if( (!Config.getBoolSetting(Config.KEY_GENERATE_CAVERNS)) & key.getPath().toLowerCase().contains("overworld") && (defaultSettings == ngs_noise) ) {
+        for (Identifier key : noiseReg.keySet()) {
+            NoiseGeneratorSettings ngs_noise = noiseReg.get(key)
+                    .orElseThrow(() -> new IllegalStateException("Noise settings not found for: " + key))
+                    .value();
 
-				NoiseRouter defaultNoiseRouter = defaultSettings.noiseRouter();
+            if ((!Config.getBoolSetting(Config.KEY_GENERATE_CAVERNS))
+                    && key.getPath().toLowerCase().contains("overworld") // Note: & should be &&
+                    && (defaultSettings == ngs_noise)) {
 
-				HolderGetter hg_noise = registries.lookupOrThrow(Registries.NOISE);
-				HolderGetter hg_density_function = registries.lookupOrThrow(Registries.DENSITY_FUNCTION);
+                NoiseRouter defaultNoiseRouter = defaultSettings.noiseRouter();
+                HolderGetter<DensityFunction> hg_density_function = registries.lookupOrThrow(Registries.DENSITY_FUNCTION);
 
-				DensityFunction densityfunction8 = NoiseRouterDataAccessor.getFunction(hg_density_function, false ? NoiseRouterDataAccessor.FACTOR_LARGE() : (false ? NoiseRouterDataAccessor.FACTOR_AMPLIFIED() : NoiseRouterDataAccessor.FACTOR()));
-				DensityFunction densityfunction9 = NoiseRouterDataAccessor.getFunction(hg_density_function, false ? NoiseRouterDataAccessor.DEPTH_LARGE() : (false ? NoiseRouterDataAccessor.DEPTH_AMPLIFIED() : NoiseRouterDataAccessor.DEPTH()));
-				DensityFunction densityfunction10 = NoiseRouterDataAccessor.noiseGradientDensity(DensityFunctions.cache2d(densityfunction8), densityfunction9);
-				DensityFunction newTerrainDF = NoiseRouterDataAccessor.slideOverworld(
-						false,
-						DensityFunctions.add(
-								densityfunction10,
-								DensityFunctions.constant(-0.703125D)
-						).clamp(-64.0D, 64.0D));
+                DensityFunction densityfunction8 = NoiseRouterDataAccessor.getFunction(hg_density_function, NoiseRouterDataAccessor.FACTOR());
+                DensityFunction densityfunction9 = NoiseRouterDataAccessor.getFunction(hg_density_function, NoiseRouterDataAccessor.DEPTH());
+                DensityFunction densityfunction10 = NoiseRouterDataAccessor.noiseGradientDensity(
+                        DensityFunctions.cache2d(densityfunction8), densityfunction9);
 
-				DensityFunction newFinalDensity = NoiseRouterDataAccessor.postProcess(NoiseRouterDataAccessor.getFunction(hg_density_function, NoiseRouterDataAccessor.SLOPED_CHEESE()));
+                NoiseRouterDataAccessor.slideOverworld(
+                        false,
+                        DensityFunctions.add(
+                                densityfunction10,
+                                DensityFunctions.constant(-0.703125D)
+                        ).clamp(-64.0D, 64.0D));
 
-				DensityFunction modifiedDF = NoiseMaker.makeNoise(defaultSettings.noiseRouter().finalDensity());
+                // ... rest of the logic
 
-				NoiseRouter newNoiseRouter = new NoiseRouter(
-						defaultNoiseRouter.barrierNoise(),
-						defaultNoiseRouter.fluidLevelFloodednessNoise(),
-						defaultNoiseRouter.fluidLevelSpreadNoise(),
-						defaultNoiseRouter.lavaNoise(),
-						defaultNoiseRouter.temperature(),
-						defaultNoiseRouter.vegetation(),
-						defaultNoiseRouter.continents(),
-						defaultNoiseRouter.erosion(),
-						defaultNoiseRouter.depth(),
-						defaultNoiseRouter.ridges(),
-						defaultNoiseRouter.initialDensityWithoutJaggedness(),
-						modifiedDF, //newFinalDensity
-						defaultNoiseRouter.veinToggle(),
-						defaultNoiseRouter.veinRidged(),
-						defaultNoiseRouter.veinGap()
-				);
+                NoiseRouterDataAccessor.postProcess(NoiseRouterDataAccessor.getFunction(hg_density_function, NoiseRouterDataAccessor.SLOPED_CHEESE()));
 
+                DensityFunction modifiedDF = NoiseMaker.makeNoise(defaultSettings.noiseRouter().finalDensity());
 
-				NoiseGeneratorSettings modified_worldgen = new NoiseGeneratorSettings(
-						defaultSettings.noiseSettings(),
-						defaultSettings.defaultBlock(),
-						defaultSettings.defaultFluid(),
-						newNoiseRouter,
-						defaultSettings.surfaceRule(),
-						defaultSettings.spawnTarget(),
-						defaultSettings.seaLevel(),
-						defaultSettings.disableMobGeneration(),
-						defaultSettings.aquifersEnabled(),
-						defaultSettings.oreVeinsEnabled(),
-						defaultSettings.useLegacyRandomSource());
+                NoiseRouter newNoiseRouter = new NoiseRouter(
+                        defaultNoiseRouter.barrierNoise(),
+                        defaultNoiseRouter.fluidLevelFloodednessNoise(),
+                        defaultNoiseRouter.fluidLevelSpreadNoise(),
+                        defaultNoiseRouter.lavaNoise(),
+                        defaultNoiseRouter.temperature(),
+                        defaultNoiseRouter.vegetation(),
+                        defaultNoiseRouter.continents(),
+                        defaultNoiseRouter.erosion(),
+                        defaultNoiseRouter.depth(),
+                        defaultNoiseRouter.ridges(),
+                        defaultNoiseRouter.preliminarySurfaceLevel(),
+                        modifiedDF, //newFinalDensity
+                        defaultNoiseRouter.veinToggle(),
+                        defaultNoiseRouter.veinRidged(),
+                        defaultNoiseRouter.veinGap()
+                );
 
-				return modified_worldgen;
-			}
-		}
-
-		return defaultSettings;
-	}
-
-
-
+                return new NoiseGeneratorSettings(
+                        defaultSettings.noiseSettings(),
+                        defaultSettings.defaultBlock(),
+                        defaultSettings.defaultFluid(),
+                        newNoiseRouter,
+                        defaultSettings.surfaceRule(),
+                        defaultSettings.spawnTarget(),
+                        defaultSettings.seaLevel(),
+                        defaultSettings.disableMobGeneration(),
+                        defaultSettings.aquifersEnabled(),
+                        defaultSettings.oreVeinsEnabled(),
+                        defaultSettings.useLegacyRandomSource());
+            }
+        }
+        return defaultSettings;
+    }
 }

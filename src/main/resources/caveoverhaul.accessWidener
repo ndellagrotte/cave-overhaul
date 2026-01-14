@@ -31,8 +31,6 @@ accessible   class   net/minecraft/world/level/levelgen/NoiseChunk$FlatCache
 accessible   class   net/minecraft/world/level/levelgen/NoiseChunk$NoiseInterpolator
 accessible   class   net/minecraft/core/Holder$Reference$Type
 
-
-
 accessible   method   net/minecraft/world/level/levelgen/DensityFunctions$BlendOffset <init> (Ljava/lang/String;I)V
 accessible   method   net/minecraft/world/level/levelgen/DensityFunctions$Marker <init> (Lnet/minecraft/world/level/levelgen/DensityFunctions$Marker$Type;Lnet/minecraft/world/level/levelgen/DensityFunction;)V
 accessible   method   net/minecraft/world/level/levelgen/DensityFunctions$Noise <init> (Lnet/minecraft/world/level/levelgen/DensityFunction$NoiseHolder;DD)V
