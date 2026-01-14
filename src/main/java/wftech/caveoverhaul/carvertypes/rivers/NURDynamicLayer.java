@@ -80,17 +80,6 @@ public class NURDynamicLayer {
 
      */
 
-    protected FastNoiseLite genNoiseIsLiquid() {
-        FastNoiseLite tnoise = new FastNoiseLite();
-        tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed() + seedOffset + 2);
-        tnoise.SetNoiseType(NoiseType.OpenSimplex2); //SimplexFractal
-        tnoise.SetFrequency(0.003f); //CHANGED was 0.003
-        tnoise.SetFractalType(FractalType.Ridged);
-        tnoise.SetFractalOctaves(1);
-
-        return tnoise;
-    }
-
     protected FastNoiseLite genNoiseYLevel() {
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed() + seedOffset);
@@ -121,16 +110,6 @@ public class NURDynamicLayer {
         domainWarp = tnoise;
     }
 
-    /*
-    The actual liquid test
-     */
-    protected float getCaveDetailsNoise2D(float x, float z) {
-        return this.cache.getCaveDetailsNoise2D((int) x, (int) z);
-    }
-
-    protected float getCaveYNoise(int x, int z) {
-        return this.cache.getCaveYNoise(x, z);
-    }
 
     /*
     It's for the out of bounds test. I think it's not working properly. Disabling for now.
@@ -151,81 +130,86 @@ public class NURDynamicLayer {
         } else return preferredBlock == Blocks.WATER && !Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE);
     }
 
-    public float getNoise2D(int xPos, int zPos) {
-        return this.getCaveDetailsNoise2D(xPos, zPos);
+    public float getNoise3D(int xPos, int yPos, int zPos) {
+        return this.getCaveDetailsNoise(xPos, yPos, zPos);
+    }
+    private FastNoiseLite genNoiseIsLiquid() {
+        FastNoiseLite tnoise = new FastNoiseLite();
+        tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed() + seedOffset + 2);
+        tnoise.SetNoiseType(NoiseType.OpenSimplex2); //SimplexFractal
+        tnoise.SetFrequency(0.003f); //CHANGED was 0.003
+        tnoise.SetFractalType(FractalType.Ridged);
+        tnoise.SetFractalOctaves(1);
+
+        return tnoise;
     }
 
-    protected float getWarpedNoise(int xPos, int zPos) {
+    public float getCaveDetailsNoise(int x, int y, int z) {
+        if (domainWarp != null) {
+            FastNoiseLite.Vector3 coords = new FastNoiseLite.Vector3(x, y, z);
+            domainWarp.DomainWarp(coords);
+            return genNoiseIsLiquid().GetNoise(coords.x, coords.y, coords.z);
+        }
+        return genNoiseIsLiquid().GetNoise(x, y, z);
+    }
 
-        if(domainWarp == null) {
+    protected float getWarpedNoise(int xPos, int yPos, int zPos) {
+
+        if (domainWarp == null) {
             initDomainWarp();
         }
 
         float warpX = xPos;
+        float warpY = yPos;
         float warpZ = zPos;
-        for(int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             //CHANGED
             //Not applying an offset to warpX is intentional.
-            //The location for warpX can be anywhere, so it's ok that there's no offset. It hsould have no skew change or anything.
-            warpX += domainWarp.GetNoise(warpX + 20, warpZ + 20) * 2f; //was 5 with pretty incredible results
-            warpZ += domainWarp.GetNoise(warpX - 20, warpZ - 20) * 2f;
+            //The location for warpX can be anywhere, so it's ok that there's no offset. It should have no skew change or anything.
+            warpX += domainWarp.GetNoise(warpX + 20, warpY, warpZ + 20) * 2f;
+            warpY += domainWarp.GetNoise(warpX, warpY + 20, warpZ) * 2f;
+            warpZ += domainWarp.GetNoise(warpX - 20, warpY, warpZ - 20) * 2f;
         }
 
-        return this.getNoise2D((int) warpX, (int) warpZ);
+        return this.getNoise3D((int) warpX, (int) warpY, (int) warpZ);
     }
 
     public boolean isLiquid(int x, int y, int z) {
 
-        if(enableRiver()) {
+        if (enableRiver()) {
             return false;
         }
 
         BlockPos bPos = new BlockPos(x, y, z);
 
-        /*
-        if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
+        if (this.getNoise3D(bPos.getX(), bPos.getY(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED) {
             return false;
         }
 
-         */
-
-        if(this.getNoise2D(bPos.getX(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED){
-            return false;
-        }
-
-        float yLevelNoise = this.getCaveYNoise(x, z);
+        float yLevelNoise = this.getCaveYNoise(x, y, z);
         int caveY = this.getCaveY(yLevelNoise);
-        if(caveY != y) {
+        if (caveY != y) {
             return false;
         }
 
-        float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
+        float noise = this.getWarpedNoise(bPos.getX(), bPos.getY(), bPos.getZ());
         return noise > NOISE_CUTOFF_RIVER;
     }
 
     public boolean isAir(int x, int y, int z) {
 
-        if(enableRiver()) {
+        if (enableRiver()) {
             return false;
         }
 
         BlockPos bPos = new BlockPos(x, y, z);
 
-        /*
-        if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
+        if (this.getNoise3D(bPos.getX(), bPos.getY(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED) {
             return false;
         }
 
-         */
-
-
-        if(this.getNoise2D(bPos.getX(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED){
-            return false;
-        }
-
-
-        float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
-        if(noise <= NOISE_CUTOFF_RIVER) {
+        float noise = this.getWarpedNoise(bPos.getX(), bPos.getY(), bPos.getZ());
+        if (noise <= NOISE_CUTOFF_RIVER) {
             return false;
         }
 
@@ -233,9 +217,9 @@ public class NURDynamicLayer {
             return false;
         }
 
-        if(isLiquid(x, y - 1, z)) {
+        if (isLiquid(x, y - 1, z)) {
             return true;
-        } else if(isLiquid(x, y - 2, z)) {
+        } else if (isLiquid(x, y - 2, z)) {
             return true;
         }
 
@@ -243,16 +227,14 @@ public class NURDynamicLayer {
         float noiseDelta = noise - NOISE_CUTOFF_RIVER;
         int noiseCutoffCeiling = (int) (noiseDelta * 100);
         noiseCutoffCeiling /= 2;
-        for(int i = 1; i < noiseCutoffCeiling; i++) {
-            //level.setBlockState(curPos.above(2 + i), Blocks.AIR.defaultBlockState(), false);
-            if(isLiquid(x, y - (2 + i), z)) {
+        for (int i = 1; i < noiseCutoffCeiling; i++) {
+            if (isLiquid(x, y - (2 + i), z)) {
                 return true;
             }
         }
 
         return false;
     }
-
 
     public boolean isInYRange(int y) {
         //16 is arbitrary, should be more than enough
@@ -260,12 +242,10 @@ public class NURDynamicLayer {
         return y < (this.min_y - 2) || y > (this.min_y + 16);
     }
 
-
-
     //checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
     public boolean isBoundary(int x, int y, int z) {
 
-        if(enableRiver()) {
+        if (enableRiver()) {
             return false;
         }
 
@@ -276,34 +256,16 @@ public class NURDynamicLayer {
 
         BlockPos bPos = new BlockPos(x, y, z);
 
-        /*
-        if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
+        if (this.getNoise3D(bPos.getX(), bPos.getY(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED) {
             return false;
         }
 
-         */
-
-        //was 0.75
-        if(this.getNoise2D(bPos.getX(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED){
-            return false;
-        }
-
-        float noise = this.getWarpedNoise(bPos.getX(), bPos.getZ());
+        float noise = this.getWarpedNoise(bPos.getX(), bPos.getY(), bPos.getZ());
         boolean shouldCarveRiver = noise > NOISE_CUTOFF_RIVER;
-        if(shouldCarveRiver) {
+        if (shouldCarveRiver) {
             return false;
         }
 
-        //why do I have this?
-        /*
-        for(int i = 0; i < 5; i++) {
-            if(shouldCheckBoundary) {
-                shouldCheckBoundary = NoiseChunkMixinUtils.getRiverLayer(128, x, y - i, z) == null;
-            }
-        }
-         */
-
-        // /tp 4383 -18 3784
         if (NoiseChunkMixinUtils.getRiverLayer(128, x + 1, y, z) != null) {
             return true;
         } else if (NoiseChunkMixinUtils.getRiverLayer(128, x - 1, y, z) != null) {
@@ -311,41 +273,14 @@ public class NURDynamicLayer {
         } else if (NoiseChunkMixinUtils.getRiverLayer(128, x, y, z + 1) != null) {
             return true;
         } else return NoiseChunkMixinUtils.getRiverLayer(128, x, y, z - 1) != null;
-
-
-        /*
-        boolean shouldCheckBoundary = true;
-        for(int i = 0; i < 5; i++) {
-            if(shouldCheckBoundary) {
-                shouldCheckBoundary = !NoiseChunkMixinUtils.shouldSetToLava(128, x, y - i, z) &&
-                        !NoiseChunkMixinUtils.shouldSetToWater(128, x, y - i, z);
-            }
-        }
-
-        // /tp 4383 -18 3784
-        if(shouldCheckBoundary) {
-            if(NoiseChunkMixinUtils.shouldSetToLava(128, x + 1, y, z) || NoiseChunkMixinUtils.shouldSetToWater(128, x + 1, y, z)) {
-                return true;
-            } else if(NoiseChunkMixinUtils.shouldSetToLava(128, x - 1, y, z) || NoiseChunkMixinUtils.shouldSetToWater(128, x - 1, y, z)) {
-                return true;
-            } else if(NoiseChunkMixinUtils.shouldSetToLava(128, x, y, z + 1) || NoiseChunkMixinUtils.shouldSetToWater(128, x, y, z + 1)) {
-                return true;
-            } else if(NoiseChunkMixinUtils.shouldSetToLava(128, x, y, z - 1) || NoiseChunkMixinUtils.shouldSetToWater(128, x, y, z - 1)) {
-                return true;
-            }
-        }
-
-         */
-
     }
 
     //checkIfInRiver = true for the noise mixin, false = if it's called by waterfall function
     public boolean isBelowWaterfallSupport(int x, int y, int z) {
 
-        if(enableRiver()) {
+        if (enableRiver()) {
             return false;
         }
-
 
         //Do not place stone in the bottom-of-world lava area
         if (y <= (Globals.minY + 8)) {
@@ -354,44 +289,37 @@ public class NURDynamicLayer {
 
         BlockPos bPos = new BlockPos(x, y, z);
 
-        /*
-        if(this.isOutOfBounds(bPos.getX(), bPos.getZ())) {
+        if (this.getNoise3D(bPos.getX(), bPos.getY(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED) {
             return false;
         }
 
-         */
+        this.getWarpedNoise(bPos.getX(), bPos.getY(), bPos.getZ());
 
-        if(this.getNoise2D(bPos.getX(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED){
-            return false;
-        }
-
-        this.getWarpedNoise(bPos.getX(), bPos.getZ());
-
-        float yLevelNoise_o = this.getCaveYNoise(x, z);
+        float yLevelNoise_o = this.getCaveYNoise(x, y, z);
         int y_o = this.getCaveY(yLevelNoise_o);
 
         BlockPos.MutableBlockPos mbPos = new BlockPos.MutableBlockPos();
         mbPos.set(bPos.getX() + 1, bPos.getY(), bPos.getZ());
-        if(this.getWarpedNoise(mbPos.getX(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
-            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getZ());
+        if (this.getWarpedNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
+            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ());
             int neighborY = this.getCaveY(yLevelNoise1);
             return y == neighborY && (y_o != y) && neighborY < y_o;
         }
         mbPos.set(bPos.getX() - 1, bPos.getY(), bPos.getZ());
-        if(this.getWarpedNoise(mbPos.getX(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
-            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getZ());
+        if (this.getWarpedNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
+            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ());
             int neighborY = this.getCaveY(yLevelNoise1);
-            return y ==neighborY && y_o != y && neighborY < y_o;
+            return y == neighborY && y_o != y && neighborY < y_o;
         }
         mbPos.set(bPos.getX(), bPos.getY(), bPos.getZ() + 1);
-        if(this.getWarpedNoise(mbPos.getX(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
-            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getZ());
+        if (this.getWarpedNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
+            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ());
             int neighborY = this.getCaveY(yLevelNoise1);
             return y == neighborY && y_o != y && neighborY < y_o;
         }
         mbPos.set(bPos.getX(), bPos.getY(), bPos.getZ() - 1);
-        if(this.getWarpedNoise(mbPos.getX(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
-            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getZ());
+        if (this.getWarpedNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ()) > NOISE_CUTOFF_RIVER) {
+            float yLevelNoise1 = this.getCaveYNoise(mbPos.getX(), mbPos.getY(), mbPos.getZ());
             int neighborY = this.getCaveY(yLevelNoise1);
             return y == neighborY && y_o != y && neighborY < y_o;
         }
@@ -399,39 +327,21 @@ public class NURDynamicLayer {
         return false;
     }
 
+    private float getCaveYNoise(int x, int y, int z) {
+        return this.cache.getCaveYNoise(x, y, z);    }
 
     public boolean isBelowRiverSupport(int x, int y, int z) {
 
-        if(enableRiver()) {
+        if (enableRiver()) {
             return false;
         }
-
 
         //Do not place stone in the bottom-of-world lava area
         if (y <= (Globals.minY + 8)) {
             return false;
         }
 
-        /*
-        if(this.getLiquidType() == Blocks.LAVA) {
-            if(this.isLava(x, y + 1, z)) {
-                return true;
-            }
-            if(this.isLava(x, y + 2, z)) {
-                return true;
-            }
-        } else {
-            if(this.isWater(x, y + 1, z)) {
-                return true;
-            }
-            if(this.isWater(x, y + 2, z)) {
-                return true;
-            }
-        }
-
-         */
-
-        if(this.isLiquid(x, y + 1, z)) {
+        if (this.isLiquid(x, y + 1, z)) {
             return true;
         } else return this.isLiquid(x, y + 2, z);
     }

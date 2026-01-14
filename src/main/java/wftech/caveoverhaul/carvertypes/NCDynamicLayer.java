@@ -19,7 +19,6 @@ public class NCDynamicLayer {
     public FastNoiseLite caveStructureNoise = null;
     private NCLogic cache = null;
 
-
     /*
      * -64 to 0, doubling up to expand the amount of fun caves near the bottom
      */
@@ -53,6 +52,7 @@ public class NCDynamicLayer {
          */
         BlockPos.MutableBlockPos mPos = new BlockPos.MutableBlockPos();
         int earlyXPos = (int) x;
+        int earlyYPos = (int) y;
         int earlyZPos = (int) z;
 
         /*
@@ -60,47 +60,26 @@ public class NCDynamicLayer {
         Think about it like sketching out activity zones. If we're in an activity zone, we then check the activity
         itself. Else, do nothing.
          */
-        /*
-        float caveHeightNoise = getCaveThicknessNoise(earlyXPos, earlyZPos);
-        int caveHeight = 0;
-        caveHeightNoise = ((1f + caveHeightNoise) / 2f) * (float) MAX_CAVE_SIZE_Y;
-        float caveHeightNoiseSquished = ySquish(caveHeightNoise);
-        caveHeight = (int) (caveHeightNoiseSquished * MAX_CAVE_SIZE_Y);
-
-         */
-        int caveHeight = (int) this.cache.getCachedCaveHeight(earlyXPos, earlyZPos);
-        if(caveHeight <= 0) {
+        int caveHeight = (int) this.cache.getCachedCaveHeight(earlyXPos, earlyYPos, earlyZPos);
+        if (caveHeight <= 0) {
             return false;
         }
 
-        /*
-        //Actual noise check for the cave itself
-        float rawNoiseY = getCaveYNoise(earlyXPos, earlyZPos);
-        rawNoiseY = NCDynamicLayer.norm(rawNoiseY);
-        //rawNoiseY = rawNoiseY > 1 ? 1 : (rawNoiseY < 0 ? 0 : rawNoiseY);
-        rawNoiseY = Math.max(0, rawNoiseY);
-        rawNoiseY = Math.min(1, rawNoiseY);
-        int caveY = getCaveY(rawNoiseY);
-         */
-        int caveY = (int) this.cache.getCachedYLevel(earlyXPos, earlyZPos);
-
+        int caveY = (int) this.cache.getCachedYLevel(earlyXPos, earlyYPos, earlyZPos);
 
         return shouldCarveBasedOnHeight(x, y, z, caveHeight, caveY);
     }
 
     // REMOVE
     public static float ySquish(float noiseHeight) {
-        float caveOffset = ((float) MAX_CAVE_SIZE_Y) / 2f; //(float)MAX_CAVE_SIZE_Y/4f; //if 32, becomes 8. Noise is usually a normal distribution with the mean being MAX/2.
-        float k = 2f; //1f = 8 tiles from 1 to 0, 2f = 4 tiles, 16f for an outgoing range of [0, 1]
-        //Use https://www.desmos.com/calculator
-        //desmos equation: y\ =\ 1\ -\ \frac{1}{1\ +\ e^{\left(\left(-x\ +\ 32\right)\right)}}
-        int dist = 2 + 1; //2f = 2, 4f = 1, 1f = 8, 3f = 1.5?, then add a +1 to account for edge squish weirdness
+        float caveOffset = ((float) MAX_CAVE_SIZE_Y) / 2f;
+        float k = 2f;
+        int dist = 2 + 1;
         if (noiseHeight > caveOffset + dist || noiseHeight < caveOffset - dist) {
             return 0f;
         }
 
         return 1f - (float) (1f / (1f + Math.exp(k * (-noiseHeight + (caveOffset)))));
-
     }
 
     public float getNoiseThreshold() {
@@ -108,20 +87,17 @@ public class NCDynamicLayer {
     }
 
     public boolean shouldCarveBasedOnHeight(float x, float y, float z, int caveHeight, int caveY) {
-
-        int y_adj = (int) y;
         int yPos = (int) y;
 
-        if(yPos < caveY || yPos > caveY + caveHeight) {
+        if (yPos < caveY || yPos > caveY + caveHeight) {
             return false;
         }
 
         int xPos = (int) x;
         int zPos = (int) z;
 
-        float noiseFound = getWarpedNoise(xPos, yPos*2, zPos);
+        float noiseFound = getWarpedNoise(xPos, yPos * 2, zPos);
 
         return noiseFound > getNoiseThreshold();
     }
-
 }
