@@ -41,16 +41,6 @@ public class NCDynamicLayer {
         return y <= (maxY + MAX_CAVE_SIZE_Y) && y >= minY;
     }
 
-    //REMOVE
-    public float getCaveThicknessNoise(int x, int z) {
-        return caveSizeNoise.GetNoise(x, z);
-    }
-
-    //Used
-    public float getCaveYNoise(int x, int z) {
-        return caveYNoise.GetNoise(x, z);
-    }
-
     //Used
     public float getWarpedNoise(float x, float y, float z) {
         FloatPos fpos = NoisetypeDomainWarp.getWarpedPosition(x, y, z);
@@ -113,11 +103,7 @@ public class NCDynamicLayer {
 
     }
 
-    public int getCaveY(float noiseValue) {
-        return (int) (((maxY - minY) * noiseValue) + minY);
-    }
-
-    public float getNoiseThreshold(float x, float z) {
+    public float getNoiseThreshold() {
         return 0.15f;
     }
 
@@ -135,7 +121,7 @@ public class NCDynamicLayer {
 
         float noiseFound = getWarpedNoise(xPos, yPos*2, zPos);
 
-        return noiseFound > getNoiseThreshold(xPos, zPos);
+        return noiseFound > getNoiseThreshold();
     }
 
 }

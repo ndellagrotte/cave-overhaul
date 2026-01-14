@@ -46,9 +46,8 @@ public class NCLogic {
         //rawNoiseY = rawNoiseY > 1 ? 1 : (rawNoiseY < 0 ? 0 : rawNoiseY);
         rawNoiseY = Math.max(0, rawNoiseY);
         rawNoiseY = Math.min(1, rawNoiseY);
-        int caveY = getCaveY(rawNoiseY);
 
-        return caveY;
+        return getCaveY(rawNoiseY);
     }
 
     //Used

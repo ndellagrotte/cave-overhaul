@@ -97,9 +97,7 @@ public class NoisetypeDomainWarp {
             warpZ += domainWarp.GetNoise(warpX - warpOffset, warpY - warpOffset, warpZ - warpOffset) * warpSlide;
         }
 
-        FloatPos fPos = new FloatPos(warpX, warpY, warpZ);
-
-        return fPos;
+        return new FloatPos(warpX, warpY, warpZ);
         //return getCaveDetailsNoise(warpX, warpY, warpZ);
     }
 }

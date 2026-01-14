@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A single precision floating point 3 by 3 matrix.
  * Primarily to support 3D rotations.
@@ -35,7 +37,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Matrix3f implements java.io.Serializable, Cloneable {
 
   // Compatible with 1.1
-  static final long serialVersionUID = 329697160112089834L;
+  @Serial
+  private static final long serialVersionUID = 329697160112089834L;
 
   /**
     * The first matrix element in the first row.
@@ -328,36 +331,12 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
 	  }
     }
 
-    /**
-     * Copies the matrix values in the specified row into the vector parameter.
-     * @param row  the matrix row
-     * @param v    the vector into which the matrix row values will be copied
-     */
-    public final void getRow(int row, Vector3f v) {
-         if( row == 0 ) {
-           v.x = m00;
-           v.y = m01;
-           v.z = m02;
-        } else if(row == 1) {
-           v.x = m10;
-           v.y = m11;
-           v.z = m12;
-        } else if(row == 2) {
-           v.x = m20;
-           v.y = m21;
-           v.z = m22;
-        } else {
-          throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3f1"));
-        }
-
-    }
-
-    /**
+	/**
      * Copies the matrix values in the specified row into the array parameter.
      * @param row  the matrix row
      * @param v    the array into which the matrix row values will be copied
      */
-    public final void getRow(int row, float v[]) {
+    public final void getRow(int row, float[] v) {
         if( row == 0 ) {
            v[0] = m00;
            v[1] = m01;
@@ -552,7 +531,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      * @param row the row number to be modified (zero indexed)
      * @param v the replacement row
      */
-    public final void setRow(int row, float v[])
+    public final void setRow(int row, float[] v)
     {
 	switch (row) {
 	case 0:
@@ -642,38 +621,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
 	}
     }
 
-    /**
-     * Sets the specified column of this matrix3f to the three values provided.
-     * @param column the column number to be modified (zero indexed)
-     * @param v the replacement column
-     */
-    public final void setColumn(int column, float v[])
-    {
-	switch (column) {
-	case 0:
-	    this.m00 = v[0];
-	    this.m10 = v[1];
-	    this.m20 = v[2];
-	    break;
-
-	case 1:
-	    this.m01 = v[0];
-	    this.m11 = v[1];
-	    this.m21 = v[2];
-	    break;
-
-	case 2:
-	    this.m02 = v[0];
-	    this.m12 = v[1];
-	    this.m22 = v[2];
-	    break;
-
-	default:
-	    throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3f9"));
-	}
-    }
-
-   /**
+	/**
      * Performs an SVD normalization of this matrix to calculate
      * and return the uniform scale factor. If the matrix has non-uniform
      * scale factors, the largest of the x, y, and z scale factors will
@@ -1055,17 +1003,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
     }
 
 
-    /**
-     * Sets the value of this matrix to the matrix inverse
-     * of the passed matrix m1.
-     * @param m1 the matrix to be inverted
-     */
-    public final void invert(Matrix3f m1)
-    {
-	 invertGeneral( m1);
-    }
-
-    /**
+	/**
      * Inverts this matrix in place.
      */
     public final void invert()
@@ -1081,27 +1019,27 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      * Also note that since this routine is slow anyway, we won't worry
      * about allocating a little bit of garbage.
      */
-    private final void invertGeneral(Matrix3f  m1) {
-	double temp[] = new double[9];
-	double result[] = new double[9];
-	int row_perm[] = new int[3];
-	int i, r, c;
+    private void invertGeneral(Matrix3f m1) {
+	double[] temp = new double[9];
+	double[] result = new double[9];
+	int[] row_perm = new int[3];
+	int i;
 
-	// Use LU decomposition and backsubstitution code specifically
+        // Use LU decomposition and backsubstitution code specifically
 	// for floating-point 3x3 matrices.
 
 	// Copy source matrix to t1tmp
-        temp[0] = (double)m1.m00;
-        temp[1] = (double)m1.m01;
-        temp[2] = (double)m1.m02;
+        temp[0] = m1.m00;
+        temp[1] = m1.m01;
+        temp[2] = m1.m02;
 
-        temp[3] = (double)m1.m10;
-        temp[4] = (double)m1.m11;
-        temp[5] = (double)m1.m12;
+        temp[3] = m1.m10;
+        temp[4] = m1.m11;
+        temp[5] = m1.m12;
 
-        temp[6] = (double)m1.m20;
-        temp[7] = (double)m1.m21;
-        temp[8] = (double)m1.m22;
+        temp[6] = m1.m20;
+        temp[7] = m1.m21;
+        temp[8] = m1.m22;
 
 
 	// Calculate LU decomposition: Is the matrix singular?
@@ -1138,7 +1076,6 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      * pivoting.  The output parameter "even_row_xchg" is 1 when the
      * number of row exchanges is even, or -1 otherwise.  Assumes data
      * type is always double.
-     *
      * This function is similar to luDecomposition, except that it
      * is tuned specifically for 3x3 matrices.
      *
@@ -1289,7 +1226,6 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      * column of "matrix2" in turn and treats it as the right-hand side of the
      * matrix equation Ax = LUx = b.  The solution vector replaces the
      * original column of the matrix.
-     *
      * If "matrix2" is the identity matrix, the procedure replaces its contents
      * with the inverse of the matrix from which "matrix1" was originally
      * derived.
@@ -1342,13 +1278,13 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
 	    matrix2[cv+3*2] /= matrix1[rv+2];
 
 	    rv -= 3;
-	    matrix2[cv+3*1] = (matrix2[cv+3*1] -
+	    matrix2[cv+ 3] = (matrix2[cv+ 3] -
 			    matrix1[rv+2] * matrix2[cv+3*2]) / matrix1[rv+1];
 
 	    rv -= 3;
-	    matrix2[cv+4*0] = (matrix2[cv+3*0] -
-			    matrix1[rv+1] * matrix2[cv+3*1] -
-			    matrix1[rv+2] * matrix2[cv+3*2]) / matrix1[rv+0];
+	    matrix2[cv] = (matrix2[cv] -
+			    matrix1[rv+1] * matrix2[cv+ 3] -
+			    matrix1[rv+2] * matrix2[cv+3*2]) / matrix1[rv];
 
 	}
     }
@@ -1961,7 +1897,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
     /**
      * Returns a hash code value based on the data values in this
      * object.  Two different Matrix3f objects with identical data values
-     * (i.e., Matrix3f.equals returns true) will return the same hash
+     * (i.e., Matrix3f. Equals returns true) will return the same hash
      * code value.  Two objects with different data members may return the
      * same hash value, although this is not likely.
      * @return the integer hash code value

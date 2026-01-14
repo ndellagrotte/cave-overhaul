@@ -1,6 +1,5 @@
 package wftech.caveoverhaul.carvertypes;
 
-import wftech.caveoverhaul.CaveOverhaul;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FabricUtils;
 import wftech.caveoverhaul.utils.Globals;
@@ -20,8 +19,8 @@ public class NCLayerHolder {
     Actual class
      */
 
-    private List<NCDynamicLayer> layers = new ArrayList<>();
-    private int[][] height_min_max_for_each_layer = {
+    private final List<NCDynamicLayer> layers = new ArrayList<>();
+    private final int[][] height_min_max_for_each_layer = {
             {96, 128}, {64, 96}, {32, 64}, //top layers
             {0, 32}, {-32, 0}, //middle layers
             // DO NOT REMOVE THE REPEATED ENTRIES
@@ -56,7 +55,7 @@ public class NCLayerHolder {
     private void addMainLayers(int seed, int min_y, FastNoiseLite genericNoiseStructural) {
         // Load in the predefined segments
         for(int i = 0; i < height_min_max_for_each_layer.length; i++) {
-            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, (i * 3) + 0);
+            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, (i * 3));
             FastNoiseLite genericNoiseHeight = this.genCaveHeight(seed, (i * 3) + 1);
 
             layers.add(new NCDynamicLayer(
@@ -75,9 +74,8 @@ public class NCLayerHolder {
         for(int new_y = -64; new_y > min_y; new_y -= 64 ) {
             int new_min = new_y - 64;
             new_min = Math.max(new_min, min_y); //clamp to min_y
-            int new_max = new_y;
 
-            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, seedOffset + 0);
+            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, seedOffset);
             FastNoiseLite genericNoiseHeight = this.genCaveHeight(seed, seedOffset + 1);
 
             FastNoiseLite genericNoiseThickness2 = this.genThicknessHeight(seed, seedOffset + 3);
@@ -88,7 +86,7 @@ public class NCLayerHolder {
             //Double-up 1
             layers.add(new NCDynamicLayer(
                     new_min,
-                    new_max,
+                    new_y,
                     genericNoiseThickness,
                     genericNoiseHeight,
                     genericNoiseStructural));
@@ -96,7 +94,7 @@ public class NCLayerHolder {
             //Double-up 2
             layers.add(new NCDynamicLayer(
                     new_min,
-                    new_max,
+                    new_y,
                     genericNoiseThickness2,
                     genericNoiseHeight2,
                     genericNoiseStructural));

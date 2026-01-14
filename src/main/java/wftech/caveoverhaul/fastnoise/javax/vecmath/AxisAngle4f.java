@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A four-element axis angle represented by single-precision floating point
  * x,y,z,angle components.  An axis angle is a rotation of angle (radians)
@@ -36,7 +38,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class AxisAngle4f implements java.io.Serializable, Cloneable {
 
   // Compatible with 1.1
-  static final long serialVersionUID = -163246355858070601L;
+  @Serial
+  private static final long serialVersionUID = -163246355858070601L;
 
   /**
    * The x coordinate.
@@ -474,8 +477,7 @@ public class AxisAngle4f implements java.io.Serializable, Cloneable {
            return(this.x == a2.x && this.y == a2.y && this.z == a2.z
             && this.angle == a2.angle);
         }
-        catch (NullPointerException e2) {return false;}
-        catch (ClassCastException   e1) {return false;}
+        catch (NullPointerException | ClassCastException e2) {return false;}
 
     }
 
@@ -502,9 +504,7 @@ public class AxisAngle4f implements java.io.Serializable, Cloneable {
        if((diff<0?-diff:diff) > epsilon) return false;
 
        diff = angle - a1.angle;
-       if((diff<0?-diff:diff) > epsilon) return false;
-
-       return true;
+        return !((diff < 0 ? -diff : diff) > epsilon);
 
     }
 
