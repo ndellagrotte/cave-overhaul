@@ -4,44 +4,40 @@ import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 
 public class NURLogic {
 
-//    private FastNoiseLite domainWarp = null;
-    public FastNoiseLite noiseIsLiquid = null;
+    private final FastNoiseLite domainWarp;
+    public FastNoiseLite noiseIsLiquid;
     public FastNoiseLite noiseShouldCarveBase = null;
     public FastNoiseLite noiseYLevelBase = null;
-
-    //overhead > speed improvements :(
-    //private final HashCache<Long, Float> cacheIsLiquid = new HashCache<Long, Float>(10000);
-    //private final HashCache<Long, Float> cacheYLevel = new HashCache<Long, Float>(10000);
 
     public NURLogic(FastNoiseLite noiseIsLiquid, FastNoiseLite noiseShouldCarveBase, FastNoiseLite noiseYLevelBase) {
         this.noiseIsLiquid = noiseIsLiquid;
         this.noiseShouldCarveBase = noiseShouldCarveBase;
         this.noiseYLevelBase = noiseYLevelBase;
+
+        // Domain warp setup - tweak these values for different effects
+        FastNoiseLite warp = new FastNoiseLite(12345); // hardcoded seed for testing
+        warp.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+        warp.SetDomainWarpAmp(50.0f);  // higher = more warping
+        warp.SetFrequency(0.01f);       // lower = larger warp features
+        this.domainWarp = warp;
     }
 
     public float getCaveDetailsNoise2D(int x, int z) {
-        //return cacheIsLiquid.get(BlockPos.asLong(x, 0, z), () -> noiseIsLiquid.GetNoise(x, z));
+        if (domainWarp != null) {
+            float[] coords = {x, z};
+            domainWarp.DomainWarp(coords);
+            return noiseIsLiquid.GetNoise(coords[0], coords[1]);
+        }
         return noiseIsLiquid.GetNoise(x, z);
     }
 
     public float getCaveYNoise(int x, int z) {
-        //return cacheYLevel.get(BlockPos.asLong(x, 0, z), () -> noiseYLevelBase.GetNoise(x, z));
+        if (domainWarp != null) {
+            float[] coords = {x, z};
+            domainWarp.DomainWarp(coords);
+            return noiseYLevelBase.GetNoise(coords[0], coords[1]);
+        }
         return noiseYLevelBase.GetNoise(x, z);
     }
 
-    /*
-    OOB test, was never properly implemented.
-    Sratch it?
-     */
-//    public float getShouldCarveNoise(int x, int z) {
-//        return noiseShouldCarveBase.GetNoise(x, z);
-//    }
-//
-//    public FastNoiseLite getDomainWarp() {
-//        return domainWarp;
-//    }
-//
-//    public void setDomainWarp(FastNoiseLite domainWarp) {
-//        this.domainWarp = domainWarp;
-//    }
 }
