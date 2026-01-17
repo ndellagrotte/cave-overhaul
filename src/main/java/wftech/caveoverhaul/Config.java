@@ -10,7 +10,7 @@ Fake YAML because I'm a fake person
  */
 public class Config {
 
-    public static HashMap<String, Float> settings = new HashMap<String, Float>();
+    public static HashMap<String, Float> settings = new HashMap<>();
 
     public static String KEY_CAVE_CHANCE = "cave_chance";
     public static String KEY_CAVE_AIR_EXPOSURE = "cave_air_exposure_chance";
@@ -131,7 +131,7 @@ public class Config {
         /*
         Collect known keys
          */
-        HashSet<String> discoveredKeysSet = new HashSet<String>();
+        HashSet<String> discoveredKeysSet = new HashSet<>();
         List<String> boolKeysArr = Arrays.asList(boolKeys);
 //        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 //            // Read the content of the file
@@ -217,7 +217,7 @@ public class Config {
                     writer.write(missingKey + "=" + DEFAULT_VALUES.get(missingKey) + "\n");
                 }
             } catch (IOException e) {
-                LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to add missing key " + missingKey + " to config!");
+                LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to add missing key {} to config!", missingKey);
                 for(StackTraceElement line: e.getStackTrace()){
                     LoggerFactory.getLogger("caveoverhaul").error(line.toString());
                 }
@@ -279,7 +279,7 @@ public class Config {
         HashSet<String> discoveredKeysSet = gatherAndInitSettings(file);
 
         //Re-add missing keys or add new missing keys
-        HashSet<String> missingKeysAsSet = new HashSet<String>(Arrays.asList(validKeys));
+        HashSet<String> missingKeysAsSet = new HashSet<>(Arrays.asList(validKeys));
         missingKeysAsSet.removeAll(discoveredKeysSet);
         fixConfig(file, missingKeysAsSet);
 

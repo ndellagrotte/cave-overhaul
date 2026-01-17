@@ -11,7 +11,7 @@ import wftech.caveoverhaul.utils.FabricUtils;
 public class IntegratedServerMixin {
 
     //Thread.currentThread().getThreadGroup();
-    @Inject(method="initServer()Z", at=@At("HEAD"), remap=true)
+    @Inject(method="initServer()Z", at=@At("HEAD"))
     private void initServerMixin(CallbackInfoReturnable<Boolean> cir) {
         FabricUtils.server = (IntegratedServer) (Object) this;
     }

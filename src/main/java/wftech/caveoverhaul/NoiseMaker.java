@@ -2,7 +2,6 @@ package wftech.caveoverhaul;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderOwner;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -66,22 +65,17 @@ public class NoiseMaker {
         //preferred_holder = "";
         //might need caves/pillars
         //overworld/caves deletes everything except cave entrances
-        String[] preferred_holders = {""};
+        //String[] preferred_holders = {""};
 
-        /*
-        for(String preferred_holder: preferred_holders) {
-            if(holder.contains(preferred_holder)) {
-                return true;
-            }
-        }
+//        for(String preferred_holder: preferred_holders) {
+//            if(holder.contains(preferred_holder)) {
+//                return true;
+//            }
+//        }
 
-         */
-
-        /*
-        List of entries where caves still appear:
-        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / minecraft:overworld/noise_router/final_density]'
-        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / tectonic:overworld/caves]'
-         */
+//        List of entries where caves still appear:
+//        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / minecraft:overworld/noise_router/final_density]'
+//        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / tectonic:overworld/caves]'
 
 
         return Objects.equals(holder, "") || holder.trim().isEmpty() || holder.contains("overworld/caves");
@@ -89,8 +83,8 @@ public class NoiseMaker {
     }
 
     public static DensityFunction copyDF(DensityFunction func, String curHolder) {
-        //CaveOverhaul.LOGGER.error("-> 1Current holder = " + curHolder);
 
+        //CaveOverhaul.LOGGER.error("-> 1Current holder = " + curHolder);
         //CaveOverhaul.LOGGER.error("***** " + func);
 
         switch (func) {
@@ -166,20 +160,18 @@ public class NoiseMaker {
                 if (heldFunc instanceof Holder.Direct<DensityFunction>(DensityFunction newFunc)) {
                     //CaveOverhaul.LOGGER.error("-> Iter on " + newFunc);
                     newFunc = copyDF(newFunc, curHolder);
-                    heldFunc = new Holder.Direct<DensityFunction>(newFunc);
+                    heldFunc = new Holder.Direct<>(newFunc);
 
                 } else if (heldFunc instanceof Holder.Reference<DensityFunction> referenceHolder) {
                     DensityFunction newFunc = referenceHolder.value();
-                    newFunc = copyDF(newFunc, curHolder);
-                    Holder.Reference.Type type = referenceHolder.type;
-                    HolderOwner<DensityFunction> owner = referenceHolder.owner;
+                    copyDF(newFunc, curHolder);
                     DensityFunction value = referenceHolder.value;
                     ResourceKey<DensityFunction> key = referenceHolder.key;
                     String newHolderName = key != null ? key.toString() : "";
                     assert value != null;
                     value = copyDF(value, newHolderName);
                     //retdf = new Holder.Reference<DensityFunction>(type, owner, key, value);
-                    heldFunc = new Holder.Direct<DensityFunction>(value);
+                    heldFunc = new Holder.Direct<>(value);
                 }
 
                 return new DensityFunctions.HolderHolder(heldFunc);
@@ -268,7 +260,7 @@ public class NoiseMaker {
                 return new DensityFunctions.Noise(retdf, t_func.xzScale(), t_func.yScale());
 
             }
-            case DensityFunctions.EndIslandDensityFunction t_func -> {
+            case DensityFunctions.EndIslandDensityFunction ignored -> {
                 return func;
             }
             case DensityFunctions.WeirdScaledSampler t_func -> {
@@ -329,7 +321,7 @@ public class NoiseMaker {
                 //int fromY, int toY, double fromValue, double toValue
             }
             default ->
-                    CaveOverhaul.LOGGER.debug("CaveOverhaul: Found other-type density function. Report this to the CaveOverhaul mod maker please -> " + func.getClass());
+                    CaveOverhaul.LOGGER.debug("CaveOverhaul: Found other-type density function. Report this to the CaveOverhaul mod maker please -> {}", func.getClass());
         }
 
         return func;
