@@ -12,7 +12,6 @@ import org.jspecify.annotations.NonNull;
 import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
-//public class AirOnlyAquifer implements Aquifer {
 public class AirOnlyAquifer implements Aquifer {
 
 	protected ChunkAccess level;

@@ -62,14 +62,14 @@ public class FastNoiseLite
         Perlin,
         ValueCubic,
         Value
-    };
+    }
 
     public enum RotationType3D
     {
         None,
         ImproveXYPlanes,
         ImproveXZPlanes
-    };
+    }
 
     public enum FractalType
     {
@@ -79,7 +79,7 @@ public class FastNoiseLite
         PingPong,
         DomainWarpProgressive,
         DomainWarpIndependent
-    };
+    }
 
     public enum CellularDistanceFunction
     {
@@ -87,7 +87,7 @@ public class FastNoiseLite
         EuclideanSq,
         Manhattan,
         Hybrid
-    };
+    }
 
     public enum CellularReturnType
     {
@@ -98,14 +98,14 @@ public class FastNoiseLite
         Distance2Sub,
         Distance2Mul,
         Distance2Div
-    };
+    }
 
     public enum DomainWarpType
     {
         OpenSimplex2,
         OpenSimplex2Reduced,
         BasicGrid
-    };
+    }
 
     private enum TransformType3D
     {
@@ -113,7 +113,7 @@ public class FastNoiseLite
         ImproveXYPlanes,
         ImproveXZPlanes,
         DefaultOpenSimplex2
-    };
+    }
 
     private int mSeed = 1337;
     private float mFrequency = 0.01f;
@@ -516,23 +516,14 @@ public class FastNoiseLite
 
     private float GenNoiseSingle(int seed, /*FNLfloat*/ float x, /*FNLfloat*/ float y, /*FNLfloat*/ float z)
     {
-        switch (mNoiseType)
-        {
-            case OpenSimplex2:
-                return SingleOpenSimplex2(seed, x, y, z);
-            case OpenSimplex2S:
-                return SingleOpenSimplex2S(seed, x, y, z);
-            case Cellular:
-                return SingleCellular(seed, x, y, z);
-            case Perlin:
-                return SinglePerlin(seed, x, y, z);
-            case ValueCubic:
-                return SingleValueCubic(seed, x, y, z);
-            case Value:
-                return SingleValue(seed, x, y, z);
-            default:
-                return 0;
-        }
+        return switch (mNoiseType) {
+            case OpenSimplex2 -> SingleOpenSimplex2(seed, x, y, z);
+            case OpenSimplex2S -> SingleOpenSimplex2S(seed, x, y, z);
+            case Cellular -> SingleCellular(seed, x, y, z);
+            case Perlin -> SinglePerlin(seed, x, y, z);
+            case ValueCubic -> SingleValueCubic(seed, x, y, z);
+            case Value -> SingleValue(seed, x, y, z);
+        };
     }
 
 
@@ -677,9 +668,9 @@ public class FastNoiseLite
         int i = FastRound(x);
         int j = FastRound(y);
         int k = FastRound(z);
-        float x0 = (float)(x - i);
-        float y0 = (float)(y - j);
-        float z0 = (float)(z - k);
+        float x0 = x - i;
+        float y0 = y - j;
+        float z0 = z - k;
 
         int xNSign = (int)(-1.0f - x0) | 1;
         int yNSign = (int)(-1.0f - y0) | 1;
@@ -773,9 +764,9 @@ public class FastNoiseLite
         int i = FastFloor(x);
         int j = FastFloor(y);
         int k = FastFloor(z);
-        float xi = (float)(x - i);
-        float yi = (float)(y - j);
-        float zi = (float)(z - k);
+        float xi = (x - i);
+        float yi = (y - j);
+        float zi = (z - k);
 
         i *= PrimeX;
         j *= PrimeY;
@@ -1466,9 +1457,9 @@ public class FastNoiseLite
         int i = FastRound(x);
         int j = FastRound(y);
         int k = FastRound(z);
-        float x0 = (float)x - i;
-        float y0 = (float)y - j;
-        float z0 = (float)z - k;
+        float x0 = x - i;
+        float y0 = y - j;
+        float z0 = z - k;
 
         int xNSign = (int)(-x0 - 1.0f) | 1;
         int yNSign = (int)(-y0 - 1.0f) | 1;
