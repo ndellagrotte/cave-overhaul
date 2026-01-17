@@ -386,7 +386,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      * @param column  the matrix column
      * @param v    the array into which the matrix row values will be copied
      */
-    public final void getColumn(int column, float v[]) {
+    public final void getColumn(int column, float[] v) {
         if( column == 0 ) {
            v[0] = m00;
            v[1] = m10;
@@ -844,8 +844,8 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
          float ay = a1.y*mag;
          float az = a1.z*mag;
 
-         float sinTheta = (float)Math.sin((float)a1.angle);
-         float cosTheta = (float)Math.cos((float)a1.angle);
+         float sinTheta = (float)Math.sin(a1.angle);
+         float cosTheta = (float)Math.cos(a1.angle);
          float t = (float)1.0 - cosTheta;
 
          float xz = ax * az;
@@ -1089,7 +1089,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
     static boolean luDecomposition(double[] matrix0,
 				   int[] row_perm) {
 
-	double row_scale[] = new double[3];
+	double[] row_scale = new double[3];
 
 	// Determine implicit scaling information by looping over rows
 	{
@@ -1860,8 +1860,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
              && this.m10 == m2.m10 && this.m11 == m2.m11 && this.m12 == m2.m12
              && this.m20 == m2.m20 && this.m21 == m2.m21 && this.m22 == m2.m22);
         }
-        catch (ClassCastException   e1) { return false; }
-        catch (NullPointerException e2) { return false; }
+        catch (ClassCastException | NullPointerException e1) { return false; }
     }
 
    /**
@@ -1875,9 +1874,8 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      */
     public boolean epsilonEquals(Matrix3f m1, float epsilon)
     {
-        boolean status = true;
+        boolean status = !(Math.abs(this.m00 - m1.m00) > epsilon);
 
-        if( Math.abs( this.m00 - m1.m00) > epsilon) status = false;
         if( Math.abs( this.m01 - m1.m01) > epsilon) status = false;
         if( Math.abs( this.m02 - m1.m02) > epsilon) status = false;
 
@@ -2022,8 +2020,6 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
         tmp[8] = m22;
         Matrix3d.compute_svd(tmp, scales, rot);
 
-        return;
-
     }
 
     /**
@@ -2036,7 +2032,7 @@ public class Matrix3f implements java.io.Serializable, Cloneable {
      */
     @Override
     public Object clone() {
-	Matrix3f m1 = null;
+	Matrix3f m1;
 	try {
 	    m1 = (Matrix3f)super.clone();
 	} catch (CloneNotSupportedException e) {

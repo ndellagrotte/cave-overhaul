@@ -26,6 +26,8 @@
 
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
+import java.io.Serial;
+
 /**
  * A four-element axis angle represented by double-precision floating point
  * x,y,z,angle components.  An axis angle is a rotation of angle (radians)
@@ -36,7 +38,8 @@ public class AxisAngle4d implements java.io.Serializable, Cloneable {
 
 
     // Compatible with 1.1
-    static final long serialVersionUID = 3644296204459140589L;
+    @Serial
+    private static final long serialVersionUID = 3644296204459140589L;
 
     /**
      * The x coordinate.
@@ -61,79 +64,8 @@ public class AxisAngle4d implements java.io.Serializable, Cloneable {
     // Fixed to issue 538
     final static double EPS = 1.0e-12;
 
-    /**
-     * Constructs and initializes an AxisAngle4d from the specified
-     * x, y, z, and angle.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     * @param angle the angle of rotation in radians
-     */
-    public AxisAngle4d(double x, double y, double z, double angle)
-    {
-	this.x = x;
-	this.y = y;
-	this.z = z;
-	this.angle = angle;
-    }
 
-
-    /**
-     * Constructs and initializes an AxisAngle4d from the components
-     * contained in the array.
-     * @param a  the array of length 4 containing x,y,z,angle in order
-     */
-        public AxisAngle4d(double[] a)
-     {
-         this.x = a[0];
-         this.y = a[1];
-         this.z = a[2];
-         this.angle = a[3];
-     }
-    /**
-     * Constructs and initializes an AxisAngle4d from the specified AxisAngle4d.
-     * @param a1 the AxisAngle4d containing the initialization x y z angle data
-     */
-    public AxisAngle4d(AxisAngle4d a1)
-    {
-	this.x = a1.x;
-	this.y = a1.y;
-	this.z = a1.z;
-	this.angle = a1.angle;
-    }
-
-
-    /**
-     * Constructs and initializes an AxisAngle4d from the specified
-     * AxisAngle4f.
-     * @param a1 the AxisAngle4f containing the initialization x y z angle data
-     */
-    public AxisAngle4d(AxisAngle4f a1)
-    {
-	this.x = a1.x;
-	this.y = a1.y;
-	this.z = a1.z;
-	this.angle = a1.angle;
-    }
-
-
-    /**
-     * Constructs and initializes an AxisAngle4d from the specified
-     * axis and angle.
-     * @param axis the axis
-     * @param angle the angle of rotation in radian
-     *
-     * @since vecmath 1.2
-     */
-    public AxisAngle4d(Vector3d axis, double angle) {
-	this.x = axis.x;
-	this.y = axis.y;
-	this.z = axis.z;
-	this.angle = angle;
-    }
-
-
-    /**
+	/**
      * Constructs and initializes an AxisAngle4d to (0,0,1,0).
      */
     public AxisAngle4d()
@@ -318,9 +250,9 @@ public class AxisAngle4d implements java.io.Serializable, Cloneable {
      */
     public final void set(Matrix3f m1)
     {
-        x = (float)(m1.m21 - m1.m12);
-        y = (float)(m1.m02 - m1.m20);
-        z = (float)(m1.m10 - m1.m01);
+        x = m1.m21 - m1.m12;
+        y = m1.m02 - m1.m20;
+        z = m1.m10 - m1.m01;
         double mag = x*x + y*y + z*z;
 
 	if (mag > EPS ) {

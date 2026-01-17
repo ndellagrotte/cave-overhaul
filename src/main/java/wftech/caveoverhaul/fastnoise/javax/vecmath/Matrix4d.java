@@ -630,7 +630,7 @@ public class Matrix4d implements java.io.Serializable, Cloneable {
      * @param row the matrix row
      * @param v   the array into which the matrix row values will be copied
      */
-    public final void getRow(int row, double v[]) {
+    public final void getRow(int row, double[] v) {
         if (row == 0) {
             v[0] = m00;
             v[1] = m01;
@@ -1651,8 +1651,8 @@ public class Matrix4d implements java.io.Serializable, Cloneable {
             double ay = a1.y * mag;
             double az = a1.z * mag;
 
-            double sinTheta = Math.sin((double) a1.angle);
-            double cosTheta = Math.cos((double) a1.angle);
+            double sinTheta = Math.sin(a1.angle);
+            double cosTheta = Math.cos(a1.angle);
             double t = 1.0 - cosTheta;
 
             double xz = ax * az;

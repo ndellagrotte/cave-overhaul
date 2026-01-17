@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A single precision floating point 4 by 4 matrix.
  * Primarily to support 3D rotations.
@@ -35,7 +37,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Matrix4f implements java.io.Serializable, Cloneable {
 
     // Compatible with 1.1
-    static final long serialVersionUID = -8405036035410109353L;
+    @Serial
+    private static final long serialVersionUID = -8405036035410109353L;
 
     /**
      *  The first element of the first row.
@@ -1258,8 +1261,8 @@ public class Matrix4f implements java.io.Serializable, Cloneable {
          float ay = a1.y*mag;
          float az = a1.z*mag;
 
-         float sinTheta = (float)Math.sin((double)a1.angle);
-         float cosTheta = (float)Math.cos((double)a1.angle);
+         float sinTheta = (float)Math.sin(a1.angle);
+         float cosTheta = (float)Math.cos(a1.angle);
          float t = 1.0f - cosTheta;
 
          float xz = ax * az;
@@ -3010,7 +3013,7 @@ public class Matrix4f implements java.io.Serializable, Cloneable {
         this.m32 = -m1.m32;
         this.m33 = -m1.m33;
     }
-    private void getScaleRotate(double scales[], double[] rots) {
+    private void getScaleRotate(double[] scales, double[] rots) {
 
 	double[]    tmp = new double[9];  // scratch matrix
 	tmp[0] = m00;

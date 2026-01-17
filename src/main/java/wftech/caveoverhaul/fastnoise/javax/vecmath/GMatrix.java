@@ -124,33 +124,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
     }
 
     /**
-     * Sets the value of this matrix to the result of multiplying itself
-     * with matrix m1 (this = this * m1).
-     *
-     * @param m1 the other matrix
-     */
-    public final void mul(GMatrix m1) {
-        int i, j, k;
-
-        if (nCol != m1.nRow || nCol != m1.nCol)
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix0"));
-
-        double[][] tmp = new double[nRow][nCol];
-
-        for (i = 0; i < nRow; i++) {
-            for (j = 0; j < nCol; j++) {
-                tmp[i][j] = 0.0;
-                for (k = 0; k < nCol; k++) {
-                    tmp[i][j] += values[i][k] * m1.values[k][j];
-                }
-            }
-        }
-
-        values = tmp;
-    }
-
-    /**
      * Sets the value of this matrix to the result of multiplying
      * the two argument matrices together (this = m1 * m2).
      *
@@ -176,33 +149,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
         }
 
         values = tmp;
-    }
-
-    /**
-     * Computes the outer product of the two vectors; multiplies the
-     * the first vector by the transpose of the second vector and places
-     * the matrix result into this matrix.  This matrix must be
-     * be as big or bigger than getSize(v1)xgetSize(v2).
-     *
-     * @param v1 the first vector, treated as a row vector
-     * @param v2 the second vector, treated as a column vector
-     */
-    public final void mul(GVector v1, GVector v2) {
-        int i, j;
-
-        if (nRow < v1.getSize())
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix2"));
-
-        if (nCol < v2.getSize())
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix3"));
-
-        for (i = 0; i < v1.getSize(); i++) {
-            for (j = 0; j < v2.getSize(); j++) {
-                values[i][j] = v1.values[i] * v2.values[j];
-            }
-        }
     }
 
     /**
@@ -362,34 +308,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
      */
     public final void invert() {
         invertGeneral(this);
-    }
-
-    /**
-     * Changes the size of this matrix dynamically.  If the size is increased
-     * no data values will be lost.  If the size is decreased, only those data
-     * values whose matrix positions were eliminated will be lost.
-     *
-     * @param nRow number of desired rows in this matrix
-     * @param nCol number of desired columns in this matrix
-     */
-    public final void setSize(int nRow, int nCol) {
-        double[][] tmp = new double[nRow][nCol];
-        int i, j, maxRow, maxCol;
-
-        maxRow = Math.min(this.nRow, nRow);
-
-        maxCol = Math.min(this.nCol, nCol);
-
-        for (i = 0; i < maxRow; i++) {
-            for (j = 0; j < maxCol; j++) {
-                tmp[i][j] = values[i][j];
-            }
-        }
-
-        this.nRow = nRow;
-        this.nCol = nCol;
-
-        values = tmp;
     }
 
     /**
@@ -911,43 +829,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
         }
     }
 
-	/**
-     * Multiplies the transpose of matrix m1 times the transpose of matrix
-     * m2, and places the result into this.
-     *
-     * @param m1 The matrix on the left hand side of the multiplication
-     * @param m2 The matrix on the right hand side of the multiplication
-     */
-    public final void mulTransposeBoth(GMatrix m1, GMatrix m2) {
-        int i, j, k;
-
-        if (m1.nRow != m2.nCol || nRow != m1.nCol || nCol != m2.nRow)
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix14"));
-
-        if (m1 == this || m2 == this) {
-            double[][] tmp = new double[nRow][nCol];
-            for (i = 0; i < nRow; i++) {
-                for (j = 0; j < nCol; j++) {
-                    tmp[i][j] = 0.0;
-                    for (k = 0; k < m1.nRow; k++) {
-                        tmp[i][j] += m1.values[k][i] * m2.values[j][k];
-                    }
-                }
-            }
-            values = tmp;
-        } else {
-            for (i = 0; i < nRow; i++) {
-                for (j = 0; j < nCol; j++) {
-                    values[i][j] = 0.0;
-                    for (k = 0; k < m1.nRow; k++) {
-                        values[i][j] += m1.values[k][i] * m2.values[j][k];
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Multiplies matrix m1 times the transpose of matrix m2, and
      * places the result into this.
@@ -1024,59 +905,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
         }
     }
 
-
-    /**
-     * Transposes this matrix in place.
-     */
-    public final void transpose() {
-        int i, j;
-
-        if (nRow != nCol) {
-            double[][] tmp;
-            i = nRow;
-            nRow = nCol;
-            nCol = i;
-            tmp = new double[nRow][nCol];
-            for (i = 0; i < nRow; i++) {
-                for (j = 0; j < nCol; j++) {
-                    tmp[i][j] = values[j][i];
-                }
-            }
-            values = tmp;
-        } else {
-            double swap;
-            for (i = 0; i < nRow; i++) {
-                for (j = 0; j < i; j++) {
-                    swap = values[i][j];
-                    values[i][j] = values[j][i];
-                    values[j][i] = swap;
-                }
-            }
-        }
-    }
-
-    /**
-     * Places the matrix values of the transpose of matrix m1 into this matrix.
-     *
-     * @param m1 the matrix to be transposed (but not modified)
-     */
-    public final void transpose(GMatrix m1) {
-        int i, j;
-
-        if (nRow != m1.nCol || nCol != m1.nRow)
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix17"));
-
-        if (m1 != this) {
-            for (i = 0; i < nRow; i++) {
-                for (j = 0; j < nCol; j++) {
-                    values[i][j] = m1.values[j][i];
-                }
-            }
-        } else {
-            transpose();
-        }
-    }
 
     /**
      * Returns a string that contains the values of this GMatrix.
@@ -1227,173 +1055,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
             }
         }
         return true;
-    }
-
-    /**
-     * Returns the trace of this matrix.
-     *
-     * @return the trace of this matrix
-     */
-    public final double trace() {
-        int i, l;
-        double t;
-
-        l = Math.min(nRow, nCol);
-
-        t = 0.0;
-        for (i = 0; i < l; i++) {
-            t += values[i][i];
-        }
-        return t;
-    }
-
-    /**
-     * Finds the singular value decomposition (SVD) of this matrix
-     * such that this = U*W*transpose(V); and returns the rank of
-     * this matrix; the values of U,W,V are all overwritten.  Note
-     * that the matrix V is output as V, and
-     * not transpose(V).  If this matrix is mxn, then U is mxm, W
-     * is a diagonal matrix that is mxn, and V is nxn.  Using the
-     * notation W = diag(w), then the inverse of this matrix is:
-     * inverse(this) = V*diag(1/w)*tranpose(U), where diag(1/w)
-     * is the same matrix as W except that the reciprocal of each
-     * of the diagonal components is used.
-     *
-     * @param U The computed U matrix in the equation this = U*W*transpose(V)
-     * @param W The computed W matrix in the equation this = U*W*transpose(V)
-     * @param V The computed V matrix in the equation this = U*W*transpose(V)
-     * @return The rank of this matrix.
-     */
-    public final int SVD(GMatrix U, GMatrix W, GMatrix V) {
-        // check for consistancy in dimensions
-        if (nCol != V.nCol || nCol != V.nRow) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix18"));
-        }
-
-        if (nRow != U.nRow || nRow != U.nCol) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix25"));
-        }
-
-        if (nRow != W.nRow || nCol != W.nCol) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix26"));
-        }
-
-        // Fix ArrayIndexOutOfBounds for 2x2 matrices, which partially
-        // addresses bug 4348562 for J3D 1.2.1.
-        //
-        // Does *not* fix the following problems reported in 4348562,
-        // which will wait for J3D 1.3:
-        //
-        //   1) no output of W
-        //   2) wrong transposition of U
-        //   3) wrong results for 4x4 matrices
-        //   4) slow performance
-        if (nRow == 2 && nCol == 2) {
-            if (values[1][0] == 0.0) {
-                U.setIdentity();
-                V.setIdentity();
-
-                if (values[0][1] == 0.0) {
-                    return 2;
-                }
-
-                double[] sinl = new double[1];
-                double[] sinr = new double[1];
-                double[] cosl = new double[1];
-                double[] cosr = new double[1];
-                double[] single_values = new double[2];
-
-                single_values[0] = values[0][0];
-                single_values[1] = values[1][1];
-
-                compute_2X2(values[0][0], values[0][1], values[1][1],
-                        single_values, sinl, cosl, sinr, cosr);
-
-                update_u(0, U, cosl, sinl);
-                update_v(0, V, cosr, sinr);
-
-                return 2;
-            }
-            // else call computeSVD() and check for 2x2 there
-        }
-
-        return computeSVD(this, U, W, V);
-    }
-
-    /**
-     * LU Decomposition: this matrix must be a square matrix and the
-     * LU GMatrix parameter must be the same size as this matrix.
-     * The matrix LU will be overwritten as the combination of a
-     * lower diagonal and upper diagonal matrix decompostion of this
-     * matrix; the diagonal
-     * elements of L (unity) are not stored.  The GVector parameter
-     * records the row permutation effected by the partial pivoting,
-     * and is used as a parameter to the GVector method LUDBackSolve
-     * to solve sets of linear equations.
-     * This method returns +/- 1 depending on whether the number
-     * of row interchanges was even or odd, respectively.
-     *
-     * @param LU          The matrix into which the lower and upper decompositions
-     *                    will be placed.
-     * @param permutation The row permutation effected by the partial
-     *                    pivoting
-     * @return +-1 depending on whether the number of row interchanges
-     * was even or odd respectively
-     */
-    public final int LUD(GMatrix LU, GVector permutation) {
-        int size = LU.nRow * LU.nCol;
-        double[] temp = new double[size];
-        int[] even_row_exchange = new int[1];
-        int[] row_perm = new int[LU.nRow];
-        int i, j;
-
-        if (nRow != nCol) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix19"));
-        }
-
-        if (nRow != LU.nRow) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix27"));
-        }
-
-        if (nCol != LU.nCol) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix27"));
-        }
-
-        if (LU.nRow != permutation.getSize()) {
-            throw new MismatchedSizeException
-                    (VecMathI18N.getString("GMatrix20"));
-        }
-
-        for (i = 0; i < nRow; i++) {
-            for (j = 0; j < nCol; j++) {
-                temp[i * nCol + j] = values[i][j];
-            }
-        }
-
-        // Calculate LU decomposition: Is the matrix singular?
-        if (luDecomposition(LU.nRow, temp, row_perm, even_row_exchange)) {
-            // Matrix has no inverse
-            throw new SingularMatrixException
-                    (VecMathI18N.getString("GMatrix21"));
-        }
-
-        for (i = 0; i < nRow; i++) {
-            for (j = 0; j < nCol; j++) {
-                LU.values[i][j] = temp[i * nCol + j];
-            }
-        }
-
-        for (i = 0; i < LU.nRow; i++) {
-            permutation.values[i] = (double) row_perm[i];
-        }
-
-        return even_row_exchange[0];
     }
 
     /**
@@ -1684,300 +1345,6 @@ public class GMatrix implements java.io.Serializable, Cloneable {
         }
     }
 
-    static int computeSVD(GMatrix mat, GMatrix U, GMatrix W, GMatrix V) {
-        int i, j, k;
-        int nr, nc, si;
-
-        int rank;
-        double mag, scale, t;
-        int eLength, sLength, vecLength;
-
-        GMatrix tmp = new GMatrix(mat.nRow, mat.nCol);
-        GMatrix u = new GMatrix(mat.nRow, mat.nCol);
-        GMatrix v = new GMatrix(mat.nRow, mat.nCol);
-        GMatrix m = new GMatrix(mat);
-
-        // compute the number of singular values
-        if (m.nRow >= m.nCol) {
-            sLength = m.nCol;
-            eLength = m.nCol - 1;
-        } else {
-            sLength = m.nRow;
-            eLength = m.nRow;
-        }
-
-        vecLength = Math.max(m.nRow, m.nCol);
-
-        double[] vec = new double[vecLength];
-        double[] single_values = new double[sLength];
-        double[] e = new double[eLength];
-
-        if (debug) {
-            System.out.println("input to compute_svd = \n" + m.toString());
-        }
-
-        U.setIdentity();
-        V.setIdentity();
-
-        nr = m.nRow;
-        nc = m.nCol;
-
-        // householder reduction
-        for (si = 0; si < sLength; si++) {
-            // for each singular value
-
-            if (nr > 1) {
-                // zero out column
-                if (debug)
-                    System.out.println
-                            ("*********************** U ***********************\n");
-
-                // compute reflector
-                mag = 0.0;
-                for (i = 0; i < nr; i++) {
-                    mag += m.values[i + si][si] * m.values[i + si][si];
-                    if (debug)
-                        System.out.println
-                                ("mag = " + mag + " matrix.dot = " +
-                                        m.values[i + si][si] * m.values[i + si][si]);
-                }
-
-                mag = Math.sqrt(mag);
-                if (m.values[si][si] == 0.0) {
-                    vec[0] = mag;
-                } else {
-                    vec[0] = m.values[si][si] + d_sign(mag, m.values[si][si]);
-                }
-
-                for (i = 1; i < nr; i++) {
-                    vec[i] = m.values[si + i][si];
-                }
-
-                scale = 0.0;
-                for (i = 0; i < nr; i++) {
-                    if (debug)
-                        System.out.println("vec[" + i + "]=" + vec[i]);
-
-                    scale += vec[i] * vec[i];
-                }
-
-                scale = 2.0 / scale;
-                if (debug)
-                    System.out.println("scale = " + scale);
-
-                for (j = si; j < m.nRow; j++) {
-                    for (k = si; k < m.nRow; k++) {
-                        u.values[j][k] = -scale * vec[j - si] * vec[k - si];
-                    }
-                }
-
-                for (i = si; i < m.nRow; i++) {
-                    u.values[i][i] += 1.0;
-                }
-
-                // compute s
-                t = 0.0;
-                for (i = si; i < m.nRow; i++) {
-                    t += u.values[si][i] * m.values[i][si];
-                }
-                m.values[si][si] = t;
-
-                // apply reflector
-                for (j = si; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        tmp.values[j][k] = 0.0;
-                        for (i = si; i < m.nCol; i++) {
-                            tmp.values[j][k] += u.values[j][i] * m.values[i][k];
-                        }
-                    }
-                }
-
-                for (j = si; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        m.values[j][k] = tmp.values[j][k];
-                    }
-                }
-
-                if (debug) {
-                    System.out.println("U =\n" + U.toString());
-                    System.out.println("u =\n" + u.toString());
-                }
-
-                // update U matrix
-                for (j = si; j < m.nRow; j++) {
-                    for (k = 0; k < m.nCol; k++) {
-                        tmp.values[j][k] = 0.0;
-                        for (i = si; i < m.nCol; i++) {
-                            tmp.values[j][k] += u.values[j][i] * U.values[i][k];
-                        }
-                    }
-                }
-
-                for (j = si; j < m.nRow; j++) {
-                    for (k = 0; k < m.nCol; k++) {
-                        U.values[j][k] = tmp.values[j][k];
-                    }
-                }
-
-                if (debug) {
-                    System.out.println("single_values[" + si + "] =\n" +
-                            single_values[si]);
-                    System.out.println("m =\n" + m.toString());
-                    System.out.println("U =\n" + U.toString());
-                }
-
-                nr--;
-            }
-
-            if (nc > 2) {
-                // zero out row
-                if (debug)
-                    System.out.println
-                            ("*********************** V ***********************\n");
-
-                mag = 0.0;
-                for (i = 1; i < nc; i++) {
-                    mag += m.values[si][si + i] * m.values[si][si + i];
-                }
-
-                if (debug)
-                    System.out.println("mag = " + mag);
-
-                // generate the reflection vector, compute the first entry and
-                // copy the rest from the row to be zeroed
-                mag = Math.sqrt(mag);
-                if (m.values[si][si + 1] == 0.0) {
-                    vec[0] = mag;
-                } else {
-                    vec[0] = m.values[si][si + 1] +
-                            d_sign(mag, m.values[si][si + 1]);
-                }
-
-                for (i = 1; i < nc - 1; i++) {
-                    vec[i] = m.values[si][si + i + 1];
-                }
-
-                // use reflection vector to compute v matrix
-                scale = 0.0;
-                for (i = 0; i < nc - 1; i++) {
-                    if (debug) System.out.println("vec[" + i + "]=" + vec[i]);
-                    scale += vec[i] * vec[i];
-                }
-
-                scale = 2.0 / scale;
-                if (debug)
-                    System.out.println("scale = " + scale);
-
-                for (j = si + 1; j < nc; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        v.values[j][k] = -scale * vec[j - si - 1] * vec[k - si - 1];
-                    }
-                }
-
-                for (i = si + 1; i < m.nCol; i++) {
-                    v.values[i][i] += 1.0;
-                }
-
-                t = 0.0;
-                for (i = si; i < m.nCol; i++) {
-                    t += v.values[i][si + 1] * m.values[si][i];
-                }
-                m.values[si][si + 1] = t;
-
-                // apply reflector
-                for (j = si + 1; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        tmp.values[j][k] = 0.0;
-                        for (i = si + 1; i < m.nCol; i++) {
-                            tmp.values[j][k] += v.values[i][k] * m.values[j][i];
-                        }
-                    }
-                }
-
-                for (j = si + 1; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        m.values[j][k] = tmp.values[j][k];
-                    }
-                }
-
-                if (debug) {
-                    System.out.println("V =\n" + V.toString());
-                    System.out.println("v =\n" + v.toString());
-                    System.out.println("tmp =\n" + tmp.toString());
-                }
-
-                // update V matrix
-                for (j = 0; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        tmp.values[j][k] = 0.0;
-                        for (i = si + 1; i < m.nCol; i++) {
-                            tmp.values[j][k] += v.values[i][k] * V.values[j][i];
-                        }
-                    }
-                }
-
-                if (debug)
-                    System.out.println("tmp =\n" + tmp.toString());
-
-                for (j = 0; j < m.nRow; j++) {
-                    for (k = si + 1; k < m.nCol; k++) {
-                        V.values[j][k] = tmp.values[j][k];
-                    }
-                }
-
-                if (debug) {
-                    System.out.println("m =\n" + m.toString());
-                    System.out.println("V =\n" + V.toString());
-                }
-
-                nc--;
-            }
-        }
-
-        for (i = 0; i < sLength; i++) {
-            single_values[i] = m.values[i][i];
-        }
-
-        for (i = 0; i < eLength; i++) {
-            e[i] = m.values[i][i + 1];
-        }
-
-        // Fix ArrayIndexOutOfBounds for 2x2 matrices, which partially
-        // addresses bug 4348562 for J3D 1.2.1.
-        //
-        // Does *not* fix the following problems reported in 4348562,
-        // which will wait for J3D 1.3:
-        //
-        //   1) no output of W
-        //   2) wrong transposition of U
-        //   3) wrong results for 4x4 matrices
-        //   4) slow performance
-        if (m.nRow == 2 && m.nCol == 2) {
-            double[] cosl = new double[1];
-            double[] cosr = new double[1];
-            double[] sinl = new double[1];
-            double[] sinr = new double[1];
-
-            compute_2X2(single_values[0], e[0], single_values[1],
-                    single_values, sinl, cosl, sinr, cosr);
-
-            update_u(0, U, cosl, sinl);
-            update_v(0, V, cosr, sinr);
-
-            return 2;
-        }
-
-        // compute_qr causes ArrayIndexOutOfBounds for 2x2 matrices
-        compute_qr(0, e.length - 1, single_values, e, U, V);
-
-        // compute rank = number of non zero singular values
-        rank = single_values.length;
-
-        // sort by order of size of single values
-        // and check for zero's
-        return rank;
-    }
-
     static void compute_qr(int start, int end, double[] s, double[] e,
                            GMatrix u, GMatrix v) {
 
@@ -2012,7 +1379,7 @@ public class GMatrix implements java.io.Serializable, Cloneable {
             for (i = 0; i < e.length; i++) {
                 m.values[i][i + 1] = e[i];
             }
-            System.out.println("\nm =\n" + m.toString());
+            System.out.println("\nm =\n" + m);
         }
 
         double c_b48 = 1.0;
@@ -2075,7 +1442,7 @@ public class GMatrix implements java.io.Serializable, Cloneable {
 
             // if extra off diagonal perform one more right side rotation
             if (s.length == e.length) {
-                r = compute_rot(f, g, sinr, cosr);
+                compute_rot(f, g, sinr, cosr);
                 f = cosr[0] * s[i] + sinr[0] * e[i];
                 e[i] = cosr[0] * e[i] - sinr[0] * s[i];
                 s[i + 1] = cosr[0] * s[i + 1];
@@ -2116,9 +1483,10 @@ public class GMatrix implements java.io.Serializable, Cloneable {
 
             if ((end - start <= 1) && (Math.abs(e[start + 1]) < CONVERGE_TOL)) {
                 converged = true;
-            } else {
-                // check if zero on the diagonal
             }
+//            else {
+//                // check if zero on the diagonal
+//            }
 
         }
 

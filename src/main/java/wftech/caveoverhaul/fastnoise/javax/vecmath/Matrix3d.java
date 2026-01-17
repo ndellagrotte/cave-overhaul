@@ -27,6 +27,8 @@
 package wftech.caveoverhaul.fastnoise.javax.vecmath;
 
 
+import java.io.Serial;
+
 /**
  * A double precision floating point 3 by 3 matrix.
  * Primarily to support 3D rotations.
@@ -35,7 +37,8 @@ package wftech.caveoverhaul.fastnoise.javax.vecmath;
 public class Matrix3d implements java.io.Serializable, Cloneable {
 
     // Compatible with 1.1
-    static final long serialVersionUID = 6837536777072402710L;
+    @Serial
+    private static final long serialVersionUID = 6837536777072402710L;
 
     /**
      * The first matrix element in the first row.
@@ -211,25 +214,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
 	this.m20 + ", " + this.m21 + ", " + this.m22 + "\n";
     }
 
-    /**
-     * Sets this Matrix3d to identity.
-     */
-    public final void setIdentity()
-    {
-	this.m00 = 1.0;
-	this.m01 = 0.0;
-	this.m02 = 0.0;
-
-	this.m10 = 0.0;
-	this.m11 = 1.0;
-	this.m12 = 0.0;
-
-	this.m20 = 0.0;
-	this.m21 = 0.0;
-	this.m22 = 1.0;
-    }
-
-   /**
+	/**
      * Sets the scale component of the current matrix by factoring
      * out the current scale (by doing an SVD) and multiplying by
      * the new scale.
@@ -256,265 +241,8 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
 	this.m22 = tmp_rot[8] * scale;
     }
 
-    /**
-     * Sets the specified element of this matrix3f to the value provided.
-     * @param row the row number to be modified (zero indexed)
-     * @param column the column number to be modified (zero indexed)
-     * @param value the new value
-     */
-    public final void setElement(int row, int column, double value)
-    {
-	switch (row)
-	  {
-	  case 0:
-	    switch(column)
-	      {
-	      case 0:
-		this.m00 = value;
-		break;
-	      case 1:
-		this.m01 = value;
-		break;
-	      case 2:
-		this.m02 = value;
-		break;
-	      default:
-		throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d0"));
-	      }
-	    break;
 
-	  case 1:
-	    switch(column)
-	      {
-	      case 0:
-		this.m10 = value;
-		break;
-	      case 1:
-		this.m11 = value;
-		break;
-	      case 2:
-		this.m12 = value;
-		break;
-	      default:
-		throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d0"));
-	      }
-	    break;
-
-
-	  case 2:
-	    switch(column)
-	      {
-	      case 0:
-		this.m20 = value;
-		break;
-	      case 1:
-		this.m21 = value;
-		break;
-	      case 2:
-		this.m22 = value;
-		break;
-	      default:
-		throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d0"));
-	      }
-	    break;
-
-	  default:
-		throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d0"));
-	  }
-    }
-
-    /**
-     * Retrieves the value at the specified row and column of the specified
-     * matrix.
-     * @param row the row number to be retrieved (zero indexed)
-     * @param column the column number to be retrieved (zero indexed)
-     * @return the value at the indexed element.
-     */
-    public final double getElement(int row, int column)
-    {
-	switch (row)
-	  {
-	  case 0:
-	    switch(column)
-	      {
-	      case 0:
-		return(this.m00);
-	      case 1:
-		return(this.m01);
-	      case 2:
-		return(this.m02);
-	      default:
-		break;
-	      }
-	    break;
-	  case 1:
-	    switch(column)
-	      {
-	      case 0:
-		return(this.m10);
-	      case 1:
-		return(this.m11);
-	      case 2:
-		return(this.m12);
-	      default:
-		break;
-	      }
-	    break;
-
-	  case 2:
-	    switch(column)
-	      {
-	      case 0:
-		return(this.m20);
-	      case 1:
-		return(this.m21);
-	      case 2:
-		return(this.m22);
-	      default:
-		break;
-	      }
-	    break;
-
-	  default:
-	    break;
-	  }
-
-	throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d1"));
-    }
-
-    /**
-     * Copies the matrix values in the specified row into the vector parameter.
-     * @param row  the matrix row
-     * @param v    the vector into which the matrix row values will be copied
-     */
-    public final void getRow(int row, Vector3d v) {
-        if( row == 0 ) {
-           v.x = m00;
-           v.y = m01;
-           v.z = m02;
-        } else if(row == 1) {
-           v.x = m10;
-           v.y = m11;
-           v.z = m12;
-        } else if(row == 2) {
-           v.x = m20;
-           v.y = m21;
-           v.z = m22;
-        } else {
-          throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d2"));
-        }
-
-    }
-
-    /**
-     * Copies the matrix values in the specified row into the array parameter.
-     * @param row  the matrix row
-     * @param v    the array into which the matrix row values will be copied
-     */
-    public final void getRow(int row, double v[]) {
-        if( row == 0 ) {
-           v[0] = m00;
-           v[1] = m01;
-           v[2] = m02;
-        } else if(row == 1) {
-           v[0] = m10;
-           v[1] = m11;
-           v[2] = m12;
-        } else if(row == 2) {
-           v[0] = m20;
-           v[1] = m21;
-           v[2] = m22;
-        } else {
-          throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d2"));
-        }
-
-    }
-
-    /**
-     * Copies the matrix values in the specified column into the vector
-     * parameter.
-     * @param column  the matrix column
-     * @param v    the vector into which the matrix row values will be copied
-     */
-    public final void getColumn(int column, Vector3d v) {
-        if( column == 0 ) {
-           v.x = m00;
-           v.y = m10;
-           v.z = m20;
-        } else if(column == 1) {
-           v.x = m01;
-           v.y = m11;
-           v.z = m21;
-        }else if(column == 2){
-           v.x = m02;
-           v.y = m12;
-           v.z = m22;
-        } else {
-           throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d4"));
-        }
-
-    }
-
-    /**
-     * Copies the matrix values in the specified column into the array
-     * parameter.
-     * @param column  the matrix column
-     * @param v    the array into which the matrix row values will be copied
-     */
-    public final void getColumn(int column, double v[]) {
-        if( column == 0 ) {
-           v[0] = m00;
-           v[1] = m10;
-           v[2] = m20;
-        } else if(column == 1) {
-           v[0] = m01;
-           v[1] = m11;
-           v[2] = m21;
-        }else if(column == 2) {
-           v[0] = m02;
-           v[1] = m12;
-           v[2] = m22;
-        }else {
-          throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d4"));
-        }
-
-    }
-
-
-    /**
-     * Sets the specified row of this matrix3d to the 4 values provided.
-     * @param row the row number to be modified (zero indexed)
-     * @param x the first column element
-     * @param y the second column element
-     * @param z the third column element
-     */
-    public final void setRow(int row, double x, double y, double z)
-    {
-	switch (row) {
-	case 0:
-	    this.m00 = x;
-	    this.m01 = y;
-	    this.m02 = z;
-	    break;
-
-	case 1:
-	    this.m10 = x;
-	    this.m11 = y;
-	    this.m12 = z;
-	    break;
-
-	case 2:
-	    this.m20 = x;
-	    this.m21 = y;
-	    this.m22 = z;
-	    break;
-
-	default:
-	  throw new ArrayIndexOutOfBoundsException(VecMathI18N.getString("Matrix3d6"));
-	}
-    }
-
-    /**
+	/**
      * Sets the specified row of this matrix3d to the Vector provided.
      * @param row the row number to be modified (zero indexed)
      * @param v the replacement row
@@ -550,7 +278,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
      * @param row the row number to be modified (zero indexed)
      * @param v the replacement row
      */
-    public final void setRow(int row, double v[])
+    public final void setRow(int row, double[] v)
     {
 	switch (row) {
 	case 0:
@@ -645,7 +373,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
      * @param column the column number to be modified (zero indexed)
      * @param v the replacement column
      */
-    public final void setColumn(int column, double v[])
+    public final void setColumn(int column, double[] v)
     {
 	switch (column) {
 	case 0:
@@ -1072,13 +800,12 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
      * General invert routine.  Inverts m1 and places the result in "this".
      * Note that this routine handles both the "this" version and the
      * non-"this" version.
-     *
      * Also note that since this routine is slow anyway, we won't worry
      * about allocating a little bit of garbage.
      */
-    private final void invertGeneral(Matrix3d  m1) {
-	double result[] = new double[9];
-	int row_perm[] = new int[3];
+    private void invertGeneral(Matrix3d m1) {
+	double[] result = new double[9];
+	int[] row_perm = new int[3];
 	int i;
 	double[]    tmp = new double[9];  // scratch matrix
 
@@ -1147,7 +874,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
     static boolean luDecomposition(double[] matrix0,
 				   int[] row_perm) {
 
-	double row_scale[] = new double[3];
+	double[] row_scale = new double[3];
 
 	// Determine implicit scaling information by looping over rows
 	{
@@ -1924,8 +1651,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
              && this.m10 == m2.m10 && this.m11 == m2.m11 && this.m12 == m2.m12
              && this.m20 == m2.m20 && this.m21 == m2.m21 && this.m22 == m2.m22);
         }
-        catch (ClassCastException   e1) { return false; }
-        catch (NullPointerException e2) { return false; }
+        catch (ClassCastException | NullPointerException e1) { return false; }
 
     }
 
@@ -1967,9 +1693,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
        if((diff<0?-diff:diff) > epsilon) return false;
 
        diff = m22 - m1.m22;
-       if((diff<0?-diff:diff) > epsilon) return false;
-
-       return true;
+        return !((diff < 0 ? -diff : diff) > epsilon);
     }
 
 
@@ -2087,7 +1811,7 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
     /**
      * perform SVD (if necessary to get rotational component
      */
-    final void getScaleRotate(double scales[], double rots[]) {
+    final void getScaleRotate(double[] scales, double[] rots) {
 
 	double[]    tmp = new double[9];  // scratch matrix
 
@@ -2104,7 +1828,6 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
 	tmp[8] = m22;
 	compute_svd( tmp, scales, rots);
 
-	return;
     }
 
     static void compute_svd( double[] m, double[] outScale, double[] outRot) {
@@ -2323,42 +2046,42 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
 	    u1[5] = tmp[5];
 	}
 
-	single_values[0] = m[0];
-	single_values[1] = m[4];
-	single_values[2] = m[8];
-	e[0] = m[1];
-	e[1] = m[5];
+		single_values[0] = m[0];
+		single_values[1] = m[4];
+		single_values[2] = m[8];
+		e[0] = m[1];
+		e[1] = m[5];
 
-	if( e[0]*e[0]<EPS  && e[1]*e[1]<EPS ) {
+		if (e[0] * e[0] < EPS && e[1] * e[1] < EPS) {
 
-	} else {
-	    compute_qr( single_values, e, u1, v1);
-	}
+		} else {
+			compute_qr(single_values, e, u1, v1);
+		}
 
-	scales[0] = single_values[0];
-	scales[1] = single_values[1];
-	scales[2] = single_values[2];
+		scales[0] = single_values[0];
+		scales[1] = single_values[1];
+		scales[2] = single_values[2];
 
 
-	// Do some optimization here. If scale is unity, simply return the rotation matric.
-	if(almostEqual(Math.abs(scales[0]), 1.0) &&
-	   almostEqual(Math.abs(scales[1]), 1.0) &&
-	   almostEqual(Math.abs(scales[2]), 1.0)) {
-	    //  System.out.println("Scale components almost to 1.0");
+		// Do some optimization here. If scale is unity, simply return the rotation matric.
+		if (almostEqual(Math.abs(scales[0]), 1.0) &&
+				almostEqual(Math.abs(scales[1]), 1.0) &&
+				almostEqual(Math.abs(scales[2]), 1.0)) {
+			//  System.out.println("Scale components almost to 1.0");
 
-	    for(i=0;i<3;i++)
-		if(scales[i]<0.0)
-		    negCnt++;
+			for (i = 0; i < 3; i++)
+				if (scales[i] < 0.0)
+					negCnt++;
 
-	    if((negCnt==0)||(negCnt==2)) {
-		//System.out.println("Optimize!!");
-		outScale[0] = outScale[1] = outScale[2] = 1.0;
-		for(i=0;i<9;i++)
-		    outRot[i] = rot[i];
+			if ((negCnt == 0) || (negCnt == 2)) {
+				//System.out.println("Optimize!!");
+				outScale[0] = outScale[1] = outScale[2] = 1.0;
+				for (i = 0; i < 9; i++)
+					outRot[i] = rot[i];
 
-		return;
-	    }
-	}
+				return;
+			}
+		}
 
 
 	transpose_mat(u1, t1);
@@ -2689,21 +2412,13 @@ public class Matrix3d implements java.io.Serializable, Cloneable {
        return(0);
 }
 static double max( double a, double b) {
-    if( a > b)
-      return( a);
-    else
-      return( b);
+    return Math.max(a, b);
 }
 static double min( double a, double b) {
-    if( a < b)
-      return( a);
-    else
-      return( b);
+    return Math.min(a, b);
 }
 static double d_sign(double a, double b) {
-double x;
-x = (a >= 0 ? a : - a);
-return( b >= 0 ? x : -x);
+    return GMatrix.d_sign(a, b);
 }
 
 static double compute_shift( double f, double g, double h) {
@@ -2778,10 +2493,7 @@ static int compute_2X2( double f, double g, double h, double[] single_values,
     ha = Math.abs(h);
 
     pmax = 1;
-    if( ha > fa)
-       swap = true;
-    else
-       swap = false;
+    swap = ha > fa;
 
     if (swap) {
         pmax = 3;
@@ -3064,19 +2776,13 @@ static void  transpose_mat(double[] in, double[] out) {
 }
 static  double max3( double[] values) {
      if( values[0] > values[1] ) {
-        if( values[0] > values[2] )
-           return(values[0]);
-        else
-           return(values[2]);
+         return Math.max(values[0], values[2]);
      } else {
-        if( values[1] > values[2] )
-           return(values[1]);
-        else
-           return(values[2]);
+         return Math.max(values[1], values[2]);
      }
   }
 
-    private static final boolean almostEqual(double a, double b) {
+    private static boolean almostEqual(double a, double b) {
         if (a == b)
             return true;
 
@@ -3085,15 +2791,12 @@ static  double max3( double[] values) {
         double diff = Math.abs(a-b);
         double absA = Math.abs(a);
         double absB = Math.abs(b);
-        double max = (absA >= absB) ? absA : absB;
+        double max = Math.max(absA, absB);
 
         if (diff < EPSILON_ABSOLUTE)
             return true;
 
-        if ((diff / max) < EPSILON_RELATIVE)
-            return true;
-
-        return false;
+        return (diff / max) < EPSILON_RELATIVE;
     }
 
     /**

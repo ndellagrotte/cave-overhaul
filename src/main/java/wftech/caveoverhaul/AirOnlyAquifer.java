@@ -9,15 +9,14 @@ import net.minecraft.world.level.levelgen.Aquifer;
 import net.minecraft.world.level.levelgen.DensityFunction.FunctionContext;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import org.jspecify.annotations.NonNull;
-import wftech.caveoverhaul.carvertypes.rivers.NURDynamicLayer;
 import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 //public class AirOnlyAquifer implements Aquifer {
 public class AirOnlyAquifer implements Aquifer {
 
-	protected ChunkAccess level = null;
-	protected boolean exposeToAir = false;
+	protected ChunkAccess level;
+	protected boolean exposeToAir;
 	protected int x = 0;
 	protected int y = 0;
 	protected int z = 0;
@@ -119,14 +118,10 @@ public class AirOnlyAquifer implements Aquifer {
 			return state;
 		}
 
-		NURDynamicLayer riverLayer = null;
-		if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null) {
+        if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null || NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
 			return state;
-		} else if (NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null) {
-			return state;
-		}
+		} else if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null)
+            return state;
 
 		/*
 		if(NoiseChunkMixinUtils.shouldSetToLava(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {

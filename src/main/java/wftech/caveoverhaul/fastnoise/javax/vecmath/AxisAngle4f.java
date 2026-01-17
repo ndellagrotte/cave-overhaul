@@ -63,79 +63,8 @@ public class AxisAngle4f implements java.io.Serializable, Cloneable {
 
   final static double EPS = 0.000001;
 
-  /**
-   * Constructs and initializes a AxisAngle4f from the specified xyzw coordinates.
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   * @param angle  the angle of rotation in radians
-   */
-  public AxisAngle4f(float x, float y, float z, float angle)
-  {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.angle = angle;
-  }
-
-
-  /**
-   * Constructs and initializes an AxisAngle4f from the array of length 4.
-   * @param a the array of length 4 containing x,y,z,angle in order
-   */
-  public AxisAngle4f(float[] a)
-  {
-    this.x = a[0];
-    this.y = a[1];
-    this.z = a[2];
-    this.angle = a[3];
-  }
-
-
-  /**
-   * Constructs and initializes an AxisAngle4f from the specified
-   * AxisAngle4f.
-   * @param a1 the AxisAngle4f containing the initialization x y z angle data
-   */
-  public AxisAngle4f(AxisAngle4f a1)
-  {
-    this.x = a1.x;
-    this.y = a1.y;
-    this.z = a1.z;
-    this.angle = a1.angle;
-  }
-
-
-  /**
-   * Constructs and initializes an AxisAngle4f from the specified AxisAngle4d.
-   * @param a1 the AxisAngle4d containing the initialization x y z angle data
-   */
-  public AxisAngle4f(AxisAngle4d a1)
-  {
-    this.x = (float) a1.x;
-    this.y = (float) a1.y;
-    this.z = (float) a1.z;
-    this.angle = (float) a1.angle;
-  }
-
 
     /**
-     * Constructs and initializes an AxisAngle4f from the specified
-     * axis and angle.
-     * @param axis the axis
-     * @param angle the angle of rotation in radians
-     *
-     * @since vecmath 1.2
-     */
-    public AxisAngle4f(Vector3f axis, float angle) {
-	this.x = axis.x;
-	this.y = axis.y;
-	this.z = axis.z;
-	this.angle = angle;
-    }
-
-
-  /**
    * Constructs and initializes an AxisAngle4f to (0,0,1,0).
    */
   public AxisAngle4f()
@@ -375,9 +304,9 @@ public class AxisAngle4f implements java.io.Serializable, Cloneable {
    */
   public final void set(Matrix3f m1)
   {
-        x = (float)(m1.m21 - m1.m12);
-        y = (float)(m1.m02 - m1.m20);
-        z = (float)(m1.m10 - m1.m01);
+        x = m1.m21 - m1.m12;
+        y = m1.m02 - m1.m20;
+        z = m1.m10 - m1.m01;
         double mag = x*x + y*y + z*z;
 	if (mag > EPS) {
 	    mag = Math.sqrt(mag);
