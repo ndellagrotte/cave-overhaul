@@ -21,16 +21,15 @@ public interface NoiseRouterDataAccessor {
         throw new AssertionError();
     }
 
+    //noinspection UnusedReturnValue
+    @SuppressWarnings("UnusedReturnValue")
     @Invoker("postProcess")
     static DensityFunction postProcess(DensityFunction function) {
         throw new AssertionError();
     }
 
-    @Invoker("yLimitedInterpolatable")
-    static DensityFunction yLimitedInterpolatable(DensityFunction densityFunction, DensityFunction densityFunction2, int i, int j, int k) {
-        throw new AssertionError();
-    }
-
+    //noinspection UnusedReturnValue
+    @SuppressWarnings("UnusedReturnValue")
     @Invoker("slideOverworld")
     static DensityFunction slideOverworld(boolean bl, DensityFunction densityFunction) {
         throw new AssertionError();
@@ -51,7 +50,7 @@ public interface NoiseRouterDataAccessor {
         throw new AssertionError();
     }
 
-    //    @Accessor("NOODLE")
+//    @Accessor("NOODLE")
 //    static ResourceKey<DensityFunction> NOODLE() {
 //        throw new AssertionError();
 //    }

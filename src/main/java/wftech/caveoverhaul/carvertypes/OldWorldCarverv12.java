@@ -354,11 +354,11 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 	        	            		}
 									 */
 
-                                    if(NoiseChunkMixinUtils.getRiverLayer(128, blockX, yIter, blockZ) != null) {
+                                    if(NoiseChunkMixinUtils.getRiverLayer(blockX, yIter, blockZ) != null) {
 										continue;
-									} else if (NoiseChunkMixinUtils.shouldSetToStone(128, blockX, yIter, blockZ)) {
+									} else if (NoiseChunkMixinUtils.shouldSetToStone(blockX, yIter, blockZ)) {
 										continue;
-									} else if(NoiseChunkMixinUtils.getRiverLayer(128, blockX, yIter + 1, blockZ) != null) {
+									} else if(NoiseChunkMixinUtils.getRiverLayer(blockX, yIter + 1, blockZ) != null) {
 										continue;
 									}
 

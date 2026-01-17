@@ -23,24 +23,6 @@ public class NURLogic {
         this.domainWarp = warp;
     }
 
-    public float getCaveDetailsNoise3D(int x, int y, int z) {
-        if (domainWarp != null) {
-            Vector3 coords = new Vector3(x, y, z);
-            domainWarp.DomainWarp(coords);
-            return noiseIsLiquid.GetNoise(coords.x, coords.y, coords.z);
-        }
-        return noiseIsLiquid.GetNoise(x, y, z);
-    }
-
-    public float getCaveYNoise3D(int x, int y, int z) {
-        if (domainWarp != null) {
-            Vector3 coords = new Vector3(x, y, z);
-            domainWarp.DomainWarp(coords);
-            return noiseYLevelBase.GetNoise(coords.x, coords.y, coords.z);
-        }
-        return noiseYLevelBase.GetNoise(x, y, z);
-    }
-
     public float getCaveYNoise(int x, int y, int z) {
         if (domainWarp != null) {
             Vector3 coords = new Vector3(x, y, z);
@@ -59,7 +41,7 @@ public class NURLogic {
         return noiseShouldCarveBase.GetNoise(x, y, z);
     }
 
-    public float getCaveDetailsNoise(int x, int y, int z) {
+    public float getCaveDetailsNoise3D(int x, int y, int z) {
         if (domainWarp != null) {
             Vector3 coords = new Vector3(x, y, z);
             domainWarp.DomainWarp(coords);

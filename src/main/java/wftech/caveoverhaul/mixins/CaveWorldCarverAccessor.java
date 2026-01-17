@@ -10,6 +10,5 @@ public interface CaveWorldCarverAccessor {
     @Invoker("shouldSkip")
     static boolean shouldSkip(double d, double e, double f, double g) {
         throw new AssertionError();
-    };
-
+    }
 }
