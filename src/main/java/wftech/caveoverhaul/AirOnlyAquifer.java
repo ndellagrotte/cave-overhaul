@@ -118,9 +118,9 @@ public class AirOnlyAquifer implements Aquifer {
 			return state;
 		}
 
-        if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null || NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
+        if(NoiseChunkMixinUtils.getRiverLayer(ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null || NoiseChunkMixinUtils.shouldSetToStone(ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
 			return state;
-		} else if(NoiseChunkMixinUtils.getRiverLayer(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null)
+		} else if(NoiseChunkMixinUtils.getRiverLayer(ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null)
             return state;
 
 		/*
