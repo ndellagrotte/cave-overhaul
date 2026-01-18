@@ -1,6 +1,7 @@
 package wftech.caveoverhaul;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -8,6 +9,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
 import net.minecraft.world.level.levelgen.DensityFunction.FunctionContext;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.NonNull;
 import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
@@ -26,7 +28,8 @@ public class AirOnlyAquifer implements Aquifer {
 	}
 
 	public boolean isLiquid(BlockState state) {
-		return state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.WATER || state.liquid();
+		FluidState fluidState = state.getFluidState();
+		return fluidState.is(FluidTags.WATER) || fluidState.is(FluidTags.LAVA);
 	}
 
 	@Override
