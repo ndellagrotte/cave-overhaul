@@ -134,23 +134,6 @@ public class NURDynamicLayer {
         return this.getNoise3D((int) warpX, (int) warpY, (int) warpZ);
     }
 
-    //
-//    public boolean isLiquid(int x, int y, int z) {
-//        BlockPos bPos = new BlockPos(x, y, z);
-//
-//        if (this.getNoise3D(bPos.getX(), bPos.getY(), bPos.getZ()) < NOISE_CUTOFF_RIVER_NON_WARPED) {
-//            return false;
-//        }
-//
-//        float yLevelNoise = this.getCaveYNoise(x, y, z);
-//        int caveY = this.getCaveY(yLevelNoise);
-//        if (caveY != y) {
-//            return false;
-//        }
-//
-//        float noise = this.getWarpedNoise(bPos.getX(), bPos.getY(), bPos.getZ());
-//        return noise > NOISE_CUTOFF_RIVER;
-//    }
     public boolean isLiquid(int x, int y, int z) {
         BlockPos bPos = new BlockPos(x, y, z);
 

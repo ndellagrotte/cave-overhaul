@@ -163,7 +163,7 @@ public class NCLayerHolder {
                 continue;
             }
 
-            if (layer.shouldCarve(x, y, z)) {
+            if (layer.shouldCarve((int) x, (int) y, (int) z)) {
                 return true;
             }
         }

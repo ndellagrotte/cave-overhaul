@@ -43,7 +43,7 @@ public class NCLogic {
 
     private float calcYLevel(int x, int y, int z) {
         float rawNoiseY = getCaveYNoise(x, y, z);
-        rawNoiseY = NCDynamicLayer.norm(rawNoiseY);
+        rawNoiseY = (rawNoiseY + 1f) / 2f;
         rawNoiseY = Math.max(0, rawNoiseY);
         rawNoiseY = Math.min(1, rawNoiseY);
 
