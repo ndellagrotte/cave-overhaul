@@ -111,7 +111,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		NURDynamicLayer riverLayer = NoiseChunkMixinUtils.getRiverLayer(x, y, z);
 		BlockState preferredState = null;
 		if (riverLayer != null) {
-			preferredState = riverLayer.getLiquidType().defaultBlockState();
+			preferredState = riverLayer.getFluidBlock().defaultBlockState();
 		} else if (NoiseChunkMixinUtils.shouldSetToStone(x, y, z)) {
 			preferredState = Blocks.STONE.defaultBlockState();
 		} else if (NoiseChunkMixinUtils.shouldSetToAir(x, y, z)) {
