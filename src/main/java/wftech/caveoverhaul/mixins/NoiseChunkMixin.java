@@ -23,10 +23,7 @@ import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 @Mixin(NoiseChunk.class)
 public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
-	// private DedicatedServer server;
-	@Unique
-    private NoiseSettings NS;
-	@Unique
+    @Unique
     private NoiseGeneratorSettings NGS;
 
 	@Inject(method="<init>(ILnet/minecraft/world/level/levelgen/RandomState;IILnet/minecraft/world/level/levelgen/NoiseSettings;Lnet/minecraft/world/level/levelgen/DensityFunctions$BeardifierOrMarker;Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/world/level/levelgen/Aquifer$FluidPicker;Lnet/minecraft/world/level/levelgen/blending/Blender;)V",
@@ -93,53 +90,31 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 
 		if (Config.getBoolSetting(Config.KEY_USE_AQUIFER_PATCH) && (original_block_chosen == Blocks.WATER || original_block_chosen == Blocks.LAVA)) {
-			if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y - 1, z)) {
+			if (NoiseChunkMixinUtils.shouldSetToAir(x, y - 1, z)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
 				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x - 1, y, z)) {
+			} else if (NoiseChunkMixinUtils.shouldSetToAir(x - 1, y, z)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
 				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x + 1, y, z)) {
+			} else if (NoiseChunkMixinUtils.shouldSetToAir(x + 1, y, z)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
 				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z - 1)) {
+			} else if (NoiseChunkMixinUtils.shouldSetToAir(x, y, z - 1)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
 				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z + 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y - 1, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x - 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x + 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z - 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z + 1)) {
+			} else if (NoiseChunkMixinUtils.shouldSetToAir(x, y, z + 1)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
 				cir.cancel();
 			}
 		}
 
-		/*
-		End 1.3.2 - aquifer patch
-		BUT the original_block_chosen references below in the if statements were part of the aquifer patch
-		 */
-
 		NURDynamicLayer riverLayer = NoiseChunkMixinUtils.getRiverLayer(x, y, z);
 		BlockState preferredState = null;
-		if(riverLayer != null) {
+		if (riverLayer != null) {
 			preferredState = riverLayer.getLiquidType().defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToStone(x, y, z)) {
+		} else if (NoiseChunkMixinUtils.shouldSetToStone(x, y, z)) {
 			preferredState = Blocks.STONE.defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z)) {
-			preferredState = Blocks.AIR.defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z)) {
+		} else if (NoiseChunkMixinUtils.shouldSetToAir(x, y, z)) {
 			preferredState = Blocks.AIR.defaultBlockState();
 		}
 
@@ -170,11 +145,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 	@Override
 	public void wFCaveOverhaul_Fork$setNS(NoiseSettings NS) {
-		this.NS = NS;
-	}
-
-	@Override
-	public NoiseSettings wFCaveOverhaul_Fork$getNS() {
-		return this.NS;
-	}
+        // private DedicatedServer server;
+    }
 }

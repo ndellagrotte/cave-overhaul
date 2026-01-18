@@ -2,7 +2,6 @@ package wftech.caveoverhaul;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -16,129 +15,88 @@ import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 public class AirOnlyAquifer implements Aquifer {
 
-	protected ChunkAccess level;
-	protected boolean exposeToAir;
-	protected int x = 0;
-	protected int y = 0;
-	protected int z = 0;
+	private final ChunkAccess level;
+	private final boolean exposeToAir;
 
 	public AirOnlyAquifer(ChunkAccess level, boolean exposeToAir) {
 		this.level = level;
 		this.exposeToAir = exposeToAir;
 	}
 
-	public boolean isLiquid(BlockState state) {
+	private boolean isLiquid(BlockState state) {
 		FluidState fluidState = state.getFluidState();
 		return fluidState.is(FluidTags.WATER) || fluidState.is(FluidTags.LAVA);
 	}
 
-	@Override
-	public BlockState computeSubstance(@NonNull FunctionContext ctx, double p_208159_) {
+	private boolean sameChunk(int x1, int z1, int x2, int z2) {
+		return (x1 >> 4) == (x2 >> 4) && (z1 >> 4) == (z2 >> 4);
+	}
 
-		if(this.level == null) {
+	private boolean isNearSurface(int x, int y, int z) {
+		if (y >= level.getHeight(Types.WORLD_SURFACE_WG, x, z) - 1) return true;
+		if (y >= level.getHeight(Types.WORLD_SURFACE_WG, x + 1, z) - 2) return true;
+		if (y >= level.getHeight(Types.WORLD_SURFACE_WG, x - 1, z) - 2) return true;
+		if (y >= level.getHeight(Types.WORLD_SURFACE_WG, x, z + 1) - 2) return true;
+        return y >= level.getHeight(Types.WORLD_SURFACE_WG, x, z - 1) - 2;
+    }
+
+	private boolean hasAdjacentLiquidInSameChunk(int x, int y, int z, BlockPos.MutableBlockPos mutable) {
+		// Check cardinal directions
+		if (sameChunk(x, z, x - 1, z) && isLiquid(level.getBlockState(mutable.set(x - 1, y, z)))) return true;
+		if (sameChunk(x, z, x + 1, z) && isLiquid(level.getBlockState(mutable.set(x + 1, y, z)))) return true;
+		if (sameChunk(x, z, x, z - 1) && isLiquid(level.getBlockState(mutable.set(x, y, z - 1)))) return true;
+        return sameChunk(x, z, x, z + 1) && isLiquid(level.getBlockState(mutable.set(x, y, z + 1)));
+    }
+
+	private boolean hasLiquidAbove(int x, int y, int z, BlockPos.MutableBlockPos mutable) {
+		if (isLiquid(level.getBlockState(mutable.set(x, y + 1, z)))) return true;
+		if (isLiquid(level.getBlockState(mutable.set(x, y + 2, z)))) return true;
+        return isLiquid(level.getBlockState(mutable.set(x, y + 3, z)));
+    }
+
+	@Override
+	public BlockState computeSubstance(@NonNull FunctionContext ctx, double density) {
+		if (level == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
 
-		BlockState state = this.level.getBlockState(new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ()));
+		int x = ctx.blockX();
+		int y = ctx.blockY();
+		int z = ctx.blockZ();
 
-		//if (ctx.blockY() <= (-64 + 9) && state != null && state.getBlock() == Blocks.LAVA) {
-		//	return state;
-		int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
-		if (ctx.blockY() <= (Globals.minY + y_offset)) {
+		int yOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+		if (y <= (Globals.minY + yOffset)) {
 			return Blocks.LAVA.defaultBlockState();
 		}
 
-		///tp -656 60 138
-		if(state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.WATER) {
+		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+		BlockState state = level.getBlockState(mutable.set(x, y, z));
+
+		if (state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.WATER) {
 			return state;
 		}
 
-		int topHeight = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ());
-		if(ctx.blockY() >= (topHeight - 1) && !this.exposeToAir) {
+		if (!exposeToAir && isNearSurface(x, y, z)) {
 			return state;
 		}
 
-		int topHeight_1 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX() + 1, ctx.blockZ());
-		if(ctx.blockY() >= (topHeight_1 - 2) && !this.exposeToAir) {
+		if (hasAdjacentLiquidInSameChunk(x, y, z, mutable)) {
 			return state;
 		}
 
-		int topHeight_2 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX() - 1, ctx.blockZ());
-		if(ctx.blockY() >= (topHeight_2 - 2) && !this.exposeToAir) {
+		if (hasLiquidAbove(x, y, z, mutable)) {
 			return state;
 		}
 
-		int topHeight_3 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ() + 1);
-		if(ctx.blockY() >= (topHeight_3 - 2) && !this.exposeToAir) {
+		if (NoiseChunkMixinUtils.getRiverLayer(x, y, z) != null) {
 			return state;
 		}
-
-		int topHeight_4 = this.level.getHeight(Types.WORLD_SURFACE_WG, ctx.blockX(), ctx.blockZ() - 1);
-		if(ctx.blockY() >= (topHeight_4 - 2) && !this.exposeToAir) {
+		if (NoiseChunkMixinUtils.getRiverLayer(x, y + 1, z) != null) {
 			return state;
 		}
-
-		BlockPos basePos = new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ());
-		BlockPos pos_n = new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ() - 1);
-		BlockPos pos_s = new BlockPos(ctx.blockX(), ctx.blockY(), ctx.blockZ() + 1);
-		BlockPos pos_e = new BlockPos(ctx.blockX() + 1, ctx.blockY(), ctx.blockZ());
-		BlockPos pos_w = new BlockPos(ctx.blockX() - 1, ctx.blockY(), ctx.blockZ());
-		BlockPos pos_u = new BlockPos(ctx.blockX(), ctx.blockY() + 1, ctx.blockZ());
-		BlockPos pos_u2 = new BlockPos(ctx.blockX(), ctx.blockY() + 2, ctx.blockZ());
-		BlockPos pos_u3 = new BlockPos(ctx.blockX(), ctx.blockY() + 3, ctx.blockZ());
-
-		ChunkPos cbasePos = new ChunkPos(basePos);
-		ChunkPos cpos_n = new ChunkPos(pos_n);
-		ChunkPos cpos_s = new ChunkPos(pos_s);
-		ChunkPos cpos_e = new ChunkPos(pos_e);
-		ChunkPos cpos_w = new ChunkPos(pos_w);
-
-		BlockState state_n = this.level.getBlockState(pos_n);
-		BlockState state_s = this.level.getBlockState(pos_s);
-		BlockState state_e = this.level.getBlockState(pos_e);
-		BlockState state_w = this.level.getBlockState(pos_w);
-		BlockState state_u = this.level.getBlockState(pos_u);
-		BlockState state_u2 = this.level.getBlockState(pos_u2);
-		BlockState state_u3 = this.level.getBlockState(pos_u3);
-
-		if(cbasePos.x == cpos_w.x && cbasePos.z == cpos_w.z && this.isLiquid(state_w)) {
+		if (NoiseChunkMixinUtils.shouldSetToStone(x, y, z)) {
 			return state;
 		}
-		if(cbasePos.x == cpos_e.x && cbasePos.z == cpos_e.z && this.isLiquid(state_e)) {
-			return state;
-		}
-		if(cbasePos.x == cpos_n.x && cbasePos.z == cpos_n.z && this.isLiquid(state_n)) {
-			return state;
-		}
-
-		if(cbasePos.x == cpos_s.x && cbasePos.z == cpos_s.z && this.isLiquid(state_s)) {
-			return state;
-		}
-
-		///tp -1042 63.37 -54.94
-		if(this.isLiquid(state_u) || this.isLiquid(state_u2) || this.isLiquid(state_u3)) {
-			return state;
-		}
-
-        if(NoiseChunkMixinUtils.getRiverLayer(ctx.blockX(), ctx.blockY(), ctx.blockZ()) != null || NoiseChunkMixinUtils.shouldSetToStone(ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.getRiverLayer(ctx.blockX(), ctx.blockY() + 1, ctx.blockZ()) != null)
-            return state;
-
-		/*
-		if(NoiseChunkMixinUtils.shouldSetToLava(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.shouldSetToStone(topHeight, ctx.blockX(), ctx.blockY(), ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.shouldSetToLava(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ())) {
-			return state;
-		} else if(NoiseChunkMixinUtils.shouldSetToWater(topHeight, ctx.blockX(), ctx.blockY() + 1, ctx.blockZ())) {
-			return state;
-		}
-
-		 */
 
 		return Blocks.AIR.defaultBlockState();
 	}
@@ -147,5 +105,4 @@ public class AirOnlyAquifer implements Aquifer {
 	public boolean shouldScheduleFluidUpdate() {
 		return false;
 	}
-
 }

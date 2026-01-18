@@ -230,15 +230,15 @@ public class NoiseMaker {
                 retdf = copyDF(retdf, curHolder);
                 return DensityFunctions.interpolated(retdf);
             }
-            case DensityFunctions.BlendAlpha blendAlpha -> {
-                return DensityFunctions.BlendAlpha.INSTANCE;
-            }
-            case DensityFunctions.BlendOffset blendOffset -> {
-                return DensityFunctions.BlendOffset.INSTANCE;
-            }
-            case DensityFunctions.BeardifierMarker beardifierMarker -> {
-                return DensityFunctions.BeardifierMarker.INSTANCE;
-            }
+//            case DensityFunctions.BlendAlpha blendAlpha -> {
+//                return DensityFunctions.BlendAlpha.INSTANCE;
+//            }
+//            case DensityFunctions.BlendOffset blendOffset -> {
+//                return DensityFunctions.BlendOffset.INSTANCE;
+//            }
+//            case DensityFunctions.BeardifierMarker beardifierMarker -> {
+//                return DensityFunctions.BeardifierMarker.INSTANCE;
+//            }
             case DensityFunctions.Noise t_func -> {
                 DensityFunction.NoiseHolder retdf = t_func.noise();
                 boolean keyPresent = retdf.noiseData().unwrapKey().isPresent();
