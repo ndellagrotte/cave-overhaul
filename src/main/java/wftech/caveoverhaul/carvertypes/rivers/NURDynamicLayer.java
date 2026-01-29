@@ -24,7 +24,6 @@ public class NURDynamicLayer {
     private final Block fluidBlock;
     private final NURLogic cache;
     private final boolean enabled;
-    private final boolean useFlatRiver;
 
     // Precomputed Y range bounds
     private final int yRangeLower;
@@ -44,8 +43,6 @@ public class NURDynamicLayer {
         boolean isWater = fluidBlock == Blocks.WATER;
         this.enabled = (isLava && Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE))
                 || (isWater && Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE));
-        this.useFlatRiver = (isLava && Config.getBoolSetting(Config.KEY_LAVA_RIVER_FLAT))
-                || (isWater && Config.getBoolSetting(Config.KEY_WATER_RIVER_FLAT));
 
         // Precompute Y range bounds
         this.yRangeLower = minY - 2;
@@ -92,7 +89,7 @@ public class NURDynamicLayer {
             return false;
         }
 
-        if (this.getFixedCaveY() != y) {
+        if (this.getCaveY() != y) {
             return false;
         }
 
@@ -157,40 +154,10 @@ public class NURDynamicLayer {
         return isLiquid(x, y + 1, z) || isLiquid(x, y + 2, z);
     }
 
-    public boolean isBelowWaterfallSupport(int x, int y, int z) {
-        if (y <= Globals.getMinY() + 8) {
-            return false;
-        }
-
-        if (this.getNoise3D(x, y, z) < NOISE_CUTOFF_RIVER_NON_WARPED) {
-            return false;
-        }
-
-        int originCaveY = getCaveY(getCaveYNoise(x, y, z));
-
-        return checkNeighborDropoff(x + 1, y, z, originCaveY)
-                || checkNeighborDropoff(x - 1, y, z, originCaveY)
-                || checkNeighborDropoff(x, y, z + 1, originCaveY)
-                || checkNeighborDropoff(x, y, z - 1, originCaveY);
-    }
-
-    private boolean checkNeighborDropoff(int nx, int ny, int nz, int originCaveY) {
-        if (this.getWarpedNoise(nx, ny, nz) <= NOISE_CUTOFF_RIVER) {
-            return false;
-        }
-
-        int neighborCaveY = getCaveY(getCaveYNoise(nx, ny, nz));
-        return ny == neighborCaveY && originCaveY != ny && neighborCaveY < originCaveY;
-    }
-
     // ==================== Noise Generation ====================
 
     private float getNoise3D(int x, int y, int z) {
         return this.cache.getCaveDetailsNoise3D(x, y, z);
-    }
-
-    private float getCaveYNoise(int x, int y, int z) {
-        return this.cache.getCaveYNoise(x, y, z);
     }
 
     private float getWarpedNoise(int x, int y, int z) {
@@ -218,18 +185,7 @@ public class NURDynamicLayer {
         return getNoise3D((int) warpX, (int) warpY, (int) warpZ);
     }
 
-    private int getCaveY(float noiseValue) {
-        if (this.useFlatRiver) {
-            return this.minY;
-        }
-
-        float max = this.minY + ((float) MAX_CAVE_SIZE_Y / FLOOR_VARIANCE_DIVISOR);
-        float range = max - (float) this.minY;
-
-        return (int) (noiseValue * range) + this.minY;
-    }
-
-    private int getFixedCaveY() {
+    private int getCaveY() {
         return this.minY;
     }
 

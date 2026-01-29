@@ -79,7 +79,7 @@ public class OldWorldCarverv12ReverseNoiseDistribution extends OldWorldCarverv12
 		odds2 = odds2 < 0.035 ? 0.035f : odds2;
 		*/
 
-		float odds2 = Config.settings.get(Config.KEY_CAVE_CHANCE);
+		float odds2 = Config.getFloatSetting(Config.KEY_CAVE_CHANCE);
 
 		return random.nextFloat() <= odds2;
 	}
