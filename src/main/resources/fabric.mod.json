@@ -31,5 +31,5 @@
 	"suggests": {
 		"another-mod": "*"
 	},
-	"accessWidener": "caveoverhaul.accessWidener"
+	"accessWidener": "caveoverhaul.accesswidener"
 }
