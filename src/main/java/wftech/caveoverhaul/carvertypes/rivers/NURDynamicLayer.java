@@ -23,6 +23,12 @@ public class NURDynamicLayer {
     private final int seedOffset;
     private final Block fluidBlock;
     private final NURLogic cache;
+    private final boolean enabled;
+    private final boolean useFlatRiver;
+
+    // Precomputed Y range bounds
+    private final int yRangeLower;
+    private final int yRangeUpper;
 
     private volatile FastNoiseLite domainWarp = null;
     private final Object domainWarpLock = new Object();
@@ -32,6 +38,18 @@ public class NURDynamicLayer {
         this.minY = minY;
         this.seedOffset = seedOffset;
         this.cache = new NURLogic(genNoiseIsLiquid(), genShouldCarveNoise(), genNoiseYLevel());
+
+        // Cache config values at construction time
+        boolean isLava = fluidBlock == Blocks.LAVA;
+        boolean isWater = fluidBlock == Blocks.WATER;
+        this.enabled = (isLava && Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE))
+                || (isWater && Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE));
+        this.useFlatRiver = (isLava && Config.getBoolSetting(Config.KEY_LAVA_RIVER_FLAT))
+                || (isWater && Config.getBoolSetting(Config.KEY_WATER_RIVER_FLAT));
+
+        // Precompute Y range bounds
+        this.yRangeLower = minY - 2;
+        this.yRangeUpper = minY + (MAX_CAVE_SIZE_Y / FLOOR_VARIANCE_DIVISOR) + CEILING_BUFFER + 1;
     }
 
     // ==================== Public Getters ====================
@@ -55,18 +73,11 @@ public class NURDynamicLayer {
     // ==================== Enable/Range Checks ====================
 
     public boolean isEnabled() {
-        if (isLava()) {
-            return Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE);
-        } else if (isWater()) {
-            return Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE);
-        }
-        return false;
+        return this.enabled;
     }
 
     public boolean isInYRange(int y) {
-        int lowerBound = this.minY - 2;
-        int upperBound = this.minY + (MAX_CAVE_SIZE_Y / FLOOR_VARIANCE_DIVISOR) + CEILING_BUFFER + 1;
-        return y >= lowerBound && y <= upperBound;
+        return y >= this.yRangeLower && y <= this.yRangeUpper;
     }
 
     public boolean isOutOfBounds(int x, int y, int z) {
@@ -208,8 +219,7 @@ public class NURDynamicLayer {
     }
 
     private int getCaveY(float noiseValue) {
-        if ((isWater() && Config.getBoolSetting(Config.KEY_WATER_RIVER_FLAT))
-                || (isLava() && Config.getBoolSetting(Config.KEY_LAVA_RIVER_FLAT))) {
+        if (this.useFlatRiver) {
             return this.minY;
         }
 

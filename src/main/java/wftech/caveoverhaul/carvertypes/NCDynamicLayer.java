@@ -11,6 +11,7 @@ public class NCDynamicLayer {
 
     private final int minY;
     private final int maxY;
+    private final int yRangeUpper;  // Precomputed upper bound
     private final FastNoiseLite caveStructureNoise;
     private final NCLogic cache;
 
@@ -20,12 +21,13 @@ public class NCDynamicLayer {
                           FastNoiseLite caveStructureNoise) {
         this.minY = minY;
         this.maxY = maxY;
+        this.yRangeUpper = maxY + MAX_CAVE_SIZE_Y;
         this.caveStructureNoise = caveStructureNoise;
         this.cache = new NCLogic(minY, maxY, caveYNoise, caveSizeNoise);
     }
 
     public boolean isInYRange(int y) {
-        return y >= minY && y <= maxY + MAX_CAVE_SIZE_Y;
+        return y >= minY && y <= yRangeUpper;
     }
 
     public boolean shouldCarve(int x, int y, int z) {
