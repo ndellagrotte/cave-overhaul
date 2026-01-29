@@ -17,11 +17,10 @@ public class WorldGenUtils {
 
 	public static boolean checkIfLikelyOverworld(NoiseGeneratorSettings settings) {
 		for(NoiseGeneratorSettings candidate: OVERWORLD_NGS_CANDIDATES){
-			if (settings == candidate){
+			if (settings.equals(candidate)){
 				return true;
 			}
 		}
 		return false;
-
 	}
 }

@@ -4,5 +4,5 @@ import net.minecraft.server.MinecraftServer;
 
 public class FabricUtils {
 
-    public static MinecraftServer server = null;
+    public static volatile MinecraftServer server = null;
 }

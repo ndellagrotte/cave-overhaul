@@ -55,6 +55,17 @@ public class Config {
     private static final Map<String, Boolean> DEFAULT_BOOL_VALUES = new HashMap<>();
     private static final Map<String, Float> DEFAULT_FLOAT_VALUES = new HashMap<>();
 
+    // Validation ranges for float settings: [min, max]
+    private static final Map<String, float[]> FLOAT_RANGES = new HashMap<>();
+    static {
+        FLOAT_RANGES.put(KEY_CAVE_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CAVE_AIR_EXPOSURE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_UPPER_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_LOWER_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_LAVA_OFFSET, new float[]{0f, 64f});
+    }
+
     public static boolean getBoolSetting(String key){
         return boolSettings.getOrDefault(key, DEFAULT_BOOL_VALUES.getOrDefault(key, false));
     }
@@ -71,6 +82,28 @@ public class Config {
         }
 
         return false;
+    }
+
+    private static float clampFloatValue(String key, float value) {
+        float[] range = FLOAT_RANGES.get(key);
+        if (range == null) {
+            return value;
+        }
+        float min = range[0];
+        float max = range[1];
+        if (value < min) {
+            LoggerFactory.getLogger("caveoverhaul").warn(
+                    "[WFs Cave Overhaul] Config value for '{}' ({}) is below minimum ({}), clamping to {}",
+                    key, value, min, min);
+            return min;
+        }
+        if (value > max) {
+            LoggerFactory.getLogger("caveoverhaul").warn(
+                    "[WFs Cave Overhaul] Config value for '{}' ({}) is above maximum ({}), clamping to {}",
+                    key, value, max, max);
+            return max;
+        }
+        return value;
     }
 
     private static void initFile(File file){
@@ -108,7 +141,7 @@ public class Config {
                 writer.write("# canyon_lower_chance=0.02\n");
                 writer.write("\n");
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to create config file.", e);
             }
 
             addMissingKeys(file, new HashSet<>(Arrays.asList(validKeys)));
@@ -152,7 +185,9 @@ public class Config {
                         boolSettings.put(parts[0], value);
                         discoveredKeysSet.add(parts[0]);
                     } else {
-                        floatSettings.put(parts[0], Float.parseFloat((parts[1].strip())));
+                        float value = Float.parseFloat(parts[1].strip());
+                        value = clampFloatValue(parts[0], value);
+                        floatSettings.put(parts[0], value);
                         discoveredKeysSet.add(parts[0]);
                     }
                 }
