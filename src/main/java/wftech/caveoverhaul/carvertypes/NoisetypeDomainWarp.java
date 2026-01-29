@@ -6,22 +6,36 @@ import wftech.caveoverhaul.utils.FloatPos;
 
 public class NoisetypeDomainWarp {
 
-    private static NoisetypeDomainWarp INSTANCE = null;
+    private static volatile NoisetypeDomainWarp INSTANCE = null;
+    private static final Object LOCK = new Object();
 
     public static void init(int minY) {
-        INSTANCE = new NoisetypeDomainWarp(minY);
+        if (INSTANCE == null || INSTANCE.minY != Math.abs(minY)) {
+            synchronized (LOCK) {
+                if (INSTANCE == null || INSTANCE.minY != Math.abs(minY)) {
+                    INSTANCE = new NoisetypeDomainWarp(minY);
+                }
+            }
+        }
     }
 
     public static void reset() {
-        INSTANCE = null;
+        synchronized (LOCK) {
+            INSTANCE = null;
+        }
     }
 
     public static FloatPos getWarpedPosition(float xPos, float yPos, float zPos) {
-        return INSTANCE.getWarpedPositionInternal(xPos, yPos, zPos);
+        NoisetypeDomainWarp instance = INSTANCE;
+        if (instance == null) {
+            throw new IllegalStateException("NoisetypeDomainWarp not initialized");
+        }
+        return instance.getWarpedPositionInternal(xPos, yPos, zPos);
     }
 
     private final int minY;
-    private FastNoiseLite domainWarp = null;
+    private volatile FastNoiseLite domainWarp = null;
+    private final Object domainWarpLock = new Object();
 
     private NoisetypeDomainWarp(int minY) {
         this.minY = Math.abs(minY);
@@ -32,11 +46,17 @@ public class NoisetypeDomainWarp {
             return;
         }
 
-        FastNoiseLite noise = new FastNoiseLite();
-        noise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
-        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        noise.SetFrequency(0.01f);
-        domainWarp = noise;
+        synchronized (domainWarpLock) {
+            if (domainWarp != null) {
+                return;
+            }
+
+            FastNoiseLite noise = new FastNoiseLite();
+            noise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
+            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            noise.SetFrequency(0.01f);
+            domainWarp = noise;
+        }
     }
 
     private FloatPos getWarpedPositionInternal(float xPos, float yPos, float zPos) {

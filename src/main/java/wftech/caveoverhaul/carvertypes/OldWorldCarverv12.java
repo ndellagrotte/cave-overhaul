@@ -46,7 +46,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 			return 130 - randomSource.nextInt(randomSource.nextInt(120) + 1); //130 = average y I'd like the caves to start at
 		} else {
 			//return randomSource.nextInt(randomSource.nextInt(384) + 8);
-            return randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.minY)) + 8) - Math.abs(Globals.minY);
+            return randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.getMinY())) + 8) - Math.abs(Globals.getMinY());
 		}
 	}
 
@@ -293,8 +293,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 						maxX = 16;
 					}
 
-					if (minY < (Globals.minY - 1)) {
-						minY = (Globals.minY - 1);
+					if (minY < (Globals.getMinY() - 1)) {
+						minY = (Globals.getMinY() - 1);
 					}
 
 					// CHANGED: was 248

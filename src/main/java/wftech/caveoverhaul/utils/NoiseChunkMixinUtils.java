@@ -15,7 +15,7 @@ public class NoiseChunkMixinUtils {
 
 	public static boolean shouldSetToAir(int x, int y, int z) {
 		return NURLayerHolder.getInstance().shouldSetToAirRivers(x, y, z)
-				|| NCLayerHolder.INSTANCE.shouldCarve(x, y, z);
+				|| NCLayerHolder.getInstance().shouldCarve(x, y, z);
 	}
 }
 //	public static boolean shouldSetToAirRivers(int x, int y, int z) {

@@ -65,7 +65,7 @@ public class AirOnlyAquifer implements Aquifer {
 		int z = ctx.blockZ();
 
 		int yOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
-		if (y <= (Globals.minY + yOffset)) {
+		if (y <= (Globals.getMinY() + yOffset)) {
 			return Blocks.LAVA.defaultBlockState();
 		}
 

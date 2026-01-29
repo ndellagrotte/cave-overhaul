@@ -44,7 +44,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 		//init layers
 		int minY = this.wFCaveOverhaul_Fork$getNGS().noiseSettings().minY();
-		Globals.minY = minY;
+		Globals.setMinY(minY);
 		NoisetypeDomainWarp.init(minY);
 
 		//boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(((NoiseChunkAccessor) this).getNoiseSettings());
@@ -121,7 +121,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		if (preferredState != null) {
 			Globals.init();
             int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
-			if (preferredState.isAir() && y <= Globals.minY + y_offset) {
+			if (preferredState.isAir() && y <= Globals.getMinY() + y_offset) {
 				preferredState = Blocks.LAVA.defaultBlockState();
 			}
 			cir.setReturnValue(preferredState);

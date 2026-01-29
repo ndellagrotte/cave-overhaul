@@ -8,7 +8,8 @@ import java.util.List;
 
 public class NURLayerHolder {
 
-    private static NURLayerHolder INSTANCE = null;
+    private static volatile NURLayerHolder INSTANCE = null;
+    private static final Object LOCK = new Object();
 
     private static final int[] WATER_Y_LEVELS = { -25, -4, -4, -8, 18, 36, 48 };
     private static final int[] LAVA_Y_LEVELS = { -56, -56, -42, -25 };
@@ -16,14 +17,22 @@ public class NURLayerHolder {
     private final List<NURDynamicLayer> riverLayers = new ArrayList<>();
 
     public static NURLayerHolder getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NURLayerHolder();
+        NURLayerHolder instance = INSTANCE;
+        if (instance == null) {
+            synchronized (LOCK) {
+                instance = INSTANCE;
+                if (instance == null) {
+                    INSTANCE = instance = new NURLayerHolder();
+                }
+            }
         }
-        return INSTANCE;
+        return instance;
     }
 
     public static void reset() {
-        INSTANCE = null;
+        synchronized (LOCK) {
+            INSTANCE = null;
+        }
     }
 
     private NURLayerHolder() {
@@ -39,9 +48,9 @@ public class NURLayerHolder {
             seedOffset += 5;
         }
 
-        if (Globals.minY < -64) {
+        if (Globals.getMinY() < -64) {
             int y = -56 - 32;
-            while (y > Globals.minY + 8) {
+            while (y > Globals.getMinY() + 8) {
                 riverLayers.add(new NURDynamicLayer(Blocks.LAVA, y, seedOffset));
                 seedOffset += 5;
                 y -= 32;

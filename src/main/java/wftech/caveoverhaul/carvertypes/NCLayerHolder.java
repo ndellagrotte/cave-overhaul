@@ -10,10 +10,27 @@ import java.util.List;
 //NC stands for NoiseCave
 public class NCLayerHolder {
 
-    /*
-    Saving incase I need to re-enable
-     */
-    public static NCLayerHolder INSTANCE =  new NCLayerHolder(Globals.minY);
+    private static volatile NCLayerHolder INSTANCE = null;
+    private static final Object LOCK = new Object();
+
+    public static NCLayerHolder getInstance() {
+        NCLayerHolder instance = INSTANCE;
+        if (instance == null) {
+            synchronized (LOCK) {
+                instance = INSTANCE;
+                if (instance == null) {
+                    INSTANCE = instance = new NCLayerHolder(Globals.getMinY());
+                }
+            }
+        }
+        return instance;
+    }
+
+    public static void reset() {
+        synchronized (LOCK) {
+            INSTANCE = null;
+        }
+    }
 
     /*
     Actual class

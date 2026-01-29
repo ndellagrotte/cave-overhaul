@@ -24,7 +24,8 @@ public class NURDynamicLayer {
     private final Block fluidBlock;
     private final NURLogic cache;
 
-    private FastNoiseLite domainWarp = null;
+    private volatile FastNoiseLite domainWarp = null;
+    private final Object domainWarpLock = new Object();
 
     public NURDynamicLayer(Block fluidBlock, int minY, int seedOffset) {
         this.fluidBlock = fluidBlock;
@@ -97,7 +98,7 @@ public class NURDynamicLayer {
             return false;
         }
 
-        if (y <= Globals.minY + 9) {
+        if (y <= Globals.getMinY() + 9) {
             return false;
         }
 
@@ -120,7 +121,7 @@ public class NURDynamicLayer {
     }
 
     public boolean isBoundary(int x, int y, int z) {
-        if (y <= Globals.minY + 8) {
+        if (y <= Globals.getMinY() + 8) {
             return false;
         }
 
@@ -139,14 +140,14 @@ public class NURDynamicLayer {
     }
 
     public boolean isBelowRiverSupport(int x, int y, int z) {
-        if (y <= Globals.minY + 8) {
+        if (y <= Globals.getMinY() + 8) {
             return false;
         }
         return isLiquid(x, y + 1, z) || isLiquid(x, y + 2, z);
     }
 
     public boolean isBelowWaterfallSupport(int x, int y, int z) {
-        if (y <= Globals.minY + 8) {
+        if (y <= Globals.getMinY() + 8) {
             return false;
         }
 
@@ -182,8 +183,15 @@ public class NURDynamicLayer {
     }
 
     private float getWarpedNoise(int x, int y, int z) {
-        if (domainWarp == null) {
-            initDomainWarp();
+        FastNoiseLite warp = domainWarp;
+        if (warp == null) {
+            synchronized (domainWarpLock) {
+                warp = domainWarp;
+                if (warp == null) {
+                    warp = createDomainWarp();
+                    domainWarp = warp;
+                }
+            }
         }
 
         float warpX = x;
@@ -191,9 +199,9 @@ public class NURDynamicLayer {
         float warpZ = z;
 
         for (int i = 0; i < 2; i++) {
-            warpX += domainWarp.GetNoise(warpX + 20, warpY, warpZ + 20) * 2f;
-            warpY += domainWarp.GetNoise(warpX, warpY + 20, warpZ) * 2f;
-            warpZ += domainWarp.GetNoise(warpX - 20, warpY, warpZ - 20) * 2f;
+            warpX += warp.GetNoise(warpX + 20, warpY, warpZ + 20) * 2f;
+            warpY += warp.GetNoise(warpX, warpY + 20, warpZ) * 2f;
+            warpZ += warp.GetNoise(warpX - 20, warpY, warpZ - 20) * 2f;
         }
 
         return getNoise3D((int) warpX, (int) warpY, (int) warpZ);
@@ -217,14 +225,14 @@ public class NURDynamicLayer {
 
     // ==================== Noise Initialization ====================
 
-    private void initDomainWarp() {
+    private FastNoiseLite createDomainWarp() {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed());
         noise.SetNoiseType(NoiseType.OpenSimplex2);
         noise.SetFrequency(0.025f);
         noise.SetFractalLacunarity(1.1f);
         noise.SetFractalGain(1.6f);
-        this.domainWarp = noise;
+        return noise;
     }
 
     private FastNoiseLite genNoiseIsLiquid() {
