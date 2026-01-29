@@ -9,6 +9,6 @@ public interface IMixinHelperNoiseChunk {
     NoiseGeneratorSettings wFCaveOverhaul_Fork$getNGS();
 
     void wFCaveOverhaul_Fork$setNS(NoiseSettings NS);
-    NoiseSettings wFCaveOverhaul_Fork$getNS();
+//    NoiseSettings wFCaveOverhaul_Fork$getNS();
 
 }

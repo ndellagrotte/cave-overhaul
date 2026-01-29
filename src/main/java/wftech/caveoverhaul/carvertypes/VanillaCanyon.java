@@ -23,7 +23,6 @@ public class VanillaCanyon extends CanyonWorldCarver {
 
 	public VanillaCanyon(Codec<CanyonCarverConfiguration> p_64711_) {
 		super(p_64711_);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -31,9 +30,9 @@ public class VanillaCanyon extends CanyonWorldCarver {
 		float flt = random.nextFloat();
 		//return flt <= cfg.probability;
 		if (cfg.yScale.getMinValue() > 3) {
-			return flt <= Config.settings.get(Config.KEY_CANYON_LOWER_CHANCE);
+			return flt <= Config.getFloatSetting(Config.KEY_CANYON_LOWER_CHANCE);
 		} else {
-			return flt <= Config.settings.get(Config.KEY_CANYON_UPPER_CHANCE);
+			return flt <= Config.getFloatSetting(Config.KEY_CANYON_UPPER_CHANCE);
 		}
 	}
 
@@ -48,11 +47,11 @@ public class VanillaCanyon extends CanyonWorldCarver {
                          ChunkPos p_224819_,
                          @NonNull CarvingMask p_224820_) {
 
-		//return super.carve(p_224813_, p_224814_, chunkAccess, p_224816_, p_224817_, new AirOnlyAquifer(chunkAccess, p_224817_.nextFloat() <=  Config.settings.get(Config.KEY_CANYON_UPPER_AIR_EXPOSURE)), p_224819_, p_224820_);
+		//return super.carve(p_224813_, p_224814_, chunkAccess, p_224816_, p_224817_, new AirOnlyAquifer(chunkAccess, p_224817_.nextFloat() <=  Config.getFloatSetting(Config.KEY_CANYON_UPPER_AIR_EXPOSURE)), p_224819_, p_224820_);
 
 		//copy and paste from CanyonWorldCarver with y values being messed
 
-		Aquifer airAquifer = new AirOnlyAquifer(chunkAccess, rndm.nextFloat() <=  Config.settings.get(Config.KEY_CANYON_UPPER_AIR_EXPOSURE));
+		Aquifer airAquifer = new AirOnlyAquifer(chunkAccess, rndm.nextFloat() <=  Config.getFloatSetting(Config.KEY_CANYON_UPPER_AIR_EXPOSURE));
 
 
 		int i = (this.getRange() * 2 - 1) * 16;

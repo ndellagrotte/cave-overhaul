@@ -46,7 +46,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 			return 130 - randomSource.nextInt(randomSource.nextInt(120) + 1); //130 = average y I'd like the caves to start at
 		} else {
 			//return randomSource.nextInt(randomSource.nextInt(384) + 8);
-            return randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.minY)) + 8) - Math.abs(Globals.minY);
+            return randomSource.nextInt(randomSource.nextInt(120 + Math.abs(Globals.getMinY())) + 8) - Math.abs(Globals.getMinY());
 		}
 	}
 
@@ -136,7 +136,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
 	protected boolean shouldCarve(CarvingContext ctx, CaveCarverConfiguration cfg, ChunkAccess level, RandomSource random, ChunkPos chunkPos) {
 		float flt = random.nextFloat();
-		return flt <= Config.settings.get(Config.KEY_CAVE_CHANCE);
+		return flt <= Config.getFloatSetting(Config.KEY_CAVE_CHANCE);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 		int minHeight = SectionPos.sectionToBlockCoord(this.getRange() * 2 - 1);
 		int maxHeight = random.nextInt(random.nextInt(random.nextInt(this.getCaveBound()) + 1) + 1) + random.nextInt(2, 8); // was +1 at the end
 		//Aquifer airAquifer = new AirOnlyAquifer(level, random.nextFloat() <=  0.15f);
-		Aquifer airAquifer = new AirOnlyAquifer(level, random.nextFloat() <=  Config.settings.get(Config.KEY_CAVE_AIR_EXPOSURE));
+		Aquifer airAquifer = new AirOnlyAquifer(level, random.nextFloat() <=  Config.getFloatSetting(Config.KEY_CAVE_AIR_EXPOSURE));
 
 		for(int k = 0; k < maxHeight; ++k) {
 			this.generateRoomCluster(
@@ -207,7 +207,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
         Random random = new Random(seed);
 		//Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface ? true : random.nextFloat() <=  0.15f);
-		Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface || random.nextFloat() <= Config.settings.get(Config.KEY_CAVE_AIR_EXPOSURE));
+		Aquifer aquifer = new AirOnlyAquifer(chunkPrimer, surface || random.nextFloat() <= Config.getFloatSetting(Config.KEY_CAVE_AIR_EXPOSURE));
 
 //      MutableBlockPos mbPosCheckAir = new MutableBlockPos();
 //		List<BlockPos> airPosList = new ArrayList<>();
@@ -293,8 +293,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 						maxX = 16;
 					}
 
-					if (minY < (Globals.minY - 1)) {
-						minY = (Globals.minY - 1);
+					if (minY < (Globals.getMinY() - 1)) {
+						minY = (Globals.getMinY() - 1);
 					}
 
 					// CHANGED: was 248

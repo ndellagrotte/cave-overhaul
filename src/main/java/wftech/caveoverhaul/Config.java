@@ -10,7 +10,8 @@ Fake YAML because I'm a fake person
  */
 public class Config {
 
-    public static HashMap<String, Float> settings = new HashMap<>();
+    private static final Map<String, Boolean> boolSettings = new HashMap<>();
+    private static final Map<String, Float> floatSettings = new HashMap<>();
 
     public static String KEY_CAVE_CHANCE = "cave_chance";
     public static String KEY_CAVE_AIR_EXPOSURE = "cave_air_exposure_chance";
@@ -21,15 +22,13 @@ public class Config {
     public static String KEY_USE_AQUIFER_PATCH = "use_aquifer_patch";
 
     //1.3.4
-    public static String KEY_LAVA_RIVER_FLAT = "use_flat_lava_rivers";
-    public static String KEY_WATER_RIVER_FLAT = "use_flat_water_rivers";
     public static String KEY_LAVA_RIVER_ENABLE = "enable_lava_rivers";
     public static String KEY_WATER_RIVER_ENABLE = "enable_water_rivers";
     public static String KEY_LAVA_OFFSET = "bottom_lava_offset";
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
-    private static final String[] validKeys = {
+    private static final Set<String> VALID_KEYS = Set.of(
             KEY_CAVE_CHANCE,
             KEY_CAVE_AIR_EXPOSURE,
             KEY_CANYON_UPPER_CHANCE,
@@ -37,49 +36,64 @@ public class Config {
             KEY_CANYON_UPPER_AIR_EXPOSURE,
             KEY_GENERATE_CAVERNS,
             KEY_USE_AQUIFER_PATCH,
-
-            //1.3.4
-            KEY_LAVA_RIVER_FLAT,
-            KEY_WATER_RIVER_FLAT,
             KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET
-            //KEY_ENABLE_CAVES_BELOW_MINUS_Y64,
-            //KEY_USE_LEGACY_OVERWORLD_DETECTION
-    };
+    );
 
-    private static final String[] boolKeys = {
+    private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
             KEY_USE_AQUIFER_PATCH,
-
-            //1.3.4
-            KEY_LAVA_RIVER_FLAT,
-            KEY_WATER_RIVER_FLAT,
             KEY_LAVA_RIVER_ENABLE,
-            KEY_WATER_RIVER_ENABLE,
-            //KEY_ENABLE_CAVES_BELOW_MINUS_Y64,
-            //KEY_USE_LEGACY_OVERWORLD_DETECTION,
-    };
+            KEY_WATER_RIVER_ENABLE
+    );
 
-    private static HashMap<String, Float> DEFAULT_VALUES = null;
+    private static final Map<String, Boolean> DEFAULT_BOOL_VALUES = new HashMap<>();
+    private static final Map<String, Float> DEFAULT_FLOAT_VALUES = new HashMap<>();
+
+    // Validation ranges for float settings: [min, max]
+    private static final Map<String, float[]> FLOAT_RANGES = new HashMap<>();
+    static {
+        FLOAT_RANGES.put(KEY_CAVE_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CAVE_AIR_EXPOSURE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_UPPER_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_CANYON_LOWER_CHANCE, new float[]{0f, 1f});
+        FLOAT_RANGES.put(KEY_LAVA_OFFSET, new float[]{0f, 64f});
+    }
 
     public static boolean getBoolSetting(String key){
-        //CaveOverhaul.LOGGER.error("Found: " + key + " -> " + (settings.get(key) != 0f));
-        return settings.get(key) != 0f;
+        return boolSettings.getOrDefault(key, DEFAULT_BOOL_VALUES.getOrDefault(key, false));
     }
 
     public static float getFloatSetting(String key){
-        return settings.get(key);
+        return floatSettings.getOrDefault(key, DEFAULT_FLOAT_VALUES.getOrDefault(key, 0f));
     }
 
     private static boolean isValidKey(String key){
-        for(String entry: validKeys){
-            if (entry.equals(key)){
-                return true;
-            }
-        }
+        return VALID_KEYS.contains(key);
+    }
 
-        return false;
+    private static float clampFloatValue(String key, float value) {
+        float[] range = FLOAT_RANGES.get(key);
+        if (range == null) {
+            return value;
+        }
+        float min = range[0];
+        float max = range[1];
+        if (value < min) {
+            LoggerFactory.getLogger("caveoverhaul").warn(
+                    "[WFs Cave Overhaul] Config value for '{}' ({}) is below minimum ({}), clamping to {}",
+                    key, value, min, min);
+            return min;
+        }
+        if (value > max) {
+            LoggerFactory.getLogger("caveoverhaul").warn(
+                    "[WFs Cave Overhaul] Config value for '{}' ({}) is above maximum ({}), clamping to {}",
+                    key, value, max, max);
+            return max;
+        }
+        return value;
     }
 
     private static void initFile(File file){
@@ -103,7 +117,6 @@ public class Config {
                 writer.write("# Enabling minecraft's caverns will re-enable the default worldgen. If you experience any mod conflicts, consider enabling the caverns option.\n");
                 writer.write("#\n");
                 writer.write("# Lava offset = fill the bottom x air blocks of the world with lava. Change this if the bottom-of-the-world lava looks weird.\n");
-                writer.write("# Flat rivers = use a static y value for each river (no mini waterfalls and whatnot).\n");
                 writer.write("# Enable rivers = disable or enable this river type.\n");
                 writer.write("#\n");
                 writer.write("# The aquifer patch fixes water-related issues, but could impact worldgen speed.\n");
@@ -118,10 +131,10 @@ public class Config {
                 writer.write("# canyon_lower_chance=0.02\n");
                 writer.write("\n");
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to create config file.", e);
             }
 
-            addMissingKeys(file, DEFAULT_VALUES.keySet());
+            addMissingKeys(file, new HashSet<>(VALID_KEYS));
         }
 
     }
@@ -132,19 +145,6 @@ public class Config {
         Collect known keys
          */
         HashSet<String> discoveredKeysSet = new HashSet<>();
-        List<String> boolKeysArr = Arrays.asList(boolKeys);
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            // Read the content of the file
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                if (line.startsWith("#")) {
-//                } else if (line.startsWith("[")) {
-//                } else {
-//                    String[] parts = line.split("=");
-//
-//                    if (parts.length == 0){
-//                        continue;
-//                    }
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -157,13 +157,14 @@ public class Config {
                     continue;
                 }
                 if (isValidKey(parts[0])) {
-                    if (boolKeysArr.contains(parts[0])) {
-                        boolean generateCaverns = Boolean.parseBoolean((parts[1].strip().toLowerCase()));
-                        float genCaverns_float = generateCaverns ? 1f : 0f;
-                        settings.put(parts[0], genCaverns_float);
+                    if (BOOL_KEYS.contains(parts[0])) {
+                        boolean value = Boolean.parseBoolean((parts[1].strip().toLowerCase()));
+                        boolSettings.put(parts[0], value);
                         discoveredKeysSet.add(parts[0]);
                     } else {
-                        settings.put(parts[0], Float.parseFloat((parts[1].strip())));
+                        float value = Float.parseFloat(parts[1].strip());
+                        value = clampFloatValue(parts[0], value);
+                        floatSettings.put(parts[0], value);
                         discoveredKeysSet.add(parts[0]);
                     }
                 }
@@ -205,16 +206,14 @@ public class Config {
     }
 
     private static void addMissingKeys(File file, Set<String> missingKeysAsSet){
-
-        List<String> boolKeysArr = Arrays.asList(boolKeys);
-
         for (String missingKey : missingKeysAsSet) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-                if (boolKeysArr.contains(missingKey)){
-                    boolean val = DEFAULT_VALUES.get(missingKey) == 1f;
+                if (BOOL_KEYS.contains(missingKey)){
+                    boolean val = DEFAULT_BOOL_VALUES.getOrDefault(missingKey, false);
                     writer.write(missingKey + "=" + val + "\n");
                 } else {
-                    writer.write(missingKey + "=" + DEFAULT_VALUES.get(missingKey) + "\n");
+                    float val = DEFAULT_FLOAT_VALUES.getOrDefault(missingKey, 0f);
+                    writer.write(missingKey + "=" + val + "\n");
                 }
             } catch (IOException e) {
                 LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to add missing key {} to config!", missingKey);
@@ -227,37 +226,25 @@ public class Config {
     }
 
     private static File generateFile(String relativePath, String fileName){
-
         File directory = new File(relativePath);
-//        if (!directory.exists()) {
-//            directory.mkdirs();
-//        }
-
         return new File(directory, fileName);
     }
 
     private static void initDefaultValues(){
+        if (DEFAULT_FLOAT_VALUES.isEmpty() && DEFAULT_BOOL_VALUES.isEmpty()) {
+            // Float settings
+            DEFAULT_FLOAT_VALUES.put(KEY_CAVE_CHANCE, 0.12f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_CHANCE, 0.12f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CANYON_LOWER_CHANCE, 0.04f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CAVE_AIR_EXPOSURE, 0.1f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.3f);
+            DEFAULT_FLOAT_VALUES.put(KEY_LAVA_OFFSET, 9f);
 
-        if (DEFAULT_VALUES == null){
-            DEFAULT_VALUES = new HashMap<>();
-            DEFAULT_VALUES.put(KEY_CAVE_CHANCE, 0.12f);
-            DEFAULT_VALUES.put(KEY_CANYON_UPPER_CHANCE, 0.12f);
-            DEFAULT_VALUES.put(KEY_CANYON_LOWER_CHANCE, 0.04f);
-
-            DEFAULT_VALUES.put(KEY_CAVE_AIR_EXPOSURE, 0.1f);
-            DEFAULT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.3f);
-            DEFAULT_VALUES.put(KEY_GENERATE_CAVERNS, 0f);
-            DEFAULT_VALUES.put(KEY_USE_AQUIFER_PATCH, 0f);
-
-            //1.3.4
-            DEFAULT_VALUES.put(KEY_LAVA_RIVER_FLAT, 0f);
-            DEFAULT_VALUES.put(KEY_WATER_RIVER_FLAT, 0f);
-            DEFAULT_VALUES.put(KEY_LAVA_RIVER_ENABLE, 1f);
-            DEFAULT_VALUES.put(KEY_WATER_RIVER_ENABLE, 1f);
-            DEFAULT_VALUES.put(KEY_LAVA_OFFSET, 9f);
-            // DEFAULT_VALUES.put(KEY_ENABLE_CAVES_BELOW_MINUS_Y64, 1f);
-            // DEFAULT_VALUES.put(KEY_USE_LEGACY_OVERWORLD_DETECTION, 1f);
-
+            // Boolean settings
+            DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
+            DEFAULT_BOOL_VALUES.put(KEY_USE_AQUIFER_PATCH, false);
+            DEFAULT_BOOL_VALUES.put(KEY_LAVA_RIVER_ENABLE, true);
+            DEFAULT_BOOL_VALUES.put(KEY_WATER_RIVER_ENABLE, true);
         }
     }
 
@@ -279,7 +266,7 @@ public class Config {
         HashSet<String> discoveredKeysSet = gatherAndInitSettings(file);
 
         //Re-add missing keys or add new missing keys
-        HashSet<String> missingKeysAsSet = new HashSet<>(Arrays.asList(validKeys));
+        HashSet<String> missingKeysAsSet = new HashSet<>(VALID_KEYS);
         missingKeysAsSet.removeAll(discoveredKeysSet);
         fixConfig(file, missingKeysAsSet);
 

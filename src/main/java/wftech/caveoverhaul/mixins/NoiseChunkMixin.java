@@ -23,11 +23,23 @@ import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 @Mixin(NoiseChunk.class)
 public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
-	// private DedicatedServer server;
-	@Unique
-    private NoiseSettings NS;
-	@Unique
+    @Unique
     private NoiseGeneratorSettings NGS;
+
+	@Unique
+	private boolean caveOverhaul$initialized = false;
+
+	@Unique
+	private boolean caveOverhaul$isOverworld = false;
+
+	@Unique
+	private int caveOverhaul$minY = 0;
+
+	@Unique
+	private int caveOverhaul$lavaOffset = 9;
+
+	@Unique
+	private boolean caveOverhaul$useAquiferPatch = false;
 
 	@Inject(method="<init>(ILnet/minecraft/world/level/levelgen/RandomState;IILnet/minecraft/world/level/levelgen/NoiseSettings;Lnet/minecraft/world/level/levelgen/DensityFunctions$BeardifierOrMarker;Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/world/level/levelgen/Aquifer$FluidPicker;Lnet/minecraft/world/level/levelgen/blending/Blender;)V",
 			at=@At("RETURN"))
@@ -38,119 +50,65 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		this.wFCaveOverhaul_Fork$setNGS(noiseGenSettings);
 		this.wFCaveOverhaul_Fork$setNS(noiseSettings);
 
+		// Pre-compute values that don't change per-block
+		this.caveOverhaul$minY = noiseGenSettings.noiseSettings().minY();
+		this.caveOverhaul$isOverworld = WorldGenUtils.checkIfLikelyOverworld(noiseGenSettings);
+		this.caveOverhaul$lavaOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+		this.caveOverhaul$useAquiferPatch = Config.getBoolSetting(Config.KEY_USE_AQUIFER_PATCH);
+
+		// Initialize global state once per chunk
+		Globals.setMinY(this.caveOverhaul$minY);
+		NoisetypeDomainWarp.init(this.caveOverhaul$minY);
+		Globals.init();
+
+		this.caveOverhaul$initialized = true;
 	}
 
 	@Inject(method="getInterpolatedState()Lnet/minecraft/world/level/block/state/BlockState;", at=@At("RETURN"), cancellable=true)
 	private void getInterpolatedStateMixin(CallbackInfoReturnable<BlockState> cir) {
-
-		NoiseChunk thisChunk = (NoiseChunk) (Object) this;
-
-		//init layers
-		int minY = this.wFCaveOverhaul_Fork$getNGS().noiseSettings().minY();
-		Globals.minY = minY;
-		NoisetypeDomainWarp.init(minY);
-
-		//boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(((NoiseChunkAccessor) this).getNoiseSettings());
-		boolean isLikelyOverworld = WorldGenUtils.checkIfLikelyOverworld(this.wFCaveOverhaul_Fork$getNGS());
-		if(!isLikelyOverworld) {
+		// Fast path: skip if not overworld
+		if (!this.caveOverhaul$isOverworld) {
 			return;
 		}
+
+		NoiseChunk thisChunk = (NoiseChunk) (Object) this;
 
 		int x = thisChunk.blockX();
 		int y = thisChunk.blockY();
 		int z = thisChunk.blockZ();
 
-		int topY = thisChunk.preliminarySurfaceLevel(x, z);
-		topY = topY - 8;
-
-		if(y >= topY) {
+		// Fast path: skip if above surface
+		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 8;
+		if (y >= topY) {
 			return;
 		}
 
-		/*
-		 * RED_STAINED_GLASS = lava
-		 * GRAY_STAINED_GLASS = water
-		 * YELLOW_STAINED_GLASS = stone
-		 * BLACK_STAINED_GLASS = air above rivers
-		 */
+		// Cache minY locally to avoid repeated field access
+		int minY = this.caveOverhaul$minY;
 
-		/*
-		Patch 1.3.2 - aquifer patch
-		 */
-		Block original_block_chosen;
-		if (cir.getReturnValue() != null) {
-			original_block_chosen = cir.getReturnValue().getBlock();
-		} else {
-			original_block_chosen = Blocks.STONE;
-		}
-
-
-		if (original_block_chosen == Blocks.LAVA && y <= (minY + 9)){
-			return;
-		} else if (original_block_chosen == Blocks.AIR && y <= (minY + 9)){
+		// Fast path: skip bottom of world
+		Block originalBlock = cir.getReturnValue() != null ? cir.getReturnValue().getBlock() : Blocks.STONE;
+		if (y <= minY + 9 && (originalBlock == Blocks.LAVA || originalBlock == Blocks.AIR)) {
 			return;
 		}
 
-
-		if (Config.getBoolSetting(Config.KEY_USE_AQUIFER_PATCH) && (original_block_chosen == Blocks.WATER || original_block_chosen == Blocks.LAVA)) {
-			if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y - 1, z)) {
+		// Aquifer patch: check if water/lava is adjacent to air (use cached config value)
+		if (this.caveOverhaul$useAquiferPatch && (originalBlock == Blocks.WATER || originalBlock == Blocks.LAVA)) {
+			if (NoiseChunkMixinUtils.hasAdjacentAir(x, y, z)) {
 				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x - 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x + 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z - 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z + 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y - 1, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x - 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x + 1, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z - 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
-			} else if (NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z + 1)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				cir.cancel();
+				return;
 			}
 		}
 
-		/*
-		End 1.3.2 - aquifer patch
-		BUT the original_block_chosen references below in the if statements were part of the aquifer patch
-		 */
-
-		NURDynamicLayer riverLayer = NoiseChunkMixinUtils.getRiverLayer(x, y, z);
-		BlockState preferredState = null;
-		if(riverLayer != null) {
-			preferredState = riverLayer.getLiquidType().defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToStone(x, y, z)) {
-			preferredState = Blocks.STONE.defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToAirRivers(x, y, z)) {
-			preferredState = Blocks.AIR.defaultBlockState();
-		} else if(NoiseChunkMixinUtils.shouldSetToAirCaverns(x, y, z)) {
-			preferredState = Blocks.AIR.defaultBlockState();
-		}
+		// Main cave/river logic
+		BlockState preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
 
 		if (preferredState != null) {
-			Globals.init();
-            int y_offset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
-			if (preferredState.isAir() && y <= Globals.minY + y_offset) {
+			// Replace air with lava at bottom of world (use cached values)
+			if (preferredState.isAir() && y <= minY + this.caveOverhaul$lavaOffset) {
 				preferredState = Blocks.LAVA.defaultBlockState();
 			}
 			cir.setReturnValue(preferredState);
-			cir.cancel();
 		}
 	}
 
@@ -170,11 +128,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 	@Override
 	public void wFCaveOverhaul_Fork$setNS(NoiseSettings NS) {
-		this.NS = NS;
-	}
-
-	@Override
-	public NoiseSettings wFCaveOverhaul_Fork$getNS() {
-		return this.NS;
-	}
+        // private DedicatedServer server;
+    }
 }
