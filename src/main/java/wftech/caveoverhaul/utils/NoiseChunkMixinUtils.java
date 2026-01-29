@@ -21,29 +21,6 @@ public class NoiseChunkMixinUtils {
 	}
 
 	/**
-	 * Optimized check for adjacent air blocks. Gets instances once and checks all neighbors.
-	 * Returns true as soon as any neighbor is air (early exit).
-	 */
-	public static boolean hasAdjacentAir(int x, int y, int z) {
-		NURLayerHolder riverHolder = NURLayerHolder.getInstance();
-		NCLayerHolder caveHolder = NCLayerHolder.getInstance();
-
-		// Check each neighbor with early exit
-		if (shouldSetToAirFast(riverHolder, caveHolder, x, y - 1, z)) return true;
-		if (shouldSetToAirFast(riverHolder, caveHolder, x - 1, y, z)) return true;
-		if (shouldSetToAirFast(riverHolder, caveHolder, x + 1, y, z)) return true;
-		if (shouldSetToAirFast(riverHolder, caveHolder, x, y, z - 1)) return true;
-		return shouldSetToAirFast(riverHolder, caveHolder, x, y, z + 1);
-	}
-
-	/**
-	 * Fast air check using pre-fetched holder instances.
-	 */
-	private static boolean shouldSetToAirFast(NURLayerHolder riverHolder, NCLayerHolder caveHolder, int x, int y, int z) {
-		return riverHolder.shouldSetToAirRivers(x, y, z) || caveHolder.shouldCarve(x, y, z);
-	}
-
-	/**
 	 * Computes the preferred block state for cave/river generation.
 	 * Gets holder instances once and performs all checks with them.
 	 * Returns null if no change is needed.
