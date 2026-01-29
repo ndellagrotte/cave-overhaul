@@ -54,6 +54,7 @@ public class NoisetypeDomainWarp {
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
             noise.SetFrequency(0.01f);
             domainWarp = noise;
         }

@@ -11,6 +11,7 @@ public class NoiseUtils {
     public static FastNoiseLite createStandardDomainWarp() {
         FastNoiseLite warp = new FastNoiseLite(12345);
         warp.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+        warp.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         warp.SetDomainWarpAmp(50.0f);
         warp.SetFrequency(0.01f);
         return warp;

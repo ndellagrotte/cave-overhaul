@@ -200,6 +200,7 @@ public class NURDynamicLayer {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed());
         noise.SetNoiseType(NoiseType.OpenSimplex2);
+        noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         noise.SetFrequency(0.025f);
         noise.SetFractalLacunarity(1.1f);
         noise.SetFractalGain(1.6f);
@@ -210,6 +211,7 @@ public class NURDynamicLayer {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed() + seedOffset + 2);
         noise.SetNoiseType(NoiseType.OpenSimplex2);
+        noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         noise.SetFrequency(0.003f);
         noise.SetFractalType(FractalType.Ridged);
         noise.SetFractalOctaves(1);
@@ -220,6 +222,7 @@ public class NURDynamicLayer {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed() + seedOffset + 1);
         noise.SetNoiseType(NoiseType.OpenSimplex2);
+        noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         noise.SetFrequency(0.0015f);
         return noise;
     }
@@ -228,6 +231,7 @@ public class NURDynamicLayer {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed() + seedOffset);
         noise.SetNoiseType(NoiseType.OpenSimplex2);
+        noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         noise.SetFrequency(0.002f);
         return noise;
     }

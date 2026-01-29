@@ -180,6 +180,7 @@ public class NURLayerHolder {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed() + 12345);
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         noise.SetFrequency(0.005f);
         return noise;
     }
