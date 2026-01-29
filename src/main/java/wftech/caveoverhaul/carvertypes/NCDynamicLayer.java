@@ -11,7 +11,6 @@ public class NCDynamicLayer {
     private static final float NOISE_THRESHOLD = 0.15f;
 
     private final int minY;
-    private final int maxY;
     private final int yRangeUpper;  // Precomputed upper bound
     private final FastNoiseLite caveStructureNoise;
     private final NCLogic cache;
@@ -21,7 +20,6 @@ public class NCDynamicLayer {
                           FastNoiseLite caveYNoise,
                           FastNoiseLite caveStructureNoise) {
         this.minY = minY;
-        this.maxY = maxY;
         this.yRangeUpper = maxY + MAX_CAVE_SIZE_Y;
         this.caveStructureNoise = caveStructureNoise;
         this.cache = new NCLogic(minY, maxY, caveYNoise, caveSizeNoise);
