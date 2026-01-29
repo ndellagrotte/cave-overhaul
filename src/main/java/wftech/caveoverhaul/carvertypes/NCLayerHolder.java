@@ -123,7 +123,8 @@ public class NCLayerHolder {
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
         tnoise.SetFractalOctaves(1);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+        tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFractalGain(0.3f);
         tnoise.SetFrequency(0.025f);
         tnoise.SetFractalType(FastNoiseLite.FractalType.FBm);
@@ -142,7 +143,8 @@ public class NCLayerHolder {
 
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed(seed);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); //SimplexFractal
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S); //SimplexFractal
+        tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFrequency(0.015f); //was 0.01
         tnoise.SetFractalType(FastNoiseLite.FractalType.FBm);
         tnoise.SetFractalGain(1.3f); //seems to top out at 3.5 though
@@ -164,7 +166,8 @@ public class NCLayerHolder {
 
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed(seed);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+        tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFrequency(0.01f);
         tnoise.SetFractalType(FastNoiseLite.FractalType.FBm);
         tnoise.SetFractalGain(2.5f);
