@@ -106,7 +106,9 @@ public class NURDynamicLayer {
             return false;
         }
 
-        if (y <= Globals.getMinY() + 9) {
+        // Allow air carving down to minY + 6 (Y=-58 with standard minY=-64)
+        // This supports lava rivers at Y=-56 which need air above at Y=-55
+        if (y <= Globals.getMinY() + 6) {
             return false;
         }
 
@@ -129,26 +131,29 @@ public class NURDynamicLayer {
     }
 
     public boolean isBoundary(int x, int y, int z) {
-        if (y <= Globals.getMinY() + 8) {
+        // Allow boundary placement down to minY + 4 (Y=-60 with standard minY=-64)
+        // This supports lava rivers at Y=-56 which need boundaries at Y=-57/-58
+        if (y <= Globals.getMinY() + 4) {
             return false;
         }
 
-        if (this.getNoise3D(x, y, z) < NOISE_CUTOFF_RIVER_NON_WARPED) {
-            return false;
-        }
-
+        // If this position is inside the river channel, it's not a boundary
         if (this.getWarpedNoise(x, y, z) > NOISE_CUTOFF_RIVER) {
             return false;
         }
 
+        // Check if any adjacent position (including above) has liquid
         return NoiseChunkMixinUtils.getRiverLayer(x + 1, y, z) != null
                 || NoiseChunkMixinUtils.getRiverLayer(x - 1, y, z) != null
                 || NoiseChunkMixinUtils.getRiverLayer(x, y, z + 1) != null
-                || NoiseChunkMixinUtils.getRiverLayer(x, y, z - 1) != null;
+                || NoiseChunkMixinUtils.getRiverLayer(x, y, z - 1) != null
+                || NoiseChunkMixinUtils.getRiverLayer(x, y + 1, z) != null;
     }
 
     public boolean isBelowRiverSupport(int x, int y, int z) {
-        if (y <= Globals.getMinY() + 8) {
+        // Allow floor support down to minY + 4 (Y=-60 with standard minY=-64)
+        // This supports lava rivers at Y=-56 which need floor at Y=-57/-58
+        if (y <= Globals.getMinY() + 4) {
             return false;
         }
         return isLiquid(x, y + 1, z) || isLiquid(x, y + 2, z);

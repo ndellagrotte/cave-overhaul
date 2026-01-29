@@ -20,19 +20,29 @@ public class NURLayerHolder {
     private static final int[] WATER_Y_LEVELS = { -25, -4, -4, -8, 18, 36, 48 };
     private static final int[] LAVA_Y_LEVELS = { -56, -56, -42, -25 };
 
-    // Y levels where both water and lava rivers exist
-    private static final Set<Integer> SHARED_Y_LEVELS;
+    // Y coordinate range where both water and lava river layers can generate
+    private static final int OVERLAP_Y_MIN;
+    private static final int OVERLAP_Y_MAX;
     static {
-        Set<Integer> waterYSet = new HashSet<>();
-        Set<Integer> lavaYSet = new HashSet<>();
-        for (int y : WATER_Y_LEVELS) waterYSet.add(y);
-        for (int y : LAVA_Y_LEVELS) lavaYSet.add(y);
-        SHARED_Y_LEVELS = new HashSet<>();
-        for (int y : waterYSet) {
-            if (lavaYSet.contains(y)) {
-                SHARED_Y_LEVELS.add(y);
-            }
+        // Calculate actual Y ranges for each layer type
+        // yRangeLower = minY - 2
+        // yRangeUpper = minY + (MAX_CAVE_SIZE_Y / 2) + CEILING_BUFFER + 1
+        //             = minY + 6 + 4 + 1 = minY + 11  (with MAX_CAVE_SIZE_Y=12, CEILING_BUFFER=4)
+        int waterMin = Integer.MAX_VALUE, waterMax = Integer.MIN_VALUE;
+        int lavaMin = Integer.MAX_VALUE, lavaMax = Integer.MIN_VALUE;
+
+        for (int minY : WATER_Y_LEVELS) {
+            waterMin = Math.min(waterMin, minY - 2);
+            waterMax = Math.max(waterMax, minY + 11);
         }
+        for (int minY : LAVA_Y_LEVELS) {
+            lavaMin = Math.min(lavaMin, minY - 2);
+            lavaMax = Math.max(lavaMax, minY + 11);
+        }
+
+        // Overlap is the intersection of water and lava ranges
+        OVERLAP_Y_MIN = Math.max(waterMin, lavaMin);
+        OVERLAP_Y_MAX = Math.min(waterMax, lavaMax);
     }
 
     private final List<NURDynamicLayer> riverLayers = new ArrayList<>();
@@ -119,19 +129,32 @@ public class NURLayerHolder {
     }
 
     private boolean shouldProcessLayer(NURDynamicLayer layer, int x, int y, int z) {
-        return !layer.isEnabled()
-                || !layer.isInYRange(y)
-                || layer.isOutOfBounds(x, y, z)
-                || isExcludedAtSharedYLevel(layer, x, z);
+        if (!layer.isEnabled()) {
+            return true;
+        }
+
+        if (!layer.isInYRange(y)) {
+            return true;
+        }
+
+        // At Y coordinates where both water and lava layers exist,
+        // check type exclusion BEFORE layer-specific bounds
+        if (isExcludedAtOverlapY(layer, x, y, z)) {
+            return true;
+        }
+
+        // Now check layer-specific bounds
+        return layer.isOutOfBounds(x, y, z);
     }
 
     /**
-     * At Y levels where both water and lava rivers exist, use noise to determine
-     * which type "owns" each x,z position. This prevents overlap while maintaining
-     * overall river frequency.
+     * At Y coordinates where both water and lava river layers can generate,
+     * use noise to determine which type "owns" each x,z position. This prevents
+     * overlap while maintaining overall river frequency.
      */
-    private boolean isExcludedAtSharedYLevel(NURDynamicLayer layer, int x, int z) {
-        if (!SHARED_Y_LEVELS.contains(layer.getMinY())) {
+    private boolean isExcludedAtOverlapY(NURDynamicLayer layer, int x, int y, int z) {
+        // Check if this Y coordinate is in the overlap range
+        if (y < OVERLAP_Y_MIN || y > OVERLAP_Y_MAX) {
             return false;
         }
 

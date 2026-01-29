@@ -19,12 +19,14 @@ public class Config {
     public static String KEY_CANYON_UPPER_AIR_EXPOSURE = "canyon_air_exposure_chance";
     public static String KEY_CANYON_LOWER_CHANCE = "canyon_lower_chance";
     public static String KEY_GENERATE_CAVERNS = "generate_minecraft_caverns";
-    public static String KEY_USE_AQUIFER_PATCH = "use_aquifer_patch";
 
     //1.3.4
     public static String KEY_LAVA_RIVER_ENABLE = "enable_lava_rivers";
     public static String KEY_WATER_RIVER_ENABLE = "enable_water_rivers";
     public static String KEY_LAVA_OFFSET = "bottom_lava_offset";
+
+    //1.3.5
+    public static String KEY_CAVE_VERTICAL_STRETCH = "cave_vertical_stretch";
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
@@ -35,15 +37,14 @@ public class Config {
             KEY_CANYON_LOWER_CHANCE,
             KEY_CANYON_UPPER_AIR_EXPOSURE,
             KEY_GENERATE_CAVERNS,
-            KEY_USE_AQUIFER_PATCH,
             KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE,
-            KEY_LAVA_OFFSET
+            KEY_LAVA_OFFSET,
+            KEY_CAVE_VERTICAL_STRETCH
     );
 
     private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
-            KEY_USE_AQUIFER_PATCH,
             KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE
     );
@@ -60,6 +61,7 @@ public class Config {
         FLOAT_RANGES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, new float[]{0f, 1f});
         FLOAT_RANGES.put(KEY_CANYON_LOWER_CHANCE, new float[]{0f, 1f});
         FLOAT_RANGES.put(KEY_LAVA_OFFSET, new float[]{0f, 64f});
+        FLOAT_RANGES.put(KEY_CAVE_VERTICAL_STRETCH, new float[]{0.5f, 4f});
     }
 
     public static boolean getBoolSetting(String key){
@@ -68,6 +70,74 @@ public class Config {
 
     public static float getFloatSetting(String key){
         return floatSettings.getOrDefault(key, DEFAULT_FLOAT_VALUES.getOrDefault(key, 0f));
+    }
+
+    public static void setBoolSetting(String key, boolean value) {
+        if (BOOL_KEYS.contains(key)) {
+            boolSettings.put(key, value);
+        }
+    }
+
+    public static void setFloatSetting(String key, float value) {
+        if (VALID_KEYS.contains(key) && !BOOL_KEYS.contains(key)) {
+            floatSettings.put(key, clampFloatValue(key, value));
+        }
+    }
+
+    public static boolean getDefaultBoolValue(String key) {
+        return DEFAULT_BOOL_VALUES.getOrDefault(key, false);
+    }
+
+    public static float getDefaultFloatValue(String key) {
+        return DEFAULT_FLOAT_VALUES.getOrDefault(key, 0f);
+    }
+
+    public static float[] getFloatRange(String key) {
+        return FLOAT_RANGES.getOrDefault(key, new float[]{0f, 1f});
+    }
+
+    public static void saveConfig() {
+        String relativePath = "config";
+        String fileName = "wfscaveoverhaul.cfg";
+        File file = generateFile(relativePath, fileName);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write("# All *_air_exposure_chance entries dictate the odds that caves/canyons will carve through the surface\n");
+            writer.write("# All *_chance entries dictate the odds that caves/canyons will spawn\n");
+            writer.write("# Upper canyons are y < 128 to bedrock\n");
+            writer.write("# Lower canyons are y < 48 to bedrock\n");
+            writer.write("# The two canyons types overlap :)\n");
+            writer.write("#\n");
+            writer.write("# Caves refer to old pre-1.18 minecraft tunnels and not the noise caverns added by this mod.\n");
+            writer.write("# Caverns refer to the ultra-large caves added in 1.18. Enabling these will have a minor decrease in worldgen performance.\n");
+            writer.write("# Likewise, enabling caverns could result in awkward terrain as the noise rules are way different from Cave Overhaul's.\n");
+            writer.write("# Enabling minecraft's caverns will re-enable the default worldgen. If you experience any mod conflicts, consider enabling the caverns option.\n");
+            writer.write("#\n");
+            writer.write("# Lava offset = fill the bottom x air blocks of the world with lava. Change this if the bottom-of-the-world lava looks weird.\n");
+            writer.write("# Enable rivers = disable or enable this river type.\n");
+            writer.write("#\n");
+            writer.write("# The format is <key>=<value> with no spaces\n");
+            writer.write("# Please use true/false or numbers only. T/F/yes/no/Y/N will not be read properly.\n");
+            writer.write("#\n");
+            writer.write("# Suggested rates if caverns are enabled: \n");
+            writer.write("# cave_air_exposure_chance=0.5\n");
+            writer.write("# canyon_air_exposure_chance=0.5\n");
+            writer.write("# cave_chance=0.02\n");
+            writer.write("# canyon_upper_chance=0.04\n");
+            writer.write("# canyon_lower_chance=0.02\n");
+            writer.write("\n");
+
+            // Write all settings
+            for (String key : VALID_KEYS) {
+                if (BOOL_KEYS.contains(key)) {
+                    writer.write(key + "=" + getBoolSetting(key) + "\n");
+                } else {
+                    writer.write(key + "=" + getFloatSetting(key) + "\n");
+                }
+            }
+        } catch (IOException e) {
+            LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to save config file.", e);
+        }
     }
 
     private static boolean isValidKey(String key){
@@ -239,10 +309,10 @@ public class Config {
             DEFAULT_FLOAT_VALUES.put(KEY_CAVE_AIR_EXPOSURE, 0.1f);
             DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.3f);
             DEFAULT_FLOAT_VALUES.put(KEY_LAVA_OFFSET, 9f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CAVE_VERTICAL_STRETCH, 2f);
 
             // Boolean settings
             DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
-            DEFAULT_BOOL_VALUES.put(KEY_USE_AQUIFER_PATCH, false);
             DEFAULT_BOOL_VALUES.put(KEY_LAVA_RIVER_ENABLE, true);
             DEFAULT_BOOL_VALUES.put(KEY_WATER_RIVER_ENABLE, true);
         }

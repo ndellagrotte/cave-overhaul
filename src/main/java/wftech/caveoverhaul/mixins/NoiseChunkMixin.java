@@ -38,9 +38,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 	@Unique
 	private int caveOverhaul$lavaOffset = 9;
 
-	@Unique
-	private boolean caveOverhaul$useAquiferPatch = false;
-
 	@Inject(method="<init>(ILnet/minecraft/world/level/levelgen/RandomState;IILnet/minecraft/world/level/levelgen/NoiseSettings;Lnet/minecraft/world/level/levelgen/DensityFunctions$BeardifierOrMarker;Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/world/level/levelgen/Aquifer$FluidPicker;Lnet/minecraft/world/level/levelgen/blending/Blender;)V",
 			at=@At("RETURN"))
 	private void constructorMixin(int int1, RandomState randomstate, int int2, int int3, NoiseSettings noiseSettings,
@@ -54,7 +51,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		this.caveOverhaul$minY = noiseGenSettings.noiseSettings().minY();
 		this.caveOverhaul$isOverworld = WorldGenUtils.checkIfLikelyOverworld(noiseGenSettings);
 		this.caveOverhaul$lavaOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
-		this.caveOverhaul$useAquiferPatch = Config.getBoolSetting(Config.KEY_USE_AQUIFER_PATCH);
 
 		// Initialize global state once per chunk
 		Globals.setMinY(this.caveOverhaul$minY);
@@ -90,14 +86,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		Block originalBlock = cir.getReturnValue() != null ? cir.getReturnValue().getBlock() : Blocks.STONE;
 		if (y <= minY + 9 && (originalBlock == Blocks.LAVA || originalBlock == Blocks.AIR)) {
 			return;
-		}
-
-		// Aquifer patch: check if water/lava is adjacent to air (use cached config value)
-		if (this.caveOverhaul$useAquiferPatch && (originalBlock == Blocks.WATER || originalBlock == Blocks.LAVA)) {
-			if (NoiseChunkMixinUtils.hasAdjacentAir(x, y, z)) {
-				cir.setReturnValue(Blocks.STONE.defaultBlockState());
-				return;
-			}
 		}
 
 		// Main cave/river logic

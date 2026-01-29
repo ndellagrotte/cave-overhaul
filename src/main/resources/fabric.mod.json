@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"wftech.caveoverhaul.CaveOverhaul"
+		],
+		"modmenu": [
+			"wftech.caveoverhaul.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -29,7 +32,8 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"cloth-config": "*",
+		"modmenu": "*"
 	},
 	"accessWidener": "caveoverhaul.accesswidener"
 }

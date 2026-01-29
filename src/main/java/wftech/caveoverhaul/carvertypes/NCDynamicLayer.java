@@ -1,5 +1,6 @@
 package wftech.caveoverhaul.carvertypes;
 
+import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FloatPos;
 import wftech.caveoverhaul.utils.Settings;
@@ -10,7 +11,6 @@ public class NCDynamicLayer {
     private static final float NOISE_THRESHOLD = 0.15f;
 
     private final int minY;
-    private final int maxY;
     private final int yRangeUpper;  // Precomputed upper bound
     private final FastNoiseLite caveStructureNoise;
     private final NCLogic cache;
@@ -20,7 +20,6 @@ public class NCDynamicLayer {
                           FastNoiseLite caveYNoise,
                           FastNoiseLite caveStructureNoise) {
         this.minY = minY;
-        this.maxY = maxY;
         this.yRangeUpper = maxY + MAX_CAVE_SIZE_Y;
         this.caveStructureNoise = caveStructureNoise;
         this.cache = new NCLogic(minY, maxY, caveYNoise, caveSizeNoise);
@@ -41,8 +40,8 @@ public class NCDynamicLayer {
             return false;
         }
 
-        //stretches caves vertically by a factor of 2???
-        float noiseFound = getWarpedNoise(x, y * 2, z);
+        float verticalStretch = Config.getFloatSetting(Config.KEY_CAVE_VERTICAL_STRETCH);
+        float noiseFound = getWarpedNoise(x, y * verticalStretch, z);
         return noiseFound > NOISE_THRESHOLD;
     }
 
