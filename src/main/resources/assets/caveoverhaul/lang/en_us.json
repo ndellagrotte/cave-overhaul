@@ -1,0 +1,38 @@
+{
+  "config.caveoverhaul.title": "Cave Overhaul Settings",
+
+  "config.caveoverhaul.category.general": "General",
+  "config.caveoverhaul.category.rivers": "Rivers",
+  "config.caveoverhaul.category.caves": "Caves",
+  "config.caveoverhaul.category.canyons": "Canyons",
+
+  "config.caveoverhaul.generate_caverns": "Generate Minecraft Caverns",
+  "config.caveoverhaul.generate_caverns.tooltip": "Enable vanilla 1.18+ cavern generation. May cause terrain conflicts with Cave Overhaul's noise caves.",
+
+  "config.caveoverhaul.enable_lava_rivers": "Enable Lava Rivers",
+  "config.caveoverhaul.enable_lava_rivers.tooltip": "Generate underground lava rivers at low Y levels.",
+
+  "config.caveoverhaul.enable_water_rivers": "Enable Water Rivers",
+  "config.caveoverhaul.enable_water_rivers.tooltip": "Generate underground water rivers.",
+
+  "config.caveoverhaul.lava_offset": "Bottom Lava Offset",
+  "config.caveoverhaul.lava_offset.tooltip": "Fill the bottom X air blocks of the world with lava. Adjust if bottom-of-world lava looks wrong.",
+
+  "config.caveoverhaul.cave_chance": "Cave Spawn Chance",
+  "config.caveoverhaul.cave_chance.tooltip": "Probability that pre-1.18 style cave tunnels will spawn. (0.0 - 1.0)",
+
+  "config.caveoverhaul.cave_air_exposure": "Cave Air Exposure Chance",
+  "config.caveoverhaul.cave_air_exposure.tooltip": "Probability that caves will carve through to the surface. (0.0 - 1.0)",
+
+  "config.caveoverhaul.cave_vertical_stretch": "Cave Vertical Stretch",
+  "config.caveoverhaul.cave_vertical_stretch.tooltip": "Stretches noise caves vertically. Higher values make caves taller and more vertical. (0.5 - 4.0)",
+
+  "config.caveoverhaul.canyon_upper_chance": "Upper Canyon Chance",
+  "config.caveoverhaul.canyon_upper_chance.tooltip": "Probability of canyons spawning in upper layers (y < 128 to bedrock). (0.0 - 1.0)",
+
+  "config.caveoverhaul.canyon_lower_chance": "Lower Canyon Chance",
+  "config.caveoverhaul.canyon_lower_chance.tooltip": "Probability of canyons spawning in lower layers (y < 48 to bedrock). (0.0 - 1.0)",
+
+  "config.caveoverhaul.canyon_air_exposure": "Canyon Air Exposure Chance",
+  "config.caveoverhaul.canyon_air_exposure.tooltip": "Probability that canyons will carve through to the surface. (0.0 - 1.0)"
+}
