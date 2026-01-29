@@ -2,6 +2,7 @@ package wftech.caveoverhaul.carvertypes.rivers;
 
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite.Vector3;
+import wftech.caveoverhaul.utils.NoiseUtils;
 
 public class NURLogic {
 
@@ -14,13 +15,7 @@ public class NURLogic {
         this.noiseIsLiquid = noiseIsLiquid;
         this.noiseShouldCarveBase = noiseShouldCarveBase;
         this.noiseYLevelBase = noiseYLevelBase;
-
-        // Domain warp setup - now 3D!
-        FastNoiseLite warp = new FastNoiseLite(12345);
-        warp.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
-        warp.SetDomainWarpAmp(50.0f);
-        warp.SetFrequency(0.01f);
-        this.domainWarp = warp;
+        this.domainWarp = NoiseUtils.createStandardDomainWarp();
     }
 
     public float getCaveYNoise(int x, int y, int z) {

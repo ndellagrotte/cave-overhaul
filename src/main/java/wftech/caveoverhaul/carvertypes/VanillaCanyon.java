@@ -23,7 +23,6 @@ public class VanillaCanyon extends CanyonWorldCarver {
 
 	public VanillaCanyon(Codec<CanyonCarverConfiguration> p_64711_) {
 		super(p_64711_);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

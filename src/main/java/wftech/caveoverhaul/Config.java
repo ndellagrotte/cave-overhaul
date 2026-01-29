@@ -28,7 +28,7 @@ public class Config {
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
-    private static final String[] validKeys = {
+    private static final Set<String> VALID_KEYS = Set.of(
             KEY_CAVE_CHANCE,
             KEY_CAVE_AIR_EXPOSURE,
             KEY_CANYON_UPPER_CHANCE,
@@ -36,21 +36,17 @@ public class Config {
             KEY_CANYON_UPPER_AIR_EXPOSURE,
             KEY_GENERATE_CAVERNS,
             KEY_USE_AQUIFER_PATCH,
-
-            //1.3.4
             KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET
-    };
+    );
 
-    private static final String[] boolKeys = {
+    private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
             KEY_USE_AQUIFER_PATCH,
-
-            //1.3.4
             KEY_LAVA_RIVER_ENABLE,
-            KEY_WATER_RIVER_ENABLE,
-    };
+            KEY_WATER_RIVER_ENABLE
+    );
 
     private static final Map<String, Boolean> DEFAULT_BOOL_VALUES = new HashMap<>();
     private static final Map<String, Float> DEFAULT_FLOAT_VALUES = new HashMap<>();
@@ -75,13 +71,7 @@ public class Config {
     }
 
     private static boolean isValidKey(String key){
-        for(String entry: validKeys){
-            if (entry.equals(key)){
-                return true;
-            }
-        }
-
-        return false;
+        return VALID_KEYS.contains(key);
     }
 
     private static float clampFloatValue(String key, float value) {
@@ -144,7 +134,7 @@ public class Config {
                 LoggerFactory.getLogger("caveoverhaul").error("[WFs Cave Overhaul] Failed to create config file.", e);
             }
 
-            addMissingKeys(file, new HashSet<>(Arrays.asList(validKeys)));
+            addMissingKeys(file, new HashSet<>(VALID_KEYS));
         }
 
     }
@@ -155,19 +145,6 @@ public class Config {
         Collect known keys
          */
         HashSet<String> discoveredKeysSet = new HashSet<>();
-        List<String> boolKeysArr = Arrays.asList(boolKeys);
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            // Read the content of the file
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                if (line.startsWith("#")) {
-//                } else if (line.startsWith("[")) {
-//                } else {
-//                    String[] parts = line.split("=");
-//
-//                    if (parts.length == 0){
-//                        continue;
-//                    }
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -180,7 +157,7 @@ public class Config {
                     continue;
                 }
                 if (isValidKey(parts[0])) {
-                    if (boolKeysArr.contains(parts[0])) {
+                    if (BOOL_KEYS.contains(parts[0])) {
                         boolean value = Boolean.parseBoolean((parts[1].strip().toLowerCase()));
                         boolSettings.put(parts[0], value);
                         discoveredKeysSet.add(parts[0]);
@@ -229,12 +206,9 @@ public class Config {
     }
 
     private static void addMissingKeys(File file, Set<String> missingKeysAsSet){
-
-        List<String> boolKeysArr = Arrays.asList(boolKeys);
-
         for (String missingKey : missingKeysAsSet) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-                if (boolKeysArr.contains(missingKey)){
+                if (BOOL_KEYS.contains(missingKey)){
                     boolean val = DEFAULT_BOOL_VALUES.getOrDefault(missingKey, false);
                     writer.write(missingKey + "=" + val + "\n");
                 } else {
@@ -252,12 +226,7 @@ public class Config {
     }
 
     private static File generateFile(String relativePath, String fileName){
-
         File directory = new File(relativePath);
-//        if (!directory.exists()) {
-//            directory.mkdirs();
-//        }
-
         return new File(directory, fileName);
     }
 
@@ -297,7 +266,7 @@ public class Config {
         HashSet<String> discoveredKeysSet = gatherAndInitSettings(file);
 
         //Re-add missing keys or add new missing keys
-        HashSet<String> missingKeysAsSet = new HashSet<>(Arrays.asList(validKeys));
+        HashSet<String> missingKeysAsSet = new HashSet<>(VALID_KEYS);
         missingKeysAsSet.removeAll(discoveredKeysSet);
         fixConfig(file, missingKeysAsSet);
 

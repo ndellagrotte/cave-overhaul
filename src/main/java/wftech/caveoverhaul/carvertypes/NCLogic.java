@@ -2,6 +2,7 @@ package wftech.caveoverhaul.carvertypes;
 
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite.Vector3;
+import wftech.caveoverhaul.utils.NoiseUtils;
 import wftech.caveoverhaul.utils.Settings;
 
 //NC stands for NoiseCave
@@ -20,13 +21,7 @@ public class NCLogic {
         this.maxY = maxY;
         this.caveYNoise = caveYNoise;
         this.caveSizeNoise = caveSizeNoise;
-
-        // 3D Domain warp setup
-        FastNoiseLite warp = new FastNoiseLite(12345);
-        warp.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
-        warp.SetDomainWarpAmp(50.0f);
-        warp.SetFrequency(0.01f);
-        this.domainWarp = warp;
+        this.domainWarp = NoiseUtils.createStandardDomainWarp();
     }
 
     public float getCachedYLevel(int x, int y, int z) {

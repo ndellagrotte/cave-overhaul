@@ -58,28 +58,10 @@ public class NoiseMaker {
     }
 
     public static boolean isHolderOnWhitelistEntrances(String holder){
-
-        //String preferred_holder = "minecraft:overworld/noise_router/final_density"; //missing the bottom
-        //String preferred_holder = "tectonic:overworld/caves"; // is OK
-        //String preferred_holder = "overworld/caves"; <-- overworld_caves covers everything except vanilla cave entrances
-        //preferred_holder = "";
-        //might need caves/pillars
-        //overworld/caves deletes everything except cave entrances
-        //String[] preferred_holders = {""};
-
-//        for(String preferred_holder: preferred_holders) {
-//            if(holder.contains(preferred_holder)) {
-//                return true;
-//            }
-//        }
-
-//        List of entries where caves still appear:
-//        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / minecraft:overworld/noise_router/final_density]'
-//        Declining to delete entrances found with current holder = 'ResourceKey[minecraft:worldgen/density_function / tectonic:overworld/caves]'
-
-
+        // List of entries where caves still appear:
+        // - 'ResourceKey[minecraft:worldgen/density_function / minecraft:overworld/noise_router/final_density]'
+        // - 'ResourceKey[minecraft:worldgen/density_function / tectonic:overworld/caves]'
         return Objects.equals(holder, "") || holder.trim().isEmpty() || holder.contains("overworld/caves");
-
     }
 
     public static DensityFunction copyDF(DensityFunction func, String curHolder) {
@@ -230,15 +212,6 @@ public class NoiseMaker {
                 retdf = copyDF(retdf, curHolder);
                 return DensityFunctions.interpolated(retdf);
             }
-//            case DensityFunctions.BlendAlpha blendAlpha -> {
-//                return DensityFunctions.BlendAlpha.INSTANCE;
-//            }
-//            case DensityFunctions.BlendOffset blendOffset -> {
-//                return DensityFunctions.BlendOffset.INSTANCE;
-//            }
-//            case DensityFunctions.BeardifierMarker beardifierMarker -> {
-//                return DensityFunctions.BeardifierMarker.INSTANCE;
-//            }
             case DensityFunctions.Noise t_func -> {
                 DensityFunction.NoiseHolder retdf = t_func.noise();
                 boolean keyPresent = retdf.noiseData().unwrapKey().isPresent();
