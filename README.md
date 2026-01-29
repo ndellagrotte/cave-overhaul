@@ -1,9 +1,5 @@
 Hello!
 
-Don't mind the code gore. Any references to RegistryUtils can be ignored- that's a leftover from when this project was first getting started.
-
-JSONs referencing rivers and noise caves can be ignored. I'll be removing those soon.
-
 If you are interested in learning how this mod was made, please look at the mixins and whatever functions they call. The mixins do everything outside of adding the little snaking tunnels.
 
 Likewise, if you are interested in modeling noise to make your own noise caverns, you can use the following to get started: https://auburn.github.io/FastNoiseLite/ Each pixel = one minecraft block.
