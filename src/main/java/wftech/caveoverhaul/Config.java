@@ -21,7 +21,6 @@ public class Config {
     public static String KEY_GENERATE_CAVERNS = "generate_minecraft_caverns";
 
     //1.3.4
-    public static String KEY_LAVA_RIVER_ENABLE = "enable_lava_rivers";
     public static String KEY_WATER_RIVER_ENABLE = "enable_water_rivers";
     public static String KEY_LAVA_OFFSET = "bottom_lava_offset";
 
@@ -37,7 +36,6 @@ public class Config {
             KEY_CANYON_LOWER_CHANCE,
             KEY_CANYON_UPPER_AIR_EXPOSURE,
             KEY_GENERATE_CAVERNS,
-            KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET,
             KEY_CAVE_VERTICAL_STRETCH
@@ -45,7 +43,6 @@ public class Config {
 
     private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
-            KEY_LAVA_RIVER_ENABLE,
             KEY_WATER_RIVER_ENABLE
     );
 
@@ -307,13 +304,12 @@ public class Config {
             DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_CHANCE, 0.12f);
             DEFAULT_FLOAT_VALUES.put(KEY_CANYON_LOWER_CHANCE, 0.04f);
             DEFAULT_FLOAT_VALUES.put(KEY_CAVE_AIR_EXPOSURE, 0.1f);
-            DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.3f);
+            DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.1f);
             DEFAULT_FLOAT_VALUES.put(KEY_LAVA_OFFSET, 9f);
             DEFAULT_FLOAT_VALUES.put(KEY_CAVE_VERTICAL_STRETCH, 2f);
 
             // Boolean settings
             DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
-            DEFAULT_BOOL_VALUES.put(KEY_LAVA_RIVER_ENABLE, true);
             DEFAULT_BOOL_VALUES.put(KEY_WATER_RIVER_ENABLE, true);
         }
     }

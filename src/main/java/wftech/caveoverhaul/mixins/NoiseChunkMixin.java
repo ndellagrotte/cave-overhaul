@@ -73,12 +73,6 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		int y = thisChunk.blockY();
 		int z = thisChunk.blockZ();
 
-		// Fast path: skip if above surface
-		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 8;
-		if (y >= topY) {
-			return;
-		}
-
 		// Cache minY locally to avoid repeated field access
 		int minY = this.caveOverhaul$minY;
 
@@ -88,8 +82,16 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 			return;
 		}
 
-		// Main cave/river logic
-		BlockState preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
+		// Near the surface, skip cave carving but still process rivers.
+		// preliminarySurfaceLevel is evaluated at 4-block cell resolution,
+		// so using it to gate river processing causes 4x4 stone artifacts.
+		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 8;
+		BlockState preferredState;
+		if (y >= topY) {
+			preferredState = NoiseChunkMixinUtils.computeRiverState(x, y, z);
+		} else {
+			preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
+		}
 
 		if (preferredState != null) {
 			// Replace air with lava at bottom of world (use cached values)

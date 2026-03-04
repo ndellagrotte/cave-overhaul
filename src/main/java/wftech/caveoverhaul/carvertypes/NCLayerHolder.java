@@ -37,6 +37,7 @@ public class NCLayerHolder {
      */
 
     private final List<NCDynamicLayer> layers = new ArrayList<>();
+    private final List<NCConnectorLayer> connectors = new ArrayList<>();
     private final int[][] height_min_max_for_each_layer = {
             {96, 128}, {64, 96}, {32, 64}, //top layers
             {0, 32}, {-32, 0}, //middle layers
@@ -61,6 +62,7 @@ public class NCLayerHolder {
         FastNoiseLite genericNoiseStructural = this.genStructuralNoise(seed, 0);
 
         addMainLayers(seed, min_y, genericNoiseStructural);
+        addConnectors(seed, genericNoiseStructural);
 
         if (min_y < -64) {
             addExtraLayers(seed, min_y, genericNoiseStructural);
@@ -119,11 +121,33 @@ public class NCLayerHolder {
 
     }
 
+    private static final int[] CONNECTOR_BOUNDARY_YS = {96, 64, 32, 0, -32};
+
+    private void addConnectors(int seed, FastNoiseLite genericNoiseStructural) {
+        for (int i = 0; i < CONNECTOR_BOUNDARY_YS.length; i++) {
+            FastNoiseLite placementNoise = genConnectorPlacementNoise(seed, i + 100);
+            connectors.add(new NCConnectorLayer(
+                    CONNECTOR_BOUNDARY_YS[i],
+                    placementNoise,
+                    genericNoiseStructural));
+        }
+    }
+
+    private FastNoiseLite genConnectorPlacementNoise(int seed, int seedOffset) {
+        FastNoiseLite noise = new FastNoiseLite();
+        noise.SetSeed(seed + seedOffset);
+        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        noise.SetFrequency(0.008f);
+        noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+        noise.SetFractalOctaves(1);
+        return noise;
+    }
+
     public FastNoiseLite genStructuralNoise(int seed, int seedOffset) {
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
         tnoise.SetFractalOctaves(1);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFractalGain(0.3f);
         tnoise.SetFrequency(0.025f);
@@ -143,7 +167,7 @@ public class NCLayerHolder {
 
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed(seed);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S); //SimplexFractal
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); //SimplexFractal
         tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFrequency(0.015f); //was 0.01
         tnoise.SetFractalType(FastNoiseLite.FractalType.FBm);
@@ -166,7 +190,7 @@ public class NCLayerHolder {
 
         FastNoiseLite tnoise = new FastNoiseLite();
         tnoise.SetSeed(seed);
-        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+        tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
         tnoise.SetFrequency(0.01f);
         tnoise.SetFractalType(FastNoiseLite.FractalType.FBm);
@@ -178,12 +202,22 @@ public class NCLayerHolder {
     }
 
     public boolean shouldCarveInternal(float x, float y, float z) {
+        int ix = (int) x;
+        int iy = (int) y;
+        int iz = (int) z;
+
         for(NCDynamicLayer layer: this.layers) {
-            if(!layer.isInYRange((int) y)) {
+            if(!layer.isInYRange(iy)) {
                 continue;
             }
 
-            if (layer.shouldCarve((int) x, (int) y, (int) z)) {
+            if (layer.shouldCarve(ix, iy, iz)) {
+                return true;
+            }
+        }
+
+        for (NCConnectorLayer connector : this.connectors) {
+            if (connector.shouldCarve(ix, iy, iz)) {
                 return true;
             }
         }

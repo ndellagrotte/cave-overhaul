@@ -21,6 +21,35 @@ public class NoiseChunkMixinUtils {
 	}
 
 	/**
+	 * Computes the preferred block state for river generation only.
+	 * Used near the surface where cave carving is skipped.
+	 * Never carves air — this keeps a solid ceiling between
+	 * the river and any surface water body above it.
+	 * Returns null if no change is needed.
+	 */
+	public static BlockState computeRiverState(int x, int y, int z) {
+		NURLayerHolder riverHolder = NURLayerHolder.getInstance();
+
+		NURDynamicLayer riverLayer = riverHolder.getRiverLayer(x, y, z);
+		if (riverLayer != null) {
+			return riverLayer.getFluidBlock().defaultBlockState();
+		}
+
+		boolean isRiverAir = riverHolder.shouldSetToAirRivers(x, y, z);
+
+		if (!isRiverAir && riverHolder.shouldSetToStone(x, y, z)) {
+			return Blocks.STONE.defaultBlockState();
+		}
+
+		if (isRiverAir) {
+			return Blocks.AIR.defaultBlockState();
+		}
+
+		return null;
+	}
+
+
+	/**
 	 * Computes the preferred block state for cave/river generation.
 	 * Gets holder instances once and performs all checks with them.
 	 * Returns null if no change is needed.
@@ -35,13 +64,17 @@ public class NoiseChunkMixinUtils {
 			return riverLayer.getFluidBlock().defaultBlockState();
 		}
 
-		// Check for stone (river support)
-		if (riverHolder.shouldSetToStone(x, y, z)) {
+		// Check for river air before stone, so one layer's boundary
+		// doesn't place stone that obstructs another layer's river
+		boolean isRiverAir = riverHolder.shouldSetToAirRivers(x, y, z);
+
+		// Check for stone (river support) only if no river wants this as air
+		if (!isRiverAir && riverHolder.shouldSetToStone(x, y, z)) {
 			return Blocks.STONE.defaultBlockState();
 		}
 
 		// Check for air (river air or cave carving)
-		if (riverHolder.shouldSetToAirRivers(x, y, z) || caveHolder.shouldCarve(x, y, z)) {
+		if (isRiverAir || caveHolder.shouldCarve(x, y, z)) {
 			return Blocks.AIR.defaultBlockState();
 		}
 

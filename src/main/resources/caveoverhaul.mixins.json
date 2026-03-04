@@ -9,7 +9,9 @@
 		"NoiseRouterDataAccessor",
 		"RandomStateMixin",
 		"VeinTypeAccessor",
-		"IntegratedServerMixin"
+		"IntegratedServerMixin",
+		"DedicatedServerMixin",
+		"DripstoneUtilsMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
