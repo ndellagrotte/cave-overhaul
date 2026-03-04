@@ -10,7 +10,8 @@
 		"RandomStateMixin",
 		"VeinTypeAccessor",
 		"IntegratedServerMixin",
-		"DedicatedServerMixin"
+		"DedicatedServerMixin",
+		"DripstoneUtilsMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
