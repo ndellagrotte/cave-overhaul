@@ -74,7 +74,10 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		int z = thisChunk.blockZ();
 
 		// Fast path: skip if above surface
-		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 8;
+		// Buffer must be large enough that river ceiling carving (up to ~11 blocks
+		// above river base Y) isn't skipped near surface water bodies, where
+		// preliminarySurfaceLevel drops to the terrain surface below the water.
+		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 20;
 		if (y >= topY) {
 			return;
 		}

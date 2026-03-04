@@ -35,13 +35,17 @@ public class NoiseChunkMixinUtils {
 			return riverLayer.getFluidBlock().defaultBlockState();
 		}
 
-		// Check for stone (river support)
-		if (riverHolder.shouldSetToStone(x, y, z)) {
+		// Check for river air before stone, so one layer's boundary
+		// doesn't place stone that obstructs another layer's river
+		boolean isRiverAir = riverHolder.shouldSetToAirRivers(x, y, z);
+
+		// Check for stone (river support) only if no river wants this as air
+		if (!isRiverAir && riverHolder.shouldSetToStone(x, y, z)) {
 			return Blocks.STONE.defaultBlockState();
 		}
 
 		// Check for air (river air or cave carving)
-		if (riverHolder.shouldSetToAirRivers(x, y, z) || caveHolder.shouldCarve(x, y, z)) {
+		if (isRiverAir || caveHolder.shouldCarve(x, y, z)) {
 			return Blocks.AIR.defaultBlockState();
 		}
 

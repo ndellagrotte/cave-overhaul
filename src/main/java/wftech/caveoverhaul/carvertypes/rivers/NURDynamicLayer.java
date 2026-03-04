@@ -214,7 +214,7 @@ public class NURDynamicLayer {
             warpZ += warp.GetNoise(warpX - 20, warpY, warpZ - 20) * 2f;
         }
 
-        return getNoise3D((int) warpX, (int) warpY, (int) warpZ);
+        return this.cache.getCaveDetailsNoise3D(warpX, warpY, warpZ);
     }
 
     private int getCaveY() {

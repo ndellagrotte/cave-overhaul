@@ -45,4 +45,13 @@ public class NURLogic {
         return noiseIsLiquid.GetNoise(x, y, z);
     }
 
+    public float getCaveDetailsNoise3D(float x, float y, float z) {
+        if (domainWarp != null) {
+            Vector3 coords = new Vector3(x, y, z);
+            domainWarp.DomainWarp(coords);
+            return noiseIsLiquid.GetNoise(coords.x, coords.y, coords.z);
+        }
+        return noiseIsLiquid.GetNoise(x, y, z);
+    }
+
 }
