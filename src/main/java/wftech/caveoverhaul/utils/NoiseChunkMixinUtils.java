@@ -21,6 +21,28 @@ public class NoiseChunkMixinUtils {
 	}
 
 	/**
+	 * Computes the preferred block state for river generation only.
+	 * Used near the surface where cave carving is skipped.
+	 * Never carves air — this keeps a solid ceiling between
+	 * the river and any surface water body above it.
+	 * Returns null if no change is needed.
+	 */
+	public static BlockState computeRiverState(int x, int y, int z) {
+		NURLayerHolder riverHolder = NURLayerHolder.getInstance();
+
+		NURDynamicLayer riverLayer = riverHolder.getRiverLayer(x, y, z);
+		if (riverLayer != null) {
+			return riverLayer.getFluidBlock().defaultBlockState();
+		}
+
+		if (riverHolder.shouldSetToStone(x, y, z)) {
+			return Blocks.STONE.defaultBlockState();
+		}
+
+		return null;
+	}
+
+	/**
 	 * Computes the preferred block state for cave/river generation.
 	 * Gets holder instances once and performs all checks with them.
 	 * Returns null if no change is needed.
