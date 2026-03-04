@@ -107,8 +107,11 @@ public class NURDynamicLayer {
             return false;
         }
 
-        // Check if liquid exists below
-        if (isLiquid(x, y - 1, z) || isLiquid(x, y - 2, z)) {
+        // Check if liquid exists below (respecting isOutOfBounds for the same reason as
+        // isBelowRiverSupport: adjacent Y positions can have independent in/out-of-bounds
+        // status due to 3D shouldCarveNoise with high domain warp amplitude).
+        if ((!isOutOfBounds(x, y - 1, z) && isLiquid(x, y - 1, z))
+                || (!isOutOfBounds(x, y - 2, z) && isLiquid(x, y - 2, z))) {
             return true;
         }
 
@@ -117,7 +120,7 @@ public class NURDynamicLayer {
         int ceilingHeight = (int) (noiseDelta * 100) / 2;
 
         for (int i = 1; i < ceilingHeight; i++) {
-            if (isLiquid(x, y - (2 + i), z)) {
+            if (!isOutOfBounds(x, y - (2 + i), z) && isLiquid(x, y - (2 + i), z)) {
                 return true;
             }
         }
@@ -151,7 +154,13 @@ public class NURDynamicLayer {
         if (y <= Globals.getMinY() + 4) {
             return false;
         }
-        return isLiquid(x, y + 1, z) || isLiquid(x, y + 2, z);
+        // Check isOutOfBounds for the positions above before calling isLiquid.
+        // shouldCarveNoise is 3D with high domain warp amplitude (50 blocks), so adjacent
+        // Y positions can have independent in/out-of-bounds status. Without this check,
+        // isBelowRiverSupport can place stone below "phantom liquid" that would never
+        // actually be processed, overriding cave carving at river endpoints.
+        return (!isOutOfBounds(x, y + 1, z) && isLiquid(x, y + 1, z))
+            || (!isOutOfBounds(x, y + 2, z) && isLiquid(x, y + 2, z));
     }
 
     // ==================== Noise Generation ====================
