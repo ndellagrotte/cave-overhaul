@@ -35,12 +35,19 @@ public class NoiseChunkMixinUtils {
 			return riverLayer.getFluidBlock().defaultBlockState();
 		}
 
-		if (riverHolder.shouldSetToStone(x, y, z)) {
+		boolean isRiverAir = riverHolder.shouldSetToAirRivers(x, y, z);
+
+		if (!isRiverAir && riverHolder.shouldSetToStone(x, y, z)) {
 			return Blocks.STONE.defaultBlockState();
+		}
+
+		if (isRiverAir) {
+			return Blocks.AIR.defaultBlockState();
 		}
 
 		return null;
 	}
+
 
 	/**
 	 * Computes the preferred block state for cave/river generation.
