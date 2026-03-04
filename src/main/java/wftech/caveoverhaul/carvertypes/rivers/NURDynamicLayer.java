@@ -1,8 +1,9 @@
 package wftech.caveoverhaul.carvertypes.rivers;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import wftech.caveoverhaul.Config;
+import java.util.Arrays;
+
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite.FractalType;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite.NoiseType;
@@ -32,35 +33,29 @@ public class NURDynamicLayer {
     private volatile FastNoiseLite domainWarp = null;
     private final Object domainWarpLock = new Object();
 
+    private final ThreadLocal<WarpedNoiseCache> warpCache;
+
     public NURDynamicLayer(Block fluidBlock, int minY, int seedOffset) {
         this.fluidBlock = fluidBlock;
         this.minY = minY;
         this.seedOffset = seedOffset;
         this.cache = new NURLogic(genNoiseIsLiquid(), genShouldCarveNoise(), genNoiseYLevel());
 
-        // Cache config values at construction time
-        boolean isLava = fluidBlock == Blocks.LAVA;
-        boolean isWater = fluidBlock == Blocks.WATER;
-        this.enabled = (isLava && Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE))
-                || (isWater && Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE));
+        this.enabled = Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE);
 
         // Precompute Y range bounds
         this.yRangeLower = minY - 2;
         this.yRangeUpper = minY + (MAX_CAVE_SIZE_Y / FLOOR_VARIANCE_DIVISOR) + CEILING_BUFFER + 1;
+
+        this.warpCache = ThreadLocal.withInitial(
+            () -> new WarpedNoiseCache(this.yRangeLower, this.yRangeUpper)
+        );
     }
 
     // ==================== Public Getters ====================
 
     public Block getFluidBlock() {
         return this.fluidBlock;
-    }
-
-    public boolean isLava() {
-        return this.fluidBlock == Blocks.LAVA;
-    }
-
-    public boolean isWater() {
-        return this.fluidBlock == Blocks.WATER;
     }
 
     public int getMinY() {
@@ -166,6 +161,29 @@ public class NURDynamicLayer {
     }
 
     private float getWarpedNoise(int x, int y, int z) {
+        WarpedNoiseCache cache = warpCache.get();
+        int cx = x >> 4;
+        int cz = z >> 4;
+        cache.ensureChunk(cx, cz);
+
+        int yOffset = y - cache.yBase;
+        if (yOffset >= 0 && yOffset < cache.ySpan) {
+            int localX = x & 15;
+            int localZ = z & 15;
+            int idx = cache.index(localX, localZ, yOffset);
+            if (cache.computed[idx]) {
+                return cache.values[idx];
+            }
+            float result = computeWarpedNoiseUncached(x, y, z);
+            cache.values[idx] = result;
+            cache.computed[idx] = true;
+            return result;
+        }
+
+        return computeWarpedNoiseUncached(x, y, z);
+    }
+
+    private float computeWarpedNoiseUncached(int x, int y, int z) {
         FastNoiseLite warp = domainWarp;
         if (warp == null) {
             synchronized (domainWarpLock) {
@@ -238,5 +256,34 @@ public class NURDynamicLayer {
 
     private int getWorldSeed() {
         return (int) FabricUtils.server.getWorldData().worldGenOptions().seed();
+    }
+
+    private static final class WarpedNoiseCache {
+        int chunkX = Integer.MIN_VALUE;
+        int chunkZ = Integer.MIN_VALUE;
+        final float[] values;
+        final boolean[] computed;
+        final int yBase;
+        final int ySpan;
+
+        WarpedNoiseCache(int yRangeLower, int yRangeUpper) {
+            this.yBase = yRangeLower;
+            this.ySpan = yRangeUpper - yRangeLower + 1;
+            int size = 16 * 16 * ySpan;
+            this.values = new float[size];
+            this.computed = new boolean[size];
+        }
+
+        void ensureChunk(int cx, int cz) {
+            if (cx != chunkX || cz != chunkZ) {
+                chunkX = cx;
+                chunkZ = cz;
+                Arrays.fill(computed, false);
+            }
+        }
+
+        int index(int localX, int localZ, int yOffset) {
+            return (localX * 16 + localZ) * ySpan + yOffset;
+        }
     }
 }

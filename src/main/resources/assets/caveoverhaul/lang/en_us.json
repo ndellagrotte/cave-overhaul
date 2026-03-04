@@ -9,9 +9,6 @@
   "config.caveoverhaul.generate_caverns": "Generate Minecraft Caverns",
   "config.caveoverhaul.generate_caverns.tooltip": "Enable vanilla 1.18+ cavern generation. May cause terrain conflicts with Cave Overhaul's noise caves.",
 
-  "config.caveoverhaul.enable_lava_rivers": "Enable Lava Rivers",
-  "config.caveoverhaul.enable_lava_rivers.tooltip": "Generate underground lava rivers at low Y levels.",
-
   "config.caveoverhaul.enable_water_rivers": "Enable Water Rivers",
   "config.caveoverhaul.enable_water_rivers.tooltip": "Generate underground water rivers.",
 

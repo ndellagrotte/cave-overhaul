@@ -31,14 +31,6 @@ public class ClothConfigScreen {
         ConfigCategory rivers = builder.getOrCreateCategory(Component.translatable("config.caveoverhaul.category.rivers"));
 
         rivers.addEntry(entryBuilder.startBooleanToggle(
-                        Component.translatable("config.caveoverhaul.enable_lava_rivers"),
-                        Config.getBoolSetting(Config.KEY_LAVA_RIVER_ENABLE))
-                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_LAVA_RIVER_ENABLE))
-                .setTooltip(Component.translatable("config.caveoverhaul.enable_lava_rivers.tooltip"))
-                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_LAVA_RIVER_ENABLE, value))
-                .build());
-
-        rivers.addEntry(entryBuilder.startBooleanToggle(
                         Component.translatable("config.caveoverhaul.enable_water_rivers"),
                         Config.getBoolSetting(Config.KEY_WATER_RIVER_ENABLE))
                 .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_WATER_RIVER_ENABLE))
