@@ -18,6 +18,7 @@ import wftech.caveoverhaul.carvertypes.NoisetypeDomainWarp;
 import wftech.caveoverhaul.carvertypes.rivers.*;
 import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.IMixinHelperNoiseChunk;
+import wftech.caveoverhaul.utils.CaveDataLogger;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 @Mixin(NoiseChunk.class)
@@ -57,6 +58,8 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		NoisetypeDomainWarp.init(this.caveOverhaul$minY);
 		Globals.init();
 
+		CaveDataLogger.onNewChunk();
+
 		this.caveOverhaul$initialized = true;
 	}
 
@@ -72,6 +75,8 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		int x = thisChunk.blockX();
 		int y = thisChunk.blockY();
 		int z = thisChunk.blockZ();
+
+		CaveDataLogger.ensureChunkCoords(x, z);
 
 		// Cache minY locally to avoid repeated field access
 		int minY = this.caveOverhaul$minY;

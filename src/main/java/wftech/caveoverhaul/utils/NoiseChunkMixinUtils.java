@@ -32,6 +32,7 @@ public class NoiseChunkMixinUtils {
 
 		NURDynamicLayer riverLayer = riverHolder.getRiverLayer(x, y, z);
 		if (riverLayer != null) {
+			CaveDataLogger.recordRiverLiquid();
 			return riverLayer.getFluidBlock().defaultBlockState();
 		}
 
@@ -42,6 +43,7 @@ public class NoiseChunkMixinUtils {
 		}
 
 		if (isRiverAir) {
+			CaveDataLogger.recordRiverAir();
 			return Blocks.AIR.defaultBlockState();
 		}
 
@@ -61,6 +63,7 @@ public class NoiseChunkMixinUtils {
 		// Check for river liquid first
 		NURDynamicLayer riverLayer = riverHolder.getRiverLayer(x, y, z);
 		if (riverLayer != null) {
+			CaveDataLogger.recordRiverLiquid();
 			return riverLayer.getFluidBlock().defaultBlockState();
 		}
 
@@ -74,7 +77,12 @@ public class NoiseChunkMixinUtils {
 		}
 
 		// Check for air (river air or cave carving)
-		if (isRiverAir || caveHolder.shouldCarve(x, y, z)) {
+		if (isRiverAir) {
+			CaveDataLogger.recordRiverAir();
+			return Blocks.AIR.defaultBlockState();
+		}
+		if (caveHolder.shouldCarve(x, y, z)) {
+			CaveDataLogger.recordCaveBlock();
 			return Blocks.AIR.defaultBlockState();
 		}
 

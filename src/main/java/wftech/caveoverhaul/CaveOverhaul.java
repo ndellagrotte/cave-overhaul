@@ -8,6 +8,7 @@ import wftech.caveoverhaul.carvertypes.InitCarverTypesFabric;
 import wftech.caveoverhaul.carvertypes.NCLayerHolder;
 import wftech.caveoverhaul.carvertypes.NoisetypeDomainWarp;
 import wftech.caveoverhaul.carvertypes.rivers.NURLayerHolder;
+import wftech.caveoverhaul.utils.CaveDataLogger;
 import wftech.caveoverhaul.utils.Globals;
 
 public class CaveOverhaul implements ModInitializer {
@@ -20,6 +21,7 @@ public class CaveOverhaul implements ModInitializer {
 		InitCarverTypesFabric.init();
 
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+			CaveDataLogger.flushAll();
 			NURLayerHolder.reset();
 			NoisetypeDomainWarp.reset();
 			NCLayerHolder.reset();
