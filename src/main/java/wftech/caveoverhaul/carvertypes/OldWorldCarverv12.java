@@ -55,11 +55,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
     @Override
     protected float getThickness(RandomSource p_230359_1_) {
-        float lvt_2_1_ = p_230359_1_.nextFloat() * 2.0f + p_230359_1_.nextFloat();
-        if (p_230359_1_.nextInt(5) == 0) {
-            lvt_2_1_ *= 1.5f;
-        }
-        return lvt_2_1_;
+        return p_230359_1_.nextFloat() * 2.0f + p_230359_1_.nextFloat();
     }
 
     public void generateRoomCluster(CarvingContext context,
@@ -112,7 +108,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
         for (int i = 0; i < numRooms; ++i) {
             float angle = random.nextFloat() * ((float) Math.PI * 2F);
             float yOffset = (random.nextFloat() - 0.5F) / 2.0F;
-            float tunnelWidth = getThickness(random) + 4.0f;
+            float tunnelThickness = getThickness(random);
             int endHeight = minHeight - random.nextInt(minHeight / 4);
 
             this.addTunnel12(
@@ -125,9 +121,9 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                     x,
                     coord_y,
                     z,
-                    tunnelWidth,
                     angle,
                     yOffset,
+                    tunnelThickness,
                     0,
                     endHeight,
                     this.getYScale(),
@@ -244,6 +240,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             initialY += pitchChangeRateY;
             initialZ += Mth.sin(yaw) * yawChangeRate;
             pitch += pitchChangeRate * 0.1f;
+            pitch = Mth.clamp(pitch, -(float)(Math.PI / 3.0), (float)(Math.PI / 3.0));
             yaw += pitchChange * 0.1f;
             pitchChangeRate *= 0.9f;
             pitchChange *= 0.75f;
@@ -252,10 +249,15 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
             if (!flag2 && curNode == j && unkModifier > 1.0f && endNode > 0) {
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ, random.nextFloat() * 0.5f + 0.5f, pitch - 1.5707964f, unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        yaw - ((float)Math.PI / 3.0f) - random.nextFloat() * 0.5f,
+                        (random.nextFloat() - 0.5f) * 0.25f,
+                        unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ, random.nextFloat() * 0.5f + 0.5f, pitch + 1.5707964f, unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
-                return;
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        yaw + ((float)Math.PI / 3.0f) + random.nextFloat() * 0.5f,
+                        (random.nextFloat() - 0.5f) * 0.25f,
+                        unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
             }
 
             if (flag2 || random.nextInt(4) != 0) {
