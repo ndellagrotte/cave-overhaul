@@ -121,6 +121,57 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setFloatSetting(Config.KEY_CANYON_UPPER_AIR_EXPOSURE, value))
                 .build());
 
+        // Debug category
+        ConfigCategory debug = builder.getOrCreateCategory(Component.translatable("config.caveoverhaul.category.debug"));
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_noise_caves"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_NOISE_CAVES))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_NOISE_CAVES))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_noise_caves.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_NOISE_CAVES, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_old_world_caves"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_OLD_WORLD_CAVES))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_old_world_caves.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_upper_canyons"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_UPPER_CANYONS))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_UPPER_CANYONS))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_upper_canyons.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_UPPER_CANYONS, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_lower_canyons"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_LOWER_CANYONS))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_LOWER_CANYONS))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_lower_canyons.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_LOWER_CANYONS, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_rivers"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_RIVERS))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_RIVERS))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_rivers.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_RIVERS, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_connectors"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_CONNECTORS))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_CONNECTORS))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_connectors.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_CONNECTORS, value))
+                .build());
+
         builder.setSavingRunnable(Config::saveConfig);
 
         return builder.build();

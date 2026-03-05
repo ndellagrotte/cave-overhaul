@@ -29,6 +29,14 @@ public class Config {
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
+    // Debug toggles
+    public static String KEY_DEBUG_NOISE_CAVES = "debug_enable_noise_caves";
+    public static String KEY_DEBUG_OLD_WORLD_CAVES = "debug_enable_old_world_caves";
+    public static String KEY_DEBUG_UPPER_CANYONS = "debug_enable_upper_canyons";
+    public static String KEY_DEBUG_LOWER_CANYONS = "debug_enable_lower_canyons";
+    public static String KEY_DEBUG_RIVERS = "debug_enable_rivers";
+    public static String KEY_DEBUG_CONNECTORS = "debug_enable_connectors";
+
     private static final Set<String> VALID_KEYS = Set.of(
             KEY_CAVE_CHANCE,
             KEY_CAVE_AIR_EXPOSURE,
@@ -38,12 +46,24 @@ public class Config {
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET,
-            KEY_CAVE_VERTICAL_STRETCH
+            KEY_CAVE_VERTICAL_STRETCH,
+            KEY_DEBUG_NOISE_CAVES,
+            KEY_DEBUG_OLD_WORLD_CAVES,
+            KEY_DEBUG_UPPER_CANYONS,
+            KEY_DEBUG_LOWER_CANYONS,
+            KEY_DEBUG_RIVERS,
+            KEY_DEBUG_CONNECTORS
     );
 
     private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
-            KEY_WATER_RIVER_ENABLE
+            KEY_WATER_RIVER_ENABLE,
+            KEY_DEBUG_NOISE_CAVES,
+            KEY_DEBUG_OLD_WORLD_CAVES,
+            KEY_DEBUG_UPPER_CANYONS,
+            KEY_DEBUG_LOWER_CANYONS,
+            KEY_DEBUG_RIVERS,
+            KEY_DEBUG_CONNECTORS
     );
 
     private static final Map<String, Boolean> DEFAULT_BOOL_VALUES = new HashMap<>();
@@ -311,6 +331,14 @@ public class Config {
             // Boolean settings
             DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
             DEFAULT_BOOL_VALUES.put(KEY_WATER_RIVER_ENABLE, true);
+
+            // Debug toggles (all enabled by default)
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_NOISE_CAVES, true);
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_OLD_WORLD_CAVES, true);
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_UPPER_CANYONS, true);
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_LOWER_CANYONS, true);
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_RIVERS, true);
+            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_CONNECTORS, true);
         }
     }
 

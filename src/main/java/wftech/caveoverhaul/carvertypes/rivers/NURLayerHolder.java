@@ -1,6 +1,7 @@
 package wftech.caveoverhaul.carvertypes.rivers;
 
 import net.minecraft.world.level.block.Blocks;
+import wftech.caveoverhaul.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,10 @@ public class NURLayerHolder {
     }
 
     private boolean shouldProcessLayer(NURDynamicLayer layer, int x, int y, int z) {
+        if (!Config.getBoolSetting(Config.KEY_DEBUG_RIVERS)) {
+            return true;
+        }
+
         if (!layer.isEnabled()) {
             return true;
         }

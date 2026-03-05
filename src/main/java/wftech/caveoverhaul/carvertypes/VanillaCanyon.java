@@ -30,8 +30,10 @@ public class VanillaCanyon extends CanyonWorldCarver {
 		float flt = random.nextFloat();
 		//return flt <= cfg.probability;
 		if (cfg.yScale.getMinValue() > 3) {
+			if (!Config.getBoolSetting(Config.KEY_DEBUG_LOWER_CANYONS)) return false;
 			return flt <= Config.getFloatSetting(Config.KEY_CANYON_LOWER_CHANCE);
 		} else {
+			if (!Config.getBoolSetting(Config.KEY_DEBUG_UPPER_CANYONS)) return false;
 			return flt <= Config.getFloatSetting(Config.KEY_CANYON_UPPER_CHANCE);
 		}
 	}

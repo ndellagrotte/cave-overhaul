@@ -152,6 +152,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             @NonNull ChunkPos chunkPos,
             @NonNull CarvingMask mask) {
 
+        if (!Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES)) return true;
+
         if (!this.shouldCarve(ctx, cfg, level, random, chunkPos)) {
             return true;
         }
