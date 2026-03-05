@@ -109,7 +109,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             float angle = random.nextFloat() * ((float) Math.PI * 2F);
             float yOffset = (random.nextFloat() - 0.5F) / 2.0F;
             float tunnelThickness = getThickness(random);
-            int endHeight = minHeight - random.nextInt(minHeight / 4);
+            int tunnelLength = 50 + random.nextInt(40); // 50-89 nodes
 
             this.addTunnel12(
                     context,
@@ -125,7 +125,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                     yOffset,
                     tunnelThickness,
                     0,
-                    endHeight,
+                    tunnelLength,
                     this.getYScale(),
                     mask,
                     clusterOriginY);
@@ -232,7 +232,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
         while (curNode < endNode) {
             //1.5 for the first term by default
-            double yStepApprox = 2.5 + (double) (Mth.sin((float) curNode * 3.1415927f / (float) endNode) * unkModifier);
+            double yStepApprox = 1.5 + (double) (Mth.sin((float) curNode * 3.1415927f / (float) endNode) * unkModifier);
             double yStep = yStepApprox * length;
             float yawChangeRate = Mth.cos(pitch);
             float pitchChangeRateY = Mth.sin(pitch);
@@ -267,7 +267,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                 double maxDiameter = unkModifier + 2.0f + 16.0f;
 
                 if (deltaX * deltaX + deltaZ * deltaZ - deltaDiameter * deltaDiameter > maxDiameter * maxDiameter) {
-                    return;
+                    ++curNode;
+                    continue;
                 }
 //
 //				mbPosCheckAir.set(initialX, initialY, initialZ);
@@ -327,8 +328,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                                 double zTargetSize = ((double) (zIter + minBlockZ) + 0.5 - initialZ) / yStepApprox;
 
 
-                                //CHANGED: first skip, originally set to skip @ 1.0
-                                if (xTargetSize * xTargetSize + zTargetSize * zTargetSize >= 4.0) continue;
+                                if (xTargetSize * xTargetSize + zTargetSize * zTargetSize >= 1.0) continue;
 
                                 MutableBoolean shouldCarve = new MutableBoolean(false);
 
