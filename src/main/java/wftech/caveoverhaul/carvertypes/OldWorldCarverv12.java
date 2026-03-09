@@ -55,11 +55,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
     @Override
     protected float getThickness(RandomSource p_230359_1_) {
-        float lvt_2_1_ = p_230359_1_.nextFloat() * 2.0f + p_230359_1_.nextFloat();
-        if (p_230359_1_.nextInt(5) == 0) {
-            lvt_2_1_ *= 1.5f;
-        }
-        return lvt_2_1_;
+        return p_230359_1_.nextFloat() * 2.0f + p_230359_1_.nextFloat();
     }
 
     public void generateRoomCluster(CarvingContext context,
@@ -112,8 +108,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
         for (int i = 0; i < numRooms; ++i) {
             float angle = random.nextFloat() * ((float) Math.PI * 2F);
             float yOffset = (random.nextFloat() - 0.5F) / 2.0F;
-            float tunnelWidth = getThickness(random) + 4.0f;
-            int endHeight = minHeight - random.nextInt(minHeight / 4);
+            float tunnelThickness = getThickness(random);
+            int tunnelLength = 50 + random.nextInt(40); // 50-89 nodes
 
             this.addTunnel12(
                     context,
@@ -125,11 +121,11 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                     x,
                     coord_y,
                     z,
-                    tunnelWidth,
                     angle,
                     yOffset,
+                    tunnelThickness,
                     0,
-                    endHeight,
+                    tunnelLength,
                     this.getYScale(),
                     mask,
                     clusterOriginY);
@@ -151,6 +147,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             @NonNull Aquifer disabled,
             @NonNull ChunkPos chunkPos,
             @NonNull CarvingMask mask) {
+
+        if (!Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES)) return true;
 
         if (!this.shouldCarve(ctx, cfg, level, random, chunkPos)) {
             return true;
@@ -234,7 +232,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
         while (curNode < endNode) {
             //1.5 for the first term by default
-            double yStepApprox = 2.5 + (double) (Mth.sin((float) curNode * 3.1415927f / (float) endNode) * unkModifier);
+            double yStepApprox = 1.5 + (double) (Mth.sin((float) curNode * 3.1415927f / (float) endNode) * unkModifier);
             double yStep = yStepApprox * length;
             float yawChangeRate = Mth.cos(pitch);
             float pitchChangeRateY = Mth.sin(pitch);
@@ -242,6 +240,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             initialY += pitchChangeRateY;
             initialZ += Mth.sin(yaw) * yawChangeRate;
             pitch += pitchChangeRate * 0.1f;
+            pitch = Mth.clamp(pitch, -(float)(Math.PI / 3.0), (float)(Math.PI / 3.0));
             yaw += pitchChange * 0.1f;
             pitchChangeRate *= 0.9f;
             pitchChange *= 0.75f;
@@ -250,10 +249,15 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
             if (!flag2 && curNode == j && unkModifier > 1.0f && endNode > 0) {
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ, random.nextFloat() * 0.5f + 0.5f, pitch - 1.5707964f, unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        yaw - ((float)Math.PI / 3.0f) - random.nextFloat() * 0.5f,
+                        (random.nextFloat() - 0.5f) * 0.25f,
+                        unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ, random.nextFloat() * 0.5f + 0.5f, pitch + 1.5707964f, unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
-                return;
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        yaw + ((float)Math.PI / 3.0f) + random.nextFloat() * 0.5f,
+                        (random.nextFloat() - 0.5f) * 0.25f,
+                        unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, clusterOriginY);
             }
 
             if (flag2 || random.nextInt(4) != 0) {
@@ -263,7 +267,8 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                 double maxDiameter = unkModifier + 2.0f + 16.0f;
 
                 if (deltaX * deltaX + deltaZ * deltaZ - deltaDiameter * deltaDiameter > maxDiameter * maxDiameter) {
-                    return;
+                    ++curNode;
+                    continue;
                 }
 //
 //				mbPosCheckAir.set(initialX, initialY, initialZ);
@@ -323,8 +328,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                                 double zTargetSize = ((double) (zIter + minBlockZ) + 0.5 - initialZ) / yStepApprox;
 
 
-                                //CHANGED: first skip, originally set to skip @ 1.0
-                                if (xTargetSize * xTargetSize + zTargetSize * zTargetSize >= 4.0) continue;
+                                if (xTargetSize * xTargetSize + zTargetSize * zTargetSize >= 1.0) continue;
 
                                 MutableBoolean shouldCarve = new MutableBoolean(false);
 

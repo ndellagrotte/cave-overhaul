@@ -1,5 +1,6 @@
 package wftech.caveoverhaul.carvertypes;
 
+import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FabricUtils;
 import wftech.caveoverhaul.utils.Globals;
@@ -206,19 +207,23 @@ public class NCLayerHolder {
         int iy = (int) y;
         int iz = (int) z;
 
-        for(NCDynamicLayer layer: this.layers) {
-            if(!layer.isInYRange(iy)) {
-                continue;
-            }
+        if (Config.getBoolSetting(Config.KEY_DEBUG_NOISE_CAVES)) {
+            for (NCDynamicLayer layer : this.layers) {
+                if (!layer.isInYRange(iy)) {
+                    continue;
+                }
 
-            if (layer.shouldCarve(ix, iy, iz)) {
-                return true;
+                if (layer.shouldCarve(ix, iy, iz)) {
+                    return true;
+                }
             }
         }
 
-        for (NCConnectorLayer connector : this.connectors) {
-            if (connector.shouldCarve(ix, iy, iz)) {
-                return true;
+        if (Config.getBoolSetting(Config.KEY_DEBUG_CONNECTORS)) {
+            for (NCConnectorLayer connector : this.connectors) {
+                if (connector.shouldCarve(ix, iy, iz)) {
+                    return true;
+                }
             }
         }
 

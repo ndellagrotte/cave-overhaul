@@ -21,9 +21,6 @@
   "config.caveoverhaul.cave_air_exposure": "Cave Air Exposure Chance",
   "config.caveoverhaul.cave_air_exposure.tooltip": "Probability that caves will carve through to the surface. (0.0 - 1.0)",
 
-  "config.caveoverhaul.cave_vertical_stretch": "Cave Vertical Stretch",
-  "config.caveoverhaul.cave_vertical_stretch.tooltip": "Stretches noise caves vertically. Higher values make caves taller and more vertical. (0.5 - 4.0)",
-
   "config.caveoverhaul.canyon_upper_chance": "Upper Canyon Chance",
   "config.caveoverhaul.canyon_upper_chance.tooltip": "Probability of canyons spawning in upper layers (y < 128 to bedrock). (0.0 - 1.0)",
 
@@ -31,5 +28,25 @@
   "config.caveoverhaul.canyon_lower_chance.tooltip": "Probability of canyons spawning in lower layers (y < 48 to bedrock). (0.0 - 1.0)",
 
   "config.caveoverhaul.canyon_air_exposure": "Canyon Air Exposure Chance",
-  "config.caveoverhaul.canyon_air_exposure.tooltip": "Probability that canyons will carve through to the surface. (0.0 - 1.0)"
+  "config.caveoverhaul.canyon_air_exposure.tooltip": "Probability that canyons will carve through to the surface. (0.0 - 1.0)",
+
+  "config.caveoverhaul.category.debug": "Debug",
+
+  "config.caveoverhaul.debug_noise_caves": "Enable Noise Caves",
+  "config.caveoverhaul.debug_noise_caves.tooltip": "Toggle noise-based cavern generation. Disable to remove all noise caves.",
+
+  "config.caveoverhaul.debug_old_world_caves": "Enable Old World Caves",
+  "config.caveoverhaul.debug_old_world_caves.tooltip": "Toggle pre-1.18 style tunnel cave generation.",
+
+  "config.caveoverhaul.debug_upper_canyons": "Enable Upper Canyons",
+  "config.caveoverhaul.debug_upper_canyons.tooltip": "Toggle canyon generation in upper layers (y < 128 to bedrock).",
+
+  "config.caveoverhaul.debug_lower_canyons": "Enable Lower Canyons",
+  "config.caveoverhaul.debug_lower_canyons.tooltip": "Toggle canyon generation in lower layers (y < 48 to bedrock).",
+
+  "config.caveoverhaul.debug_rivers": "Enable Rivers",
+  "config.caveoverhaul.debug_rivers.tooltip": "Toggle underground river generation.",
+
+  "config.caveoverhaul.debug_connectors": "Enable Connectors",
+  "config.caveoverhaul.debug_connectors.tooltip": "Toggle connector layers that bridge gaps between noise cave layers."
 }

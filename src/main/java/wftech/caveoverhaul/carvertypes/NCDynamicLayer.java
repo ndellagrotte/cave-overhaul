@@ -1,6 +1,5 @@
 package wftech.caveoverhaul.carvertypes;
 
-import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FloatPos;
 import wftech.caveoverhaul.utils.Settings;
@@ -40,8 +39,7 @@ public class NCDynamicLayer {
             return false;
         }
 
-        float verticalStretch = Config.getFloatSetting(Config.KEY_CAVE_VERTICAL_STRETCH);
-        float noiseFound = getWarpedNoise(x, y * verticalStretch, z);
+        float noiseFound = getWarpedNoise(x, y, z);
         return noiseFound > NOISE_THRESHOLD;
     }
 
