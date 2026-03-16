@@ -74,17 +74,6 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setFloatSetting(Config.KEY_CAVE_AIR_EXPOSURE, value))
                 .build());
 
-        float[] verticalStretchRange = Config.getFloatRange(Config.KEY_CAVE_VERTICAL_STRETCH);
-        caves.addEntry(entryBuilder.startFloatField(
-                        Component.translatable("config.caveoverhaul.cave_vertical_stretch"),
-                        Config.getFloatSetting(Config.KEY_CAVE_VERTICAL_STRETCH))
-                .setDefaultValue(Config.getDefaultFloatValue(Config.KEY_CAVE_VERTICAL_STRETCH))
-                .setMin(verticalStretchRange[0])
-                .setMax(verticalStretchRange[1])
-                .setTooltip(Component.translatable("config.caveoverhaul.cave_vertical_stretch.tooltip"))
-                .setSaveConsumer(value -> Config.setFloatSetting(Config.KEY_CAVE_VERTICAL_STRETCH, value))
-                .build());
-
         // Canyons category
         ConfigCategory canyons = builder.getOrCreateCategory(Component.translatable("config.caveoverhaul.category.canyons"));
 

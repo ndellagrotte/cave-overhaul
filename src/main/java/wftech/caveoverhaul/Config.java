@@ -24,8 +24,6 @@ public class Config {
     public static String KEY_WATER_RIVER_ENABLE = "enable_water_rivers";
     public static String KEY_LAVA_OFFSET = "bottom_lava_offset";
 
-    //1.3.5
-    public static String KEY_CAVE_VERTICAL_STRETCH = "cave_vertical_stretch";
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
@@ -46,7 +44,6 @@ public class Config {
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET,
-            KEY_CAVE_VERTICAL_STRETCH,
             KEY_DEBUG_NOISE_CAVES,
             KEY_DEBUG_OLD_WORLD_CAVES,
             KEY_DEBUG_UPPER_CANYONS,
@@ -78,7 +75,6 @@ public class Config {
         FLOAT_RANGES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, new float[]{0f, 1f});
         FLOAT_RANGES.put(KEY_CANYON_LOWER_CHANCE, new float[]{0f, 1f});
         FLOAT_RANGES.put(KEY_LAVA_OFFSET, new float[]{0f, 64f});
-        FLOAT_RANGES.put(KEY_CAVE_VERTICAL_STRETCH, new float[]{0.5f, 4f});
     }
 
     public static boolean getBoolSetting(String key){
@@ -326,7 +322,6 @@ public class Config {
             DEFAULT_FLOAT_VALUES.put(KEY_CAVE_AIR_EXPOSURE, 0.1f);
             DEFAULT_FLOAT_VALUES.put(KEY_CANYON_UPPER_AIR_EXPOSURE, 0.1f);
             DEFAULT_FLOAT_VALUES.put(KEY_LAVA_OFFSET, 9f);
-            DEFAULT_FLOAT_VALUES.put(KEY_CAVE_VERTICAL_STRETCH, 2f);
 
             // Boolean settings
             DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
