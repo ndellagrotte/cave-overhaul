@@ -38,7 +38,6 @@ public class NCLayerHolder {
      */
 
     private final List<NCDynamicLayer> layers = new ArrayList<>();
-    private final List<NCConnectorLayer> connectors = new ArrayList<>();
     private final int[][] height_min_max_for_each_layer = {
             {96, 128}, {64, 96}, {32, 64}, //top layers
             {0, 32}, {-32, 0}, //middle layers
@@ -63,7 +62,6 @@ public class NCLayerHolder {
         FastNoiseLite genericNoiseStructural = this.genStructuralNoise(seed, 0);
 
         addMainLayers(seed, min_y, genericNoiseStructural);
-        addConnectors(seed, genericNoiseStructural);
 
         if (min_y < -64) {
             addExtraLayers(seed, min_y, genericNoiseStructural);
@@ -120,28 +118,6 @@ public class NCLayerHolder {
                     genericNoiseStructural));
         }
 
-    }
-
-    private static final int[] CONNECTOR_BOUNDARY_YS = {96, 64, 32, 0, -32};
-
-    private void addConnectors(int seed, FastNoiseLite genericNoiseStructural) {
-        for (int i = 0; i < CONNECTOR_BOUNDARY_YS.length; i++) {
-            FastNoiseLite placementNoise = genConnectorPlacementNoise(seed, i + 100);
-            connectors.add(new NCConnectorLayer(
-                    CONNECTOR_BOUNDARY_YS[i],
-                    placementNoise,
-                    genericNoiseStructural));
-        }
-    }
-
-    private FastNoiseLite genConnectorPlacementNoise(int seed, int seedOffset) {
-        FastNoiseLite noise = new FastNoiseLite();
-        noise.SetSeed(seed + seedOffset);
-        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        noise.SetFrequency(0.008f);
-        noise.SetFractalType(FastNoiseLite.FractalType.FBm);
-        noise.SetFractalOctaves(1);
-        return noise;
     }
 
     public FastNoiseLite genStructuralNoise(int seed, int seedOffset) {
@@ -214,14 +190,6 @@ public class NCLayerHolder {
                 }
 
                 if (layer.shouldCarve(ix, iy, iz)) {
-                    return true;
-                }
-            }
-        }
-
-        if (Config.getBoolSetting(Config.KEY_DEBUG_CONNECTORS)) {
-            for (NCConnectorLayer connector : this.connectors) {
-                if (connector.shouldCarve(ix, iy, iz)) {
                     return true;
                 }
             }

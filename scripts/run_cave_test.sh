@@ -28,8 +28,7 @@ echo "[3/7] Ensuring server config..."
 if [ ! -f run/eula.txt ]; then
     echo "eula=true" > run/eula.txt
 fi
-if [ ! -f run/server.properties ]; then
-    cat > run/server.properties << 'PROPS'
+cat > run/server.properties << 'PROPS'
 enable-rcon=true
 rcon.port=25575
 rcon.password=devtest
@@ -39,10 +38,11 @@ spawn-protection=0
 max-tick-time=120000
 level-name=test_world
 level-type=minecraft\:normal
+level-seed=obama
+pause-when-empty-seconds=0
 gamemode=creative
 difficulty=peaceful
 PROPS
-fi
 
 # 4. Launch server in background
 echo "[4/7] Launching server..."

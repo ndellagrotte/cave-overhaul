@@ -33,7 +33,6 @@ public class Config {
     public static String KEY_DEBUG_UPPER_CANYONS = "debug_enable_upper_canyons";
     public static String KEY_DEBUG_LOWER_CANYONS = "debug_enable_lower_canyons";
     public static String KEY_DEBUG_RIVERS = "debug_enable_rivers";
-    public static String KEY_DEBUG_CONNECTORS = "debug_enable_connectors";
 
     private static final Set<String> VALID_KEYS = Set.of(
             KEY_CAVE_CHANCE,
@@ -48,8 +47,7 @@ public class Config {
             KEY_DEBUG_OLD_WORLD_CAVES,
             KEY_DEBUG_UPPER_CANYONS,
             KEY_DEBUG_LOWER_CANYONS,
-            KEY_DEBUG_RIVERS,
-            KEY_DEBUG_CONNECTORS
+            KEY_DEBUG_RIVERS
     );
 
     private static final Set<String> BOOL_KEYS = Set.of(
@@ -59,8 +57,7 @@ public class Config {
             KEY_DEBUG_OLD_WORLD_CAVES,
             KEY_DEBUG_UPPER_CANYONS,
             KEY_DEBUG_LOWER_CANYONS,
-            KEY_DEBUG_RIVERS,
-            KEY_DEBUG_CONNECTORS
+            KEY_DEBUG_RIVERS
     );
 
     private static final Map<String, Boolean> DEFAULT_BOOL_VALUES = new HashMap<>();
@@ -333,7 +330,6 @@ public class Config {
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_UPPER_CANYONS, true);
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_LOWER_CANYONS, true);
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_RIVERS, true);
-            DEFAULT_BOOL_VALUES.put(KEY_DEBUG_CONNECTORS, true);
         }
     }
 
