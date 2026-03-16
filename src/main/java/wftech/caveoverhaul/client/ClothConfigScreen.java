@@ -153,14 +153,6 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_RIVERS, value))
                 .build());
 
-        debug.addEntry(entryBuilder.startBooleanToggle(
-                        Component.translatable("config.caveoverhaul.debug_connectors"),
-                        Config.getBoolSetting(Config.KEY_DEBUG_CONNECTORS))
-                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_CONNECTORS))
-                .setTooltip(Component.translatable("config.caveoverhaul.debug_connectors.tooltip"))
-                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_CONNECTORS, value))
-                .build());
-
         builder.setSavingRunnable(Config::saveConfig);
 
         return builder.build();

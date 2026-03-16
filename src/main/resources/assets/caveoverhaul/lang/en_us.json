@@ -45,8 +45,5 @@
   "config.caveoverhaul.debug_lower_canyons.tooltip": "Toggle canyon generation in lower layers (y < 48 to bedrock).",
 
   "config.caveoverhaul.debug_rivers": "Enable Rivers",
-  "config.caveoverhaul.debug_rivers.tooltip": "Toggle underground river generation.",
-
-  "config.caveoverhaul.debug_connectors": "Enable Connectors",
-  "config.caveoverhaul.debug_connectors.tooltip": "Toggle connector layers that bridge gaps between noise cave layers."
+  "config.caveoverhaul.debug_rivers.tooltip": "Toggle underground river generation."
 }
