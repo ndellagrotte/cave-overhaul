@@ -39,6 +39,7 @@ max-tick-time=120000
 level-name=test_world
 level-type=minecraft\:normal
 level-seed=obama
+pause-when-empty-seconds=0
 gamemode=creative
 difficulty=peaceful
 PROPS
