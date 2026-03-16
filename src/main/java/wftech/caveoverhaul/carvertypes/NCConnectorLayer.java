@@ -1,6 +1,5 @@
 package wftech.caveoverhaul.carvertypes;
 
-import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FloatPos;
 
@@ -44,8 +43,7 @@ public class NCConnectorLayer {
         float fadeFactor = (float) distFromCenter / HALF_HEIGHT; // 0 at center, 1 at edge
         float adjustedThreshold = STRUCTURE_THRESHOLD + (fadeFactor * fadeFactor * 0.25f);
 
-        float verticalStretch = Config.getFloatSetting(Config.KEY_CAVE_VERTICAL_STRETCH);
-        float noiseFound = getWarpedNoise(x, y * verticalStretch, z);
+        float noiseFound = getWarpedNoise(x, y, z);
         return noiseFound > adjustedThreshold;
     }
 
