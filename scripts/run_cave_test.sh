@@ -39,6 +39,7 @@ spawn-protection=0
 max-tick-time=120000
 level-name=test_world
 level-type=minecraft\:normal
+level-seed=obama
 gamemode=creative
 difficulty=peaceful
 PROPS
