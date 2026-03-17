@@ -87,16 +87,21 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 			return;
 		}
 
-		// Main cave/river logic — no surface-level gate.
-		// preliminarySurfaceLevel has 4-block cell resolution, so using it
-		// to skip processing creates 4x4 stone artifacts near surface water.
-		// Cave and river layers have their own Y-range checks instead.
+		// Main cave/river logic
 		BlockState preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
 
 		if (preferredState != null) {
-			// Replace air with lava at bottom of world (use cached values)
-			if (preferredState.isAir() && y <= minY + this.caveOverhaul$lavaOffset) {
-				preferredState = Blocks.LAVA.defaultBlockState();
+			if (preferredState.isAir()) {
+				// Don't carve through water — leave vanilla's water block.
+				// The post-fill shell pass (NoiseBasedChunkGeneratorMixin)
+				// ensures solid stone below surface water.
+				if (originalBlock == Blocks.WATER) {
+					return;
+				}
+				// Replace air with lava at bottom of world
+				if (y <= minY + this.caveOverhaul$lavaOffset) {
+					preferredState = Blocks.LAVA.defaultBlockState();
+				}
 			}
 			cir.setReturnValue(preferredState);
 		}

@@ -5,6 +5,7 @@
 	"mixins": [
 		"CaveCarverConfigurationAccessor",
 		"CaveWorldCarverAccessor",
+		"NoiseBasedChunkGeneratorMixin",
 		"NoiseChunkMixin",
 		"NoiseRouterDataAccessor",
 		"RandomStateMixin",
