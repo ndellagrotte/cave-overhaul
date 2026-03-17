@@ -87,16 +87,11 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 			return;
 		}
 
-		// Near the surface, skip cave carving but still process rivers.
-		// preliminarySurfaceLevel is evaluated at 4-block cell resolution,
-		// so using it to gate river processing causes 4x4 stone artifacts.
-		int topY = thisChunk.preliminarySurfaceLevel(x, z) - 8;
-		BlockState preferredState;
-		if (y >= topY) {
-			preferredState = NoiseChunkMixinUtils.computeRiverState(x, y, z);
-		} else {
-			preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
-		}
+		// Main cave/river logic — no surface-level gate.
+		// preliminarySurfaceLevel has 4-block cell resolution, so using it
+		// to skip processing creates 4x4 stone artifacts near surface water.
+		// Cave and river layers have their own Y-range checks instead.
+		BlockState preferredState = NoiseChunkMixinUtils.computePreferredState(x, y, z);
 
 		if (preferredState != null) {
 			// Replace air with lava at bottom of world (use cached values)
