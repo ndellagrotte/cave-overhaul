@@ -341,7 +341,7 @@ public class Config {
 
         //Create the directory and file object
         String relativePath = "config";
-        String fileName = "wfscaveoverhaul.cfg";
+        String fileName = "caveoverhaul.cfg";
         File file = generateFile(relativePath, fileName);
 
         //Create the config file if it's missing
