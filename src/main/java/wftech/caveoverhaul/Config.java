@@ -108,7 +108,7 @@ public class Config {
 
     public static void saveConfig() {
         String relativePath = "config";
-        String fileName = "wfscaveoverhaul.cfg";
+        String fileName = "caveoverhaul.cfg";
         File file = generateFile(relativePath, fileName);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
