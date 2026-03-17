@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -10,41 +10,42 @@ base {
 	archivesName = project.archives_base_name
 }
 
-// Add the Terraformers maven repo to your repositories block
 repositories {
 	maven {
-		name = "Terraformers"
+		name = "Terraformers" //provides modmenu
 		url = "https://maven.terraformersmc.com/"
 	}
 	maven {
-		name = "Shedaniel"
+		name = "Shedaniel" //provides cloth config?
 		url = "https://maven.shedaniel.me/"
 	}
 }
 
 loom {
 	// do this later splitEnvironmentSourceSets()
+	// uhhhh actually probably not
 	accessWidenerPath = file("src/main/resources/caveoverhaul.accesswidener")
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+	// mojmap mappings
 	mappings loom.officialMojangMappings()
+
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	//mod menu v17.0.0-beta.2 for 1.21.11
+	//mod menu
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-	// Cloth Config for config screen
+	// Cloth Config
 	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-
-
 }
 
 processResources {
@@ -76,6 +77,7 @@ jar {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}
 }
+
 
 // configure the maven publication
 publishing {
