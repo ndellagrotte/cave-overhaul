@@ -29,7 +29,7 @@ public class VanillaCanyon extends CanyonWorldCarver {
 	public boolean isStartChunk(CanyonCarverConfiguration cfg, RandomSource random) {
 		float flt = random.nextFloat();
 		//return flt <= cfg.probability;
-		if (cfg.yScale.getMinValue() > 3) {
+		if (cfg.yScale.min() > 3) {
 			if (!Config.getBoolSetting(Config.KEY_DEBUG_LOWER_CANYONS)) return false;
 			return flt <= Config.getFloatSetting(Config.KEY_CANYON_LOWER_CHANCE);
 		} else {
@@ -63,7 +63,7 @@ public class VanillaCanyon extends CanyonWorldCarver {
 		//int j = p_224814_.y.sample(rndm, p_224813_);
 		//low y is -16 yo -64, with high y being 180 to -64
 		int coord_y;
-		if (cfg.yScale.getMinValue() > 3) {
+		if (cfg.yScale.min() > 3) {
 			//lower
 			int scaledLower = (int) (chunkAccess.getMinY() * 0.25);
 			coord_y = rndm.nextInt(chunkAccess.getMinY(), scaledLower);
