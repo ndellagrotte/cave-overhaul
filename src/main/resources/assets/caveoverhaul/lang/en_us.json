@@ -45,5 +45,8 @@
   "config.caveoverhaul.debug_lower_canyons.tooltip": "Toggle canyon generation in lower layers (y < 48 to bedrock).",
 
   "config.caveoverhaul.debug_rivers": "Enable Rivers",
-  "config.caveoverhaul.debug_rivers.tooltip": "Toggle underground river generation."
+  "config.caveoverhaul.debug_rivers.tooltip": "Toggle underground river generation.",
+
+  "config.caveoverhaul.debug_cave_data_logging": "Enable Cave Data Logging",
+  "config.caveoverhaul.debug_cave_data_logging.tooltip": "Log cave generation statistics (block counts, coordinates, seed) to the server log."
 }

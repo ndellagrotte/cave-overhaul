@@ -153,6 +153,14 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_RIVERS, value))
                 .build());
 
+        debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_cave_data_logging"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_CAVE_DATA_LOGGING))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_cave_data_logging.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING, value))
+                .build());
+
         builder.setSavingRunnable(Config::saveConfig);
 
         return builder.build();
