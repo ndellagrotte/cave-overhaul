@@ -1,6 +1,7 @@
 package wftech.caveoverhaul.utils;
 
 import wftech.caveoverhaul.CaveOverhaul;
+import wftech.caveoverhaul.Config;
 
 public class CaveDataLogger {
 
@@ -17,6 +18,7 @@ public class CaveDataLogger {
 	}
 
 	public static void onNewChunk() {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		if (stats.hasData) {
 			flush(stats);
@@ -29,6 +31,7 @@ public class CaveDataLogger {
 	}
 
 	public static void ensureChunkCoords(int blockX, int blockZ) {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		if (!stats.hasCoords) {
 			stats.chunkX = blockX >> 4;
@@ -38,18 +41,21 @@ public class CaveDataLogger {
 	}
 
 	public static void recordCaveBlock() {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		stats.caveBlocks++;
 		stats.hasData = true;
 	}
 
 	public static void recordRiverLiquid() {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		stats.riverLiquidBlocks++;
 		stats.hasData = true;
 	}
 
 	public static void recordRiverAir() {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		stats.riverAirBlocks++;
 		stats.hasData = true;
@@ -75,6 +81,7 @@ public class CaveDataLogger {
 	}
 
 	public static void flushAll() {
+		if (!Config.getBoolSetting(Config.KEY_DEBUG_CAVE_DATA_LOGGING)) return;
 		ChunkStats stats = STATS.get();
 		if (stats.hasData) {
 			flush(stats);
