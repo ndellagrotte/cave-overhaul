@@ -183,6 +183,7 @@ public class Config {
          */
 
         if (!file.exists()) {
+            file.getParentFile().mkdirs();
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                 writer.write("# All *_air_exposure_chance entries dictate the odds that caves/canyons will carve through the surface\n");
