@@ -264,7 +264,7 @@ public class NURDynamicLayer {
     }
 
     private int getWorldSeed() {
-        return (int) FabricUtils.server.getWorldData().worldGenOptions().seed();
+        return (int) FabricUtils.server.getWorldGenSettings().options().seed();
     }
 
     private static final class WarpedNoiseCache {

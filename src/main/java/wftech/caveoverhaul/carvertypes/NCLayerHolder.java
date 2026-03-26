@@ -58,7 +58,7 @@ public class NCLayerHolder {
 
     public NCLayerHolder(int min_y){
 
-        int seed = (int) FabricUtils.server.getWorldData().worldGenOptions().seed();
+        int seed = (int) FabricUtils.server.getWorldGenSettings().options().seed();
         FastNoiseLite genericNoiseStructural = this.genStructuralNoise(seed, 0);
 
         addMainLayers(seed, min_y, genericNoiseStructural);
@@ -122,7 +122,7 @@ public class NCLayerHolder {
 
     public FastNoiseLite genStructuralNoise(int seed, int seedOffset) {
         FastNoiseLite tnoise = new FastNoiseLite();
-        tnoise.SetSeed((int) FabricUtils.server.getWorldData().worldGenOptions().seed());
+        tnoise.SetSeed((int) FabricUtils.server.getWorldGenSettings().options().seed());
         tnoise.SetFractalOctaves(1);
         tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);

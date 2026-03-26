@@ -59,7 +59,7 @@ public class CaveDataLogger {
 		long seed = 0;
 		try {
 			if (FabricUtils.server != null) {
-				seed = FabricUtils.server.getWorldData().worldGenOptions().seed();
+				seed = FabricUtils.server.getWorldGenSettings().options().seed();
 			}
 		} catch (Exception ignored) {
 		}
