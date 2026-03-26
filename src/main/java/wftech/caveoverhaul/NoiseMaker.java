@@ -139,10 +139,10 @@ public class NoiseMaker {
                     //CaveOverhaul.LOGGER.error("-> Check 4 = " + (isHolderOnWhitelistEntrances(curHolder)));
                 }
 
-                if (heldFunc instanceof Holder.Direct<DensityFunction>(DensityFunction newFunc)) {
+                if (heldFunc instanceof Holder.Direct<DensityFunction>(DensityFunction newFunc, var components)) {
                     //CaveOverhaul.LOGGER.error("-> Iter on " + newFunc);
                     newFunc = copyDF(newFunc, curHolder);
-                    heldFunc = new Holder.Direct<>(newFunc);
+                    heldFunc = new Holder.Direct<>(newFunc, components);
 
                 } else if (heldFunc instanceof Holder.Reference<DensityFunction> referenceHolder) {
                     DensityFunction newFunc = referenceHolder.value();
@@ -153,7 +153,7 @@ public class NoiseMaker {
                     assert value != null;
                     value = copyDF(value, newHolderName);
                     //retdf = new Holder.Reference<DensityFunction>(type, owner, key, value);
-                    heldFunc = new Holder.Direct<>(value);
+                    heldFunc = new Holder.Direct<>(value, referenceHolder.components());
                 }
 
                 return new DensityFunctions.HolderHolder(heldFunc);
