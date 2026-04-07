@@ -14,5 +14,4 @@ will. Specifically you can redistribute and/or modify it under the terms of the
 published by the Free Software Foundation.
 
 ## Credits
-
-Thanks to **YUNGNICKYOUNG**, **Worley's Caves**, and **Mojang**, whose work was referenced during the development of this mod.
+This mod is a fork of [WunderFunct's Cave Overhaul](https://github.com/WunderFunct/WFCaveOverhaul), whose original architecture and vision made this project possible. Thanks to **YUNGNICKYOUNG**, **Worley's Caves**, and **Mojang**, whose work was also referenced during development.
