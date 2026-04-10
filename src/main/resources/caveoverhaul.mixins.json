@@ -11,7 +11,9 @@
 		"VeinTypeAccessor",
 		"IntegratedServerMixin",
 		"DedicatedServerMixin",
-		"DripstoneUtilsMixin"
+		"DripstoneUtilsMixin",
+		"OreFeatureMixin",
+		"ScatteredOreFeatureMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

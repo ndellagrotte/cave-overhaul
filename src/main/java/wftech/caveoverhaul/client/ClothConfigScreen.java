@@ -49,6 +49,25 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setFloatSetting(Config.KEY_LAVA_OFFSET, value))
                 .build());
 
+        // Ores category
+        ConfigCategory ores = builder.getOrCreateCategory(Component.translatable("config.caveoverhaul.category.ores"));
+
+        ores.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.ore_air_exposure_only"),
+                        Config.getBoolSetting(Config.KEY_ORE_AIR_EXPOSURE_ONLY))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_ORE_AIR_EXPOSURE_ONLY))
+                .setTooltip(Component.translatable("config.caveoverhaul.ore_air_exposure_only.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_ORE_AIR_EXPOSURE_ONLY, value))
+                .build());
+
+        ores.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.ore_coal_replacement"),
+                        Config.getBoolSetting(Config.KEY_ORE_COAL_REPLACEMENT))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_ORE_COAL_REPLACEMENT))
+                .setTooltip(Component.translatable("config.caveoverhaul.ore_coal_replacement.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_ORE_COAL_REPLACEMENT, value))
+                .build());
+
         // Caves category
         ConfigCategory caves = builder.getOrCreateCategory(Component.translatable("config.caveoverhaul.category.caves"));
 

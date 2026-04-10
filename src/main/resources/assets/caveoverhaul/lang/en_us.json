@@ -30,6 +30,14 @@
   "config.caveoverhaul.canyon_air_exposure": "Canyon Air Exposure Chance",
   "config.caveoverhaul.canyon_air_exposure.tooltip": "Probability that canyons will carve through to the surface. (0.0 - 1.0)",
 
+  "config.caveoverhaul.category.ores": "Ores",
+
+  "config.caveoverhaul.ore_air_exposure_only": "Ores Require Air Exposure",
+  "config.caveoverhaul.ore_air_exposure_only.tooltip": "Valuable ores (diamond, gold, emerald, lapis, redstone) only generate adjacent to air (cave walls). Buried ores are replaced with coal. Iron and copper are exempt.",
+
+  "config.caveoverhaul.ore_coal_replacement": "Replace Buried Ores with Coal",
+  "config.caveoverhaul.ore_coal_replacement.tooltip": "When ores require air exposure, buried ores become coal ore instead of not generating at all.",
+
   "config.caveoverhaul.category.debug": "Debug",
 
   "config.caveoverhaul.debug_noise_caves": "Enable Noise Caves",

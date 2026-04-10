@@ -27,6 +27,10 @@ public class Config {
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
 
+    // Ore generation
+    public static String KEY_ORE_AIR_EXPOSURE_ONLY = "ore_air_exposure_only";
+    public static String KEY_ORE_COAL_REPLACEMENT = "ore_coal_replacement";
+
     // Debug toggles
     public static String KEY_DEBUG_NOISE_CAVES = "debug_enable_noise_caves";
     public static String KEY_DEBUG_OLD_WORLD_CAVES = "debug_enable_old_world_caves";
@@ -44,6 +48,8 @@ public class Config {
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET,
+            KEY_ORE_AIR_EXPOSURE_ONLY,
+            KEY_ORE_COAL_REPLACEMENT,
             KEY_DEBUG_NOISE_CAVES,
             KEY_DEBUG_OLD_WORLD_CAVES,
             KEY_DEBUG_UPPER_CANYONS,
@@ -55,6 +61,8 @@ public class Config {
     private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
+            KEY_ORE_AIR_EXPOSURE_ONLY,
+            KEY_ORE_COAL_REPLACEMENT,
             KEY_DEBUG_NOISE_CAVES,
             KEY_DEBUG_OLD_WORLD_CAVES,
             KEY_DEBUG_UPPER_CANYONS,
@@ -336,6 +344,10 @@ public class Config {
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_RIVERS, true);
 
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_CAVE_DATA_LOGGING, false);
+
+            // Ore generation
+            DEFAULT_BOOL_VALUES.put(KEY_ORE_AIR_EXPOSURE_ONLY, true);
+            DEFAULT_BOOL_VALUES.put(KEY_ORE_COAL_REPLACEMENT, true);
         }
     }
 
