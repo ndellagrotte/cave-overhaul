@@ -38,6 +38,14 @@ public class ClothConfigScreen {
                 .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_WATER_RIVER_ENABLE, value))
                 .build());
 
+        rivers.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.enable_bottom_lava"),
+                        Config.getBoolSetting(Config.KEY_LAVA_ENABLE))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_LAVA_ENABLE))
+                .setTooltip(Component.translatable("config.caveoverhaul.enable_bottom_lava.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_LAVA_ENABLE, value))
+                .build());
+
         float[] lavaOffsetRange = Config.getFloatRange(Config.KEY_LAVA_OFFSET);
         rivers.addEntry(entryBuilder.startFloatField(
                         Component.translatable("config.caveoverhaul.lava_offset"),

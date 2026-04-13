@@ -12,6 +12,9 @@
   "config.caveoverhaul.enable_water_rivers": "Enable Water Rivers",
   "config.caveoverhaul.enable_water_rivers.tooltip": "Generate underground water rivers.",
 
+  "config.caveoverhaul.enable_bottom_lava": "Enable Bottom Lava",
+  "config.caveoverhaul.enable_bottom_lava.tooltip": "Fill the bottom of the world with lava. Disable to remove the lava layer entirely.",
+
   "config.caveoverhaul.lava_offset": "Bottom Lava Offset",
   "config.caveoverhaul.lava_offset.tooltip": "Fill the bottom X air blocks of the world with lava. Adjust if bottom-of-world lava looks wrong.",
 

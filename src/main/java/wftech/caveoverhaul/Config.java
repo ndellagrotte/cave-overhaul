@@ -23,6 +23,7 @@ public class Config {
     //1.3.4
     public static String KEY_WATER_RIVER_ENABLE = "enable_water_rivers";
     public static String KEY_LAVA_OFFSET = "bottom_lava_offset";
+    public static String KEY_LAVA_ENABLE = "enable_bottom_lava";
 
     //public static String KEY_ENABLE_CAVES_BELOW_MINUS_Y64 = "enable_caves_below_minus_y64";
     //public static String KEY_USE_LEGACY_OVERWORLD_DETECTION = "use_legacy_overworld_detection";
@@ -48,6 +49,7 @@ public class Config {
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
             KEY_LAVA_OFFSET,
+            KEY_LAVA_ENABLE,
             KEY_ORE_AIR_EXPOSURE_ONLY,
             KEY_ORE_COAL_REPLACEMENT,
             KEY_DEBUG_NOISE_CAVES,
@@ -61,6 +63,7 @@ public class Config {
     private static final Set<String> BOOL_KEYS = Set.of(
             KEY_GENERATE_CAVERNS,
             KEY_WATER_RIVER_ENABLE,
+            KEY_LAVA_ENABLE,
             KEY_ORE_AIR_EXPOSURE_ONLY,
             KEY_ORE_COAL_REPLACEMENT,
             KEY_DEBUG_NOISE_CAVES,
@@ -335,6 +338,7 @@ public class Config {
             // Boolean settings
             DEFAULT_BOOL_VALUES.put(KEY_GENERATE_CAVERNS, false);
             DEFAULT_BOOL_VALUES.put(KEY_WATER_RIVER_ENABLE, true);
+            DEFAULT_BOOL_VALUES.put(KEY_LAVA_ENABLE, true);
 
             // Debug toggles (all enabled by default)
             DEFAULT_BOOL_VALUES.put(KEY_DEBUG_NOISE_CAVES, true);

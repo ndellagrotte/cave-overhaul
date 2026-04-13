@@ -39,6 +39,9 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 	@Unique
 	private int caveOverhaul$lavaOffset = 9;
 
+	@Unique
+	private boolean caveOverhaul$lavaEnabled = true;
+
 	@Inject(method="<init>(ILnet/minecraft/world/level/levelgen/RandomState;IILnet/minecraft/world/level/levelgen/NoiseSettings;Lnet/minecraft/world/level/levelgen/DensityFunctions$BeardifierOrMarker;Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/world/level/levelgen/Aquifer$FluidPicker;Lnet/minecraft/world/level/levelgen/blending/Blender;)V",
 			at=@At("RETURN"))
 	private void constructorMixin(int int1, RandomState randomstate, int int2, int int3, NoiseSettings noiseSettings,
@@ -52,6 +55,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		this.caveOverhaul$minY = noiseGenSettings.noiseSettings().minY();
 		this.caveOverhaul$isOverworld = WorldGenUtils.checkIfLikelyOverworld(noiseGenSettings);
 		this.caveOverhaul$lavaOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
+		this.caveOverhaul$lavaEnabled = Config.getBoolSetting(Config.KEY_LAVA_ENABLE);
 
 		// Initialize global state once per chunk
 		Globals.setMinY(this.caveOverhaul$minY);
@@ -100,7 +104,7 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 
 		if (preferredState != null) {
 			// Replace air with lava at bottom of world (use cached values)
-			if (preferredState.isAir() && y <= minY + this.caveOverhaul$lavaOffset) {
+			if (this.caveOverhaul$lavaEnabled && preferredState.isAir() && y <= minY + this.caveOverhaul$lavaOffset) {
 				preferredState = Blocks.LAVA.defaultBlockState();
 			}
 			cir.setReturnValue(preferredState);
