@@ -58,7 +58,7 @@ public class NCLayerHolder {
 
     public NCLayerHolder(int min_y){
 
-        int seed = (int) FabricUtils.server.getWorldGenSettings().options().seed();
+        int seed = Long.hashCode(FabricUtils.server.getWorldGenSettings().options().seed());
 
         addMainLayers(seed, min_y);
 

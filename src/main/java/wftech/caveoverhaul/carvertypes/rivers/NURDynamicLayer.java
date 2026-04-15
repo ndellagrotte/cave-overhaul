@@ -272,7 +272,7 @@ public class NURDynamicLayer {
     }
 
     private int getWorldSeed() {
-        return (int) FabricUtils.server.getWorldGenSettings().options().seed();
+        return Long.hashCode(FabricUtils.server.getWorldGenSettings().options().seed());
     }
 
     private static final class WarpedNoiseCache {
