@@ -68,14 +68,14 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                                     boolean shallow,
                                     boolean surfaceEntrance) {
 
-        double x = chunkPos.getBlockX(random.nextInt(16 * 16));
+        double x = chunkPos.getBlockX(random.nextInt(16));
         double coord_y;
         if (shallow) {
             coord_y = this.getCaveY(random, true);
         } else {
             coord_y = this.getCaveY(random, false);
         }
-        double z = chunkPos.getBlockZ(random.nextInt(16 * 16));
+        double z = chunkPos.getBlockZ(random.nextInt(16));
 
         config.horizontalRadiusMultiplier.sample(random);
         config.verticalRadiusMultiplier.sample(random);
@@ -113,6 +113,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
                     random.nextLong(),
                     aquifer,
                     chunk,
+                    chunkPos,
                     x,
                     coord_y,
                     z,
@@ -183,6 +184,7 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             long seed,
             Aquifer _aquifer,
             ChunkAccess chunkPrimer,
+            ChunkPos originChunkPos,
             double initialX,
             double initialY,
             double initialZ,
@@ -207,8 +209,11 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 //      MutableBlockPos mbPosCheckAir = new MutableBlockPos();
 //		List<BlockPos> airPosList = new ArrayList<>();
 
-        double startX = chunkPrimer.getPos().getMiddleBlockX();
-        double startZ = chunkPrimer.getPos().getMiddleBlockZ();
+        // Distance-budget check is anchored on the ORIGIN (neighbor) chunk so tunnels
+        // can't wander outside the 8-chunk carver reach. Clamping writes at :290-311
+        // still uses the HOME chunk's footprint.
+        double startX = originChunkPos.getMiddleBlockX();
+        double startZ = originChunkPos.getMiddleBlockZ();
         int minBlockX = chunkPrimer.getPos().getMinBlockX();
         int minBlockZ = chunkPrimer.getPos().getMinBlockZ();
 
@@ -249,12 +254,12 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
 
             if (!flag2 && curNode == j && unkModifier > 1.0f && endNode > 0) {
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, originChunkPos, initialX, initialY, initialZ,
                         yaw - ((float)Math.PI / 3.0f) - random.nextFloat() * 0.5f,
                         (random.nextFloat() - 0.5f) * 0.25f,
                         unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, false);
                 this.addTunnel12(
-                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, initialX, initialY, initialZ,
+                        context, configuration, biomeFunction, random.nextLong(), aquifer, chunkPrimer, originChunkPos, initialX, initialY, initialZ,
                         yaw + ((float)Math.PI / 3.0f) + random.nextFloat() * 0.5f,
                         (random.nextFloat() - 0.5f) * 0.25f,
                         unkModifier / 3.0f, curNode, endNode, 1.0, carvingMask, false);
