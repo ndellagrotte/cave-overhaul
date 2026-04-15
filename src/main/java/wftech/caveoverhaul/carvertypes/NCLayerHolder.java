@@ -59,22 +59,22 @@ public class NCLayerHolder {
     public NCLayerHolder(int min_y){
 
         int seed = (int) FabricUtils.server.getWorldGenSettings().options().seed();
-        FastNoiseLite genericNoiseStructural = this.genStructuralNoise(seed, 0);
 
-        addMainLayers(seed, min_y, genericNoiseStructural);
+        addMainLayers(seed, min_y);
 
         if (min_y < -64) {
-            addExtraLayers(seed, min_y, genericNoiseStructural);
+            addExtraLayers(seed, min_y);
         }
 
     }
 
 
-    private void addMainLayers(int seed, int min_y, FastNoiseLite genericNoiseStructural) {
+    private void addMainLayers(int seed, int min_y) {
         // Load in the predefined segments
         for(int i = 0; i < height_min_max_for_each_layer.length; i++) {
-            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, (i * 3));
-            FastNoiseLite genericNoiseHeight = this.genCaveHeight(seed, (i * 3) + 1);
+            FastNoiseLite genericNoiseThickness  = this.genThicknessHeight(seed, (i * 3));
+            FastNoiseLite genericNoiseHeight     = this.genCaveHeight(seed, (i * 3) + 1);
+            FastNoiseLite genericNoiseStructural = this.genStructuralNoise(seed, (i * 3) + 2);
 
             layers.add(new NCDynamicLayer(
                     height_min_max_for_each_layer[i][0],
@@ -85,7 +85,7 @@ public class NCLayerHolder {
         }
     }
 
-    private void addExtraLayers(int seed, int min_y, FastNoiseLite genericNoiseStructural) {
+    private void addExtraLayers(int seed, int min_y) {
 
         // If y != -64, add more cave layers
         int seedOffset = height_min_max_for_each_layer.length * 3;
@@ -93,11 +93,13 @@ public class NCLayerHolder {
             int new_min = new_y - 64;
             new_min = Math.max(new_min, min_y); //clamp to min_y
 
-            FastNoiseLite genericNoiseThickness = this.genThicknessHeight(seed, seedOffset);
-            FastNoiseLite genericNoiseHeight = this.genCaveHeight(seed, seedOffset + 1);
+            FastNoiseLite genericNoiseThickness   = this.genThicknessHeight(seed, seedOffset);
+            FastNoiseLite genericNoiseHeight      = this.genCaveHeight(seed, seedOffset + 1);
+            FastNoiseLite genericNoiseStructural1 = this.genStructuralNoise(seed, seedOffset + 2);
 
-            FastNoiseLite genericNoiseThickness2 = this.genThicknessHeight(seed, seedOffset + 3);
-            FastNoiseLite genericNoiseHeight2 = this.genCaveHeight(seed, seedOffset + 4);
+            FastNoiseLite genericNoiseThickness2  = this.genThicknessHeight(seed, seedOffset + 3);
+            FastNoiseLite genericNoiseHeight2     = this.genCaveHeight(seed, seedOffset + 4);
+            FastNoiseLite genericNoiseStructural2 = this.genStructuralNoise(seed, seedOffset + 5);
 
             seedOffset += 6;
 
@@ -107,7 +109,7 @@ public class NCLayerHolder {
                     new_y,
                     genericNoiseThickness,
                     genericNoiseHeight,
-                    genericNoiseStructural));
+                    genericNoiseStructural1));
 
             //Double-up 2
             layers.add(new NCDynamicLayer(
@@ -115,14 +117,16 @@ public class NCLayerHolder {
                     new_y,
                     genericNoiseThickness2,
                     genericNoiseHeight2,
-                    genericNoiseStructural));
+                    genericNoiseStructural2));
         }
 
     }
 
     public FastNoiseLite genStructuralNoise(int seed, int seedOffset) {
+        seed += seedOffset;
+
         FastNoiseLite tnoise = new FastNoiseLite();
-        tnoise.SetSeed((int) FabricUtils.server.getWorldGenSettings().options().seed());
+        tnoise.SetSeed(seed);
         tnoise.SetFractalOctaves(1);
         tnoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         tnoise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
