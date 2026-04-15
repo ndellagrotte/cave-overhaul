@@ -1,14 +1,12 @@
 package wftech.caveoverhaul.carvertypes;
 
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
-import wftech.caveoverhaul.fastnoise.FastNoiseLite.Vector3;
-import wftech.caveoverhaul.utils.NoiseUtils;
+import wftech.caveoverhaul.utils.FloatPos;
 import wftech.caveoverhaul.utils.Settings;
 
 //NC stands for NoiseCave
 public class NCLogic {
 
-    private final FastNoiseLite domainWarp;
     private final float minY;
     private final float maxY;
     private final FastNoiseLite caveYNoise;
@@ -21,7 +19,6 @@ public class NCLogic {
         this.maxY = maxY;
         this.caveYNoise = caveYNoise;
         this.caveSizeNoise = caveSizeNoise;
-        this.domainWarp = NoiseUtils.createStandardDomainWarp();
     }
 
     public float getCachedYLevel(int x, int y, int z) {
@@ -46,21 +43,13 @@ public class NCLogic {
     }
 
     private float getCaveYNoise(int x, int y, int z) {
-        if (domainWarp != null) {
-            Vector3 coords = new Vector3(x, y, z);
-            domainWarp.DomainWarp(coords);
-            return this.caveYNoise.GetNoise(coords.x, coords.y, coords.z);
-        }
-        return this.caveYNoise.GetNoise(x, y, z);
+        FloatPos warped = NoisetypeDomainWarp.getWarpedPosition(x, y, z);
+        return this.caveYNoise.GetNoise(warped.x(), warped.y(), warped.z());
     }
 
     private float getCaveThicknessNoise(int x, int y, int z) {
-        if (domainWarp != null) {
-            Vector3 coords = new Vector3(x, y, z);
-            domainWarp.DomainWarp(coords);
-            return this.caveSizeNoise.GetNoise(coords.x, coords.y, coords.z);
-        }
-        return this.caveSizeNoise.GetNoise(x, y, z);
+        FloatPos warped = NoisetypeDomainWarp.getWarpedPosition(x, y, z);
+        return this.caveSizeNoise.GetNoise(warped.x(), warped.y(), warped.z());
     }
 
     private float calcHeight(int x, int y, int z) {
