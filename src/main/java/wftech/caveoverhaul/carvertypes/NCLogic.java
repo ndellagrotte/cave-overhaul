@@ -57,13 +57,8 @@ public class NCLogic {
     }
 
     public static float ySquish(float noiseHeight) {
-        float caveOffset = (MAX_CAVE_SIZE_Y) / 2f;
-        float k = 2f;
-        int dist = 2 + 1;
-        if (noiseHeight > caveOffset + dist || noiseHeight < caveOffset - dist) {
-            return 0f;
-        }
-
-        return 1f - (float) (1f / (1f + Math.exp(k * (-noiseHeight + (caveOffset)))));
+        float center = Settings.CAVE_HEIGHT_SIGMOID_CENTER;
+        float k = Settings.CAVE_HEIGHT_SIGMOID_STEEPNESS;
+        return (float) (1.0 / (1.0 + Math.exp(k * (noiseHeight - center))));
     }
 }
