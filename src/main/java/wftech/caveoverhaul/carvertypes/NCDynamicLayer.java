@@ -9,7 +9,7 @@ import wftech.caveoverhaul.utils.Settings;
 public class NCDynamicLayer {
 
     private static final int MAX_CAVE_SIZE_Y = Settings.MAX_CAVE_SIZE_Y;
-    private static final float NOISE_THRESHOLD = 0.15f;
+    private static final float NOISE_THRESHOLD = Settings.NOISE_CAVE_STRUCTURE_THRESHOLD;
 
     private final int minY;
     private final int yRangeUpper;  // Precomputed upper bound
