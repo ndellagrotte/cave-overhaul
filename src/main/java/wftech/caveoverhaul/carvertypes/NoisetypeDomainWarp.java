@@ -34,6 +34,10 @@ public class NoisetypeDomainWarp {
     }
 
     private final int minY;
+    // Shared across chunk-gen threads. Safe because FastNoiseLite is effectively immutable once
+    // configured (see its class Javadoc), and initDomainWarp() publishes via volatile+DCL so every
+    // reader sees a fully-configured instance. GetNoise() only reads config and writes to local
+    // stack, so concurrent calls on this field do not race.
     private volatile FastNoiseLite domainWarp = null;
     private final Object domainWarpLock = new Object();
 
