@@ -223,6 +223,14 @@ public class NURDynamicLayer {
 
     // ==================== Noise Initialization ====================
 
+    // Rivers use their own domain warp rather than the NoisetypeDomainWarp singleton.
+    // Why: the singleton is tuned for caves — its amplitude scales with depth (up to ~25
+    // blocks near minY) to produce twisted, large-scale cavern shapes. River channels are
+    // narrow features gated by NOISE_CUTOFF_RIVER = 0.88, so feeding them through the
+    // cave warp would shred them at the fixed river Y-levels (-12, 0, 12) where the
+    // cave warp amplitude is already huge. Rivers need a tight, bounded meander instead:
+    // higher frequency (0.025 vs 0.01) for finer detail, and a fixed amplitude of 2f
+    // applied in computeWarpedNoiseUncached — consistent across Y, not depth-scaled.
     private FastNoiseLite createDomainWarp() {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(getWorldSeed());
