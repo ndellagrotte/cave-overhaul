@@ -157,6 +157,14 @@ public class ClothConfigScreen {
                 .build());
 
         debug.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("config.caveoverhaul.debug_old_world_caves_v2"),
+                        Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES_V2))
+                .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_OLD_WORLD_CAVES_V2))
+                .setTooltip(Component.translatable("config.caveoverhaul.debug_old_world_caves_v2.tooltip"))
+                .setSaveConsumer(value -> Config.setBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES_V2, value))
+                .build());
+
+        debug.addEntry(entryBuilder.startBooleanToggle(
                         Component.translatable("config.caveoverhaul.debug_upper_canyons"),
                         Config.getBoolSetting(Config.KEY_DEBUG_UPPER_CANYONS))
                 .setDefaultValue(Config.getDefaultBoolValue(Config.KEY_DEBUG_UPPER_CANYONS))

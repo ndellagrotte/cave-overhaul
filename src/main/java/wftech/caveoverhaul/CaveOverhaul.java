@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import wftech.caveoverhaul.carvertypes.InitCarverTypesFabric;
 import wftech.caveoverhaul.carvertypes.NCLayerHolder;
 import wftech.caveoverhaul.carvertypes.NoisetypeDomainWarp;
+import wftech.caveoverhaul.carvertypes.OldWorldV2LayerHolder;
 import wftech.caveoverhaul.carvertypes.rivers.NURLayerHolder;
 import wftech.caveoverhaul.utils.CaveDataLogger;
 import wftech.caveoverhaul.utils.Globals;
@@ -25,6 +26,7 @@ public class CaveOverhaul implements ModInitializer {
 			NURLayerHolder.reset();
 			NoisetypeDomainWarp.reset();
 			NCLayerHolder.reset();
+			OldWorldV2LayerHolder.reset();
 			Globals.reset();
 		});
 	}

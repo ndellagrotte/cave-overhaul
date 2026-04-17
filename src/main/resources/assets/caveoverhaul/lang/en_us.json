@@ -49,6 +49,9 @@
   "config.caveoverhaul.debug_old_world_caves": "Enable Old World Caves",
   "config.caveoverhaul.debug_old_world_caves.tooltip": "Toggle pre-1.18 style tunnel cave generation.",
 
+  "config.caveoverhaul.debug_old_world_caves_v2": "Enable Old World Caves v2",
+  "config.caveoverhaul.debug_old_world_caves_v2.tooltip": "Noise-driven labyrinthine tunnel system. Uniformly distributed with gentle slopes. Intended as a replacement for Old World Caves v1 — do not enable both at the same time. Disabled by default.",
+
   "config.caveoverhaul.debug_upper_canyons": "Enable Upper Canyons",
   "config.caveoverhaul.debug_upper_canyons.tooltip": "Toggle canyon generation in upper layers (y < 128 to bedrock).",
 
