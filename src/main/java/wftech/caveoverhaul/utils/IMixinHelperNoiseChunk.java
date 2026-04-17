@@ -11,4 +11,6 @@ public interface IMixinHelperNoiseChunk {
     void wFCaveOverhaul_Fork$setNS(NoiseSettings NS);
 //    NoiseSettings wFCaveOverhaul_Fork$getNS();
 
+    boolean wFCaveOverhaul_Fork$isOverworld();
+
 }

@@ -18,15 +18,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.CarvingMask;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
+import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.CaveWorldCarver;
 import org.jspecify.annotations.NonNull;
 import wftech.caveoverhaul.AirOnlyAquifer;
 import wftech.caveoverhaul.Config;
+import wftech.caveoverhaul.mixins.CarvingContextAccessor;
 import wftech.caveoverhaul.mixins.CaveCarverConfigurationAccessor;
 import wftech.caveoverhaul.mixins.CaveWorldCarverAccessor;
 import wftech.caveoverhaul.utils.Globals;
+import wftech.caveoverhaul.utils.IMixinHelperNoiseChunk;
 import wftech.caveoverhaul.utils.NoiseChunkMixinUtils;
 
 public class OldWorldCarverv12 extends CaveWorldCarver {
@@ -143,6 +146,14 @@ public class OldWorldCarverv12 extends CaveWorldCarver {
             @NonNull Aquifer disabled,
             @NonNull ChunkPos chunkPos,
             @NonNull CarvingMask mask) {
+
+        // Dimension guard: the NCLayerHolder / NURLayerHolder / NoisetypeDomainWarp singletons
+        // used downstream are server-scoped and seeded from the overworld NoiseGeneratorSettings.
+        // If a data pack attaches this carver to a Nether/End/custom biome, bail out silently.
+        NoiseChunk nc = ((CarvingContextAccessor) (Object) ctx).caveOverhaul$getNoiseChunk();
+        if (nc == null || !((IMixinHelperNoiseChunk) (Object) nc).wFCaveOverhaul_Fork$isOverworld()) {
+            return true;
+        }
 
         if (!Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES)) return true;
 

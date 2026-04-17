@@ -57,12 +57,14 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 		this.caveOverhaul$lavaOffset = (int) Config.getFloatSetting(Config.KEY_LAVA_OFFSET);
 		this.caveOverhaul$lavaEnabled = Config.getBoolSetting(Config.KEY_LAVA_ENABLE);
 
-		// Initialize global state once per chunk
-		Globals.setMinY(this.caveOverhaul$minY);
-		NoisetypeDomainWarp.init(this.caveOverhaul$minY);
-		Globals.init();
-
-		CaveDataLogger.onNewChunk();
+		// Overworld-only: writing these from a Nether/End chunk thread would race Globals.minY
+		// and thrash NoisetypeDomainWarp, which rebuilds whenever |minY| changes.
+		if (this.caveOverhaul$isOverworld) {
+			Globals.setMinY(this.caveOverhaul$minY);
+			NoisetypeDomainWarp.init(this.caveOverhaul$minY);
+			Globals.init();
+			CaveDataLogger.onNewChunk();
+		}
 
 		this.caveOverhaul$initialized = true;
 	}
@@ -129,4 +131,9 @@ public class NoiseChunkMixin implements IMixinHelperNoiseChunk {
 	public void wFCaveOverhaul_Fork$setNS(NoiseSettings NS) {
         // private DedicatedServer server;
     }
+
+	@Override
+	public boolean wFCaveOverhaul_Fork$isOverworld() {
+		return this.caveOverhaul$isOverworld;
+	}
 }

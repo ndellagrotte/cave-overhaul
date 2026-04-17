@@ -3,6 +3,7 @@
 	"package": "wftech.caveoverhaul.mixins",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"CarvingContextAccessor",
 		"CaveCarverConfigurationAccessor",
 		"CaveWorldCarverAccessor",
 		"NoiseChunkMixin",
