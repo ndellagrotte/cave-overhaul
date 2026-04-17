@@ -12,12 +12,15 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.CarvingMask;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
+import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.carver.CanyonCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.CanyonWorldCarver;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import org.jspecify.annotations.NonNull;
 import wftech.caveoverhaul.AirOnlyAquifer;
 import wftech.caveoverhaul.Config;
+import wftech.caveoverhaul.mixins.CarvingContextAccessor;
+import wftech.caveoverhaul.utils.IMixinHelperNoiseChunk;
 
 public class VanillaCanyon extends CanyonWorldCarver {
 
@@ -48,6 +51,13 @@ public class VanillaCanyon extends CanyonWorldCarver {
                          @NonNull Aquifer aquifer,
                          ChunkPos p_224819_,
                          @NonNull CarvingMask p_224820_) {
+
+		// Dimension guard: in the Nether/End, chunkAccess.getMinY()==0 makes the lower-canyon
+		// branch below compute nextInt(0, 0) and crash. Bail before we can trip that.
+		NoiseChunk nc = ((CarvingContextAccessor) (Object) p_224813_).caveOverhaul$getNoiseChunk();
+		if (nc == null || !((IMixinHelperNoiseChunk) (Object) nc).wFCaveOverhaul_Fork$isOverworld()) {
+			return true;
+		}
 
 		//return super.carve(p_224813_, p_224814_, chunkAccess, p_224816_, p_224817_, new AirOnlyAquifer(chunkAccess, p_224817_.nextFloat() <=  Config.getFloatSetting(Config.KEY_CANYON_UPPER_AIR_EXPOSURE)), p_224819_, p_224820_);
 
