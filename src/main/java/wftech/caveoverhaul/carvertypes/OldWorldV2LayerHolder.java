@@ -1,21 +1,21 @@
 package wftech.caveoverhaul.carvertypes;
 
-import wftech.caveoverhaul.Config;
 import wftech.caveoverhaul.fastnoise.FastNoiseLite;
 import wftech.caveoverhaul.utils.FabricUtils;
-import wftech.caveoverhaul.utils.Globals;
 import wftech.caveoverhaul.utils.Settings;
 
 /*
- * Old World Caves v2 — noise-driven labyrinthine tunnel system.
+ * Old World Caves v2 — per-chunk noise oracle.
  *
- * Replaces the legacy carver-based OldWorldCarverv12 when KEY_DEBUG_OLD_WORLD_CAVES_V2
- * is enabled. The two systems share no code and are not designed to run simultaneously.
+ * Unlike v1 (pure per-chunk random roll, which clusters), v2 samples a single
+ * low-frequency OpenSimplex2 field at chunk resolution to decide which chunks
+ * are eligible to spawn a cave cluster. This produces "soft zones" — broad
+ * smoothly-varying regions that favor caves, separated by broad regions that
+ * don't — rather than either uniform-random scatter (too even, no regional
+ * variation) or clumped hot-spots.
  *
- * Geometry: two ridged OpenSimplex2 fields trace thin 2D surfaces in 3D space; their
- * intersection (both > threshold) traces 1D curves — tunnels. Distribution is uniform
- * by construction since both fields are translation-invariant. Sampling Y at a stretched
- * coordinate biases tunnel orientation toward horizontal for playable slopes.
+ * Actual tunnel geometry is produced by OldWorldV2Carver using v1-style
+ * node-walk logic; this class only answers "should a cluster start here?".
  */
 public class OldWorldV2LayerHolder {
 
@@ -41,57 +41,33 @@ public class OldWorldV2LayerHolder {
         }
     }
 
-    private final FastNoiseLite noise1;
-    private final FastNoiseLite noise2;
-    private final int minY;
+    private final FastNoiseLite gateNoise;
 
     private OldWorldV2LayerHolder() {
         int seed = Long.hashCode(FabricUtils.server.getWorldGenSettings().options().seed());
-        this.minY = Globals.getMinY();
-        this.noise1 = buildRidged(seed);
-        // Golden-ratio seed offset decorrelates the two fields.
-        this.noise2 = buildRidged(seed ^ 0x9E3779B1);
+        this.gateNoise = buildGateNoise(seed);
     }
 
-    private static FastNoiseLite buildRidged(int seed) {
+    private static FastNoiseLite buildGateNoise(int seed) {
         FastNoiseLite n = new FastNoiseLite();
         n.SetSeed(seed);
         n.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        n.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
-        n.SetFractalType(FastNoiseLite.FractalType.Ridged);
-        n.SetFrequency(Settings.OLD_WORLD_V2_FREQUENCY);
-        n.SetFractalOctaves(Settings.OLD_WORLD_V2_OCTAVES);
-        n.SetFractalLacunarity(Settings.OLD_WORLD_V2_LACUNARITY);
-        n.SetFractalGain(Settings.OLD_WORLD_V2_GAIN);
+        // No fractal — a single smooth octave is what we want for broad zones.
+        n.SetFractalType(FastNoiseLite.FractalType.None);
+        n.SetFrequency(Settings.OLD_WORLD_V2_GATE_FREQUENCY);
         return n;
     }
 
-    public boolean shouldCarve(int x, int y, int z) {
-        if (!Config.getBoolSetting(Config.KEY_DEBUG_OLD_WORLD_CAVES_V2)) {
-            return false;
-        }
-
-        int topCap = Settings.OLD_WORLD_V2_TOP_CAP;
-        int bottomCap = minY + Settings.OLD_WORLD_V2_BEDROCK_BUFFER;
-        if (y > topCap || y < bottomCap) {
-            return false;
-        }
-
-        float threshold = Settings.OLD_WORLD_V2_RIDGE_THRESHOLD;
-        int fadeZone = Settings.OLD_WORLD_V2_TOP_FADE_ZONE;
-        if (y > topCap - fadeZone) {
-            // Soft taper near the top cap: raise the threshold as y approaches topCap
-            // so tunnels thin out rather than slicing off at a visible ceiling.
-            float t = (y - (topCap - fadeZone)) / (float) fadeZone;
-            threshold += t * Settings.OLD_WORLD_V2_TOP_FADE_STRENGTH;
-        }
-
-        float sy = y * Settings.OLD_WORLD_V2_Y_SCALE;
-        float r1 = noise1.GetNoise((float) x, sy, (float) z);
-        if (r1 <= threshold) {
-            return false;
-        }
-        float r2 = noise2.GetNoise((float) x, sy, (float) z);
-        return r2 > threshold;
+    /**
+     * Returns true if a cave cluster is allowed to spawn with its origin in
+     * the given chunk. Sampled at chunk resolution so adjacent chunks vary
+     * smoothly; a typical zone spans several chunks.
+     *
+     * Output of the noise is in roughly [-1, 1]. We pass when it exceeds the
+     * threshold: lower threshold → more chunks pass → denser caves overall.
+     */
+    public boolean shouldSpawnAt(int chunkX, int chunkZ) {
+        float v = gateNoise.GetNoise((float) chunkX, (float) chunkZ);
+        return v > Settings.OLD_WORLD_V2_GATE_THRESHOLD;
     }
 }

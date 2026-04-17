@@ -85,10 +85,6 @@ public class NoiseChunkMixinUtils {
 			CaveDataLogger.recordCaveBlock();
 			return Blocks.AIR.defaultBlockState();
 		}
-		if (OldWorldV2LayerHolder.getInstance().shouldCarve(x, y, z)) {
-			CaveDataLogger.recordCaveBlock();
-			return Blocks.AIR.defaultBlockState();
-		}
 
 		return null;
 	}

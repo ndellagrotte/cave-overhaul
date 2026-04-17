@@ -13,22 +13,29 @@ public class Settings {
     // biggest density knob for the noise-cave system.
     public static float NOISE_CAVE_STRUCTURE_THRESHOLD = 0.15f;
 
-    // Old World Caves v2 — noise geometry.
-    // Two ridged OpenSimplex2 fields are sampled at each block; their intersection
-    // traces 1D curves through 3D space, producing a labyrinthine tunnel network.
-    public static float OLD_WORLD_V2_FREQUENCY = 0.022f;
-    public static int   OLD_WORLD_V2_OCTAVES = 2;
-    public static float OLD_WORLD_V2_LACUNARITY = 2.0f;
-    public static float OLD_WORLD_V2_GAIN = 0.5f;
-    // Main density knob. Lower -> denser, wider tunnels. Higher -> sparser, thinner.
-    public static float OLD_WORLD_V2_RIDGE_THRESHOLD = 0.70f;
-    // Vertical stretch applied to noise y-input. Biases tunnel orientation toward
-    // horizontal; values above 1.0 make tunnel slopes gentler on average.
-    public static float OLD_WORLD_V2_Y_SCALE = 2.0f;
+    // Old World Caves v2 — hybrid architecture.
+    // A low-frequency noise field is sampled at chunk resolution to gate which
+    // chunks may spawn a cluster (see OldWorldV2LayerHolder); a v1-style carver
+    // then generates the actual tunnel geometry at those locations.
 
-    // Old World Caves v2 — y-range policy.
+    // Gate frequency (in chunk units). Lower -> broader zones; higher -> grainier.
+    // At 0.08 a zone spans roughly 8–16 chunks before the noise flips sign.
+    public static float OLD_WORLD_V2_GATE_FREQUENCY = 0.08f;
+    // Gate threshold. OpenSimplex2 output sits roughly in [-1, 1]; a threshold
+    // of 0.0 passes ~50% of chunks, 0.3 passes ~25%, 0.5 passes ~15%. This is
+    // the main spawn-density knob.
+    public static float OLD_WORLD_V2_GATE_THRESHOLD = 0.30f;
+
+    // Per-cluster shape. v2 carves one cluster per passing chunk.
+    public static int   OLD_WORLD_V2_TUNNELS_PER_CLUSTER = 2;
+    public static int   OLD_WORLD_V2_TUNNEL_LENGTH_MIN = 50;
+    public static int   OLD_WORLD_V2_TUNNEL_LENGTH_RANGE = 40;
+    // Fixed tunnel radius — v1 randomized this per tunnel which caused the
+    // width variance the user wants to eliminate. A constant keeps every
+    // tunnel a consistent ~3 blocks wide.
+    public static float OLD_WORLD_V2_TUNNEL_RADIUS = 1.5f;
+
+    // Y-range policy for cluster origins.
     public static int   OLD_WORLD_V2_TOP_CAP = 110;
     public static int   OLD_WORLD_V2_BEDROCK_BUFFER = 6;
-    public static int   OLD_WORLD_V2_TOP_FADE_ZONE = 20;
-    public static float OLD_WORLD_V2_TOP_FADE_STRENGTH = 0.15f;
 }
