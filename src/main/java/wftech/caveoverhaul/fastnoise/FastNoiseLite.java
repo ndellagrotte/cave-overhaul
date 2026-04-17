@@ -52,6 +52,16 @@ package wftech.caveoverhaul.fastnoise;// MIT License
 // /*FNLfloat*/ float
 // /*FNLfloat*/ double
 
+/**
+ * Thread-safety: effectively immutable once configured. Every write to an {@code m*} field lives
+ * in a {@code Set*} setter (or the setter-triggered {@code UpdateTransformType3D} /
+ * {@code UpdateWarpTransformType3D} / {@code CalculateFractalBounding} helpers); the
+ * {@code GetNoise} / {@code DomainWarp} hot paths only read configuration and write to local
+ * stack variables. After you finish calling setters and safely publish the instance (e.g. via a
+ * {@code final} field or volatile DCL), multiple threads may call {@code GetNoise(...)} /
+ * {@code DomainWarp(...)} on the same instance concurrently without further synchronization.
+ * Mutating configuration from one thread while another is sampling is NOT safe.
+ */
 public class FastNoiseLite
 {
     public enum NoiseType

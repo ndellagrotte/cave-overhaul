@@ -34,6 +34,10 @@ public class NoisetypeDomainWarp {
     }
 
     private final int minY;
+    // Shared across chunk-gen threads. Safe because FastNoiseLite is effectively immutable once
+    // configured (see its class Javadoc), and initDomainWarp() publishes via volatile+DCL so every
+    // reader sees a fully-configured instance. GetNoise() only reads config and writes to local
+    // stack, so concurrent calls on this field do not race.
     private volatile FastNoiseLite domainWarp = null;
     private final Object domainWarpLock = new Object();
 
@@ -52,7 +56,7 @@ public class NoisetypeDomainWarp {
             }
 
             FastNoiseLite noise = new FastNoiseLite();
-            noise.SetSeed((int) FabricUtils.server.getWorldGenSettings().options().seed());
+            noise.SetSeed(Long.hashCode(FabricUtils.server.getWorldGenSettings().options().seed()));
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             noise.SetRotationType3D(FastNoiseLite.RotationType3D.ImproveXZPlanes);
             noise.SetFrequency(0.01f);
