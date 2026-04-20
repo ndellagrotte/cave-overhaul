@@ -11,9 +11,9 @@ public class NURLayerHolder {
     private static volatile NURLayerHolder INSTANCE = null;
     private static final Object LOCK = new Object();
 
-    // Duplicate entries (e.g., -4 twice) are intentional - each creates a separate layer
+    // Duplicate entries (e.g., -4 twice) may be used to create separate layers
     // with a different seed offset, resulting in denser/more varied river generation at that depth
-    private static final int[] WATER_Y_LEVELS = { -12, 0, 12 };
+    private static final int[] WATER_Y_LEVELS = { -16, 16 };
 
     private final List<NURDynamicLayer> riverLayers = new ArrayList<>();
 
